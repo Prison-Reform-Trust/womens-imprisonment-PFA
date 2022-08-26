@@ -1,7 +1,7 @@
 name: "women\u2013PFA-outcomes"
 channels:
-  - conda-forge
   - plotly
+  - conda-forge
   - defaults
 dependencies:
   - alabaster=0.7.12=py_0
