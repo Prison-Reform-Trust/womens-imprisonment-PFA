@@ -1,8 +1,8 @@
-name: "women\u2013PFA-outcomes"
+name: women-PFA-outcomes
 channels:
-  - plotly
   - conda-forge
   - defaults
+  - plotly  
 dependencies:
   - alabaster=0.7.12=py_0
   - anyio=3.3.0=py39h6e9494a_0
@@ -256,4 +256,4 @@ dependencies:
   - zipp=3.5.0=pyhd8ed1ab_0
   - zlib=1.2.11=h7795811_1010
   - zstd=1.5.0=h582d3a0_0
-prefix: "/Users/alex/opt/miniconda3/envs/women\u2013PFA-outcomes"
+prefix: /Users/alex/opt/miniconda3/envs/women-PFA-outcomes
