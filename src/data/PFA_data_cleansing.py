@@ -10,11 +10,11 @@ import pandas as pd
 
 #Importing dataset and filtering columns
 usecols =['Police Force Area', 'Year', 'Sex', 'Age group', 'Offence group', 'Sentence Outcome', 'Custodial Sentence Length','Sentenced']
-df = pd.read_csv('../../data/external/sentencing.csv', usecols=usecols, encoding = 'latin1', low_memory=False)
+df = pd.read_csv('data/external/sentencing.csv', usecols=usecols, encoding = 'latin1', low_memory=False)
 
 #Importing dataset going back to 2009 and filtering columns
 usecols_2009 =['Police Force Area', 'Year of Appearance', 'Sex', 'Age Group', 'Offence Group', 'Outcome', 'Custodial Sentence Length','Count'] 
-df_2009 = pd.read_csv('../../../womens-pfa-analysis/data/external/court-outcomes-by-PFA-2019.csv', usecols=usecols_2009, encoding = 'latin1', low_memory=False)
+df_2009 = pd.read_csv('data/external/court-outcomes-by-PFA-2019.csv', usecols=usecols_2009, encoding = 'latin1', low_memory=False)
 
 #Dropping duplicate data from 2009 dataset that also appears in df
 filt = df_2009['Year of Appearance'] < 2017
@@ -61,4 +61,4 @@ filt = filt1 & filt2 & filt3 & ~filt4
 women_custody = df_combined[filt]
 
 #Outputting data for continued analysis
-women_custody.to_csv('../../data/interim/PFA_2009-21_women_cust_comm_sus.csv', index=False)
+women_custody.to_csv('data/interim/PFA_2009-21_women_cust_comm_sus.csv', index=False)
