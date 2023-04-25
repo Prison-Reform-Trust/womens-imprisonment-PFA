@@ -18,7 +18,7 @@ df_2009 = pd.read_csv('data/external/court-outcomes-by-PFA-2019.csv', usecols=us
 
 #Dropping duplicate data from 2009 dataset that also appears in df
 filt = df_2009['Year of Appearance'] < 2017
-df_2009 = df_2009[filt]
+df_2009 = df_2009[filt].copy()
 
 #Renaming and re-ordering columns
 df.columns = ['year', 'offence', 'sex', 'age_group', 'pfa', 'outcome', 'sentence_len', 'freq']
@@ -58,7 +58,7 @@ filt2 = df_combined['outcome'].isin(['Immediate custody', 'Community sentence','
 filt3 = df_combined['age_group'].isin(["Adults", "Young adults"])
 filt4 = df_combined['pfa'].isin(["Special/miscellaneous and unknown police forces", "City of London"])
 filt = filt1 & filt2 & filt3 & ~filt4
-women_custody = df_combined[filt]
+women_custody = df_combined[filt].copy()
 
 #Outputting data for continued analysis
 women_custody.to_csv('data/interim/PFA_2009-21_women_cust_comm_sus.csv', index=False)
