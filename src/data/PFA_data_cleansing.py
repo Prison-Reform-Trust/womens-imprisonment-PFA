@@ -58,7 +58,7 @@ filt2 = df_combined['outcome'].isin(['Immediate custody', 'Community sentence','
 filt3 = df_combined['age_group'].isin(["Adults", "Young adults"])
 filt4 = df_combined['pfa'].isin(["Special/miscellaneous and unknown police forces", "City of London"])
 filt = filt1 & filt2 & filt3 & ~filt4
-women_custody = df_combined[filt].copy()
+women_custody = df_combined[filt].sort_values(['year', 'pfa']).copy()
 
 #Outputting data for continued analysis
-women_custody.to_csv('data/interim/PFA_2009-21_women_cust_comm_sus.csv', index=False)
+# women_custody.to_csv('data/interim/PFA_2009-21_women_cust_comm_sus.csv', index=False)
