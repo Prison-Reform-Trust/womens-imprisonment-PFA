@@ -14,7 +14,7 @@ def read_config():
     return config
 
 def loadData(path_to_data, cols):
-    return pd.read_csv(path_to_data, usecols=cols, low_memory=False)
+    return pd.read_csv(path_to_data, usecols=cols, encoding= 'unicode_escape', low_memory=False)
 
 def dataframeList(symbol_table):
     # Creating a list of global DataFrame variables
@@ -73,8 +73,8 @@ def remove_num_prefix(data):
         Dataframe with regex parameters replaced
     """    
     regex = [r'^\S*: \S* - ',
-             r'\d\d: ',
-             ]
+            r'\d\d: ',
+            ]
     return data.replace(regex=regex, value='', inplace=True)
 
 def tidy_elements(data):
@@ -91,11 +91,11 @@ def tidy_elements(data):
         Dataframe with regex parameters replaced
     """    
     regex = {r"^\S*: \S* - ": "",
-             r"\d\d: ": "",
+            r"\d\d: ": "",
             "Total ": "",
             "(Over)": "More than",
             "( and including)": "",
             "(to less than)": "and under",
-            "Life$": "Life sentence"
-             }
+            "Life$": "Life sentence",
+            }
     return data.replace(regex=regex, inplace=True)
