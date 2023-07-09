@@ -43,9 +43,15 @@ utils.tidy_elements(df_combined)
 column_order = ['year', 'pfa', 'sex', 'age_group', 'offence', 'outcome', 'sentence_length', 'freq']
 df_combined = df_combined.reindex(columns=column_order)
 
+# Setting categorical columns
+convert_dict = {'outcome': "category",
+                'sentence_length': "category"
+                }
+df_combined = df_combined.astype(convert_dict)
+
 ## FILTERING DATASET
 filt1 = df_combined['sex'] == 'Female'
-filt2 = df_combined['outcome'].isin(['Immediate custody', 'Community sentence','Suspended sentence']) ## Looks like there are a number of observations which have disappeared at this stage because of additional space in ' Immediate custody' and ' Community sentence' for some. Regex to resolve
+filt2 = df_combined['outcome'].isin(['Immediate custody', 'Community sentence','Suspended sentence'])
 filt3 = df_combined['age_group'].isin(["Adults", "Young adults"])
 filt4 = df_combined['pfa'].isin(["Special/miscellaneous and unknown police forces", "City of London"])
 filt = filt1 & filt2 & filt3 & ~filt4
