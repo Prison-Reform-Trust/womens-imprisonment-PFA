@@ -14,7 +14,7 @@ df = pd.read_csv('../../data/interim/PFA_2009-21_women_cust_comm_sus.csv')
 #Filtering data for custodial sentences and 2021
 filt = df['outcome'] == 'Immediate custody'
 filt2 = df['year'] == 2021
-df2 = df[filt & filt2]
+df2 = df[filt & filt2].copy()
 
 #Grouping by PFA and offence group 
 df3 = df2.groupby(['pfa', 'offence'], as_index=False)['freq'].sum()
