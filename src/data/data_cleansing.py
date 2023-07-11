@@ -58,8 +58,10 @@ convert_dict = {'outcome': "category",
                 }
 df_combined = df_combined.astype(convert_dict)
 
-# Setting outcomes to capitalize case
-df_combined['outcome'] = df_combined['outcome'].str.capitalize()
+# Setting `outcomes` and `sentence_length` to capitalize case
+capitalize_columns = ['outcome', 'sentence_length']
+for column in capitalize_columns:
+    df_combined[column] = df_combined[column].str.capitalize()
 
 ## FILTERING DATASET
 filt1 = df_combined['sex'] == 'Female'
