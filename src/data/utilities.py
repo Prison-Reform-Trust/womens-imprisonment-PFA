@@ -94,7 +94,6 @@ def tidy_elements(data):
             r"\d\d: ": "",
             "Total ": "",
             "(Over)": "More than",
-            "( and including)": "",
             "(to less than)": "and under",
             "Life$": "Life sentence",
             }
