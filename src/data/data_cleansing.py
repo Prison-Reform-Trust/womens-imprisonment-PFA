@@ -1,8 +1,12 @@
-# Import sentencing outcomes data (all courts) from Ministry of Justice Criminal Justice Statistics
+# Sentencing data 2010–22 
+# (from: https://assets.publishing.service.gov.uk/government/uploads/system/uploads/attachment_data/file/1157979/obo_sent_pivot_2010_2015.zip and 
+# https://assets.publishing.service.gov.uk/government/uploads/system/uploads/attachment_data/file/1157991/obo_sent_pivot_2016_2022.zip)
+
 # Downloaded on 8 July, 2023
 
 import pandas as pd
 import glob
+from time import sleep
 
 ## FUNCTIONS
 
@@ -70,29 +74,33 @@ def orderColumns(x_df):     #Setting column order of dataframe
     x_df = x_df.reindex(columns=column_order)
     return x_df
 
-## IMPORTING DATASET ##
+def cleanData(x_df):        #Data cleaning pipeline
+    my_df = x_df.copy()
+    print('Cleaning data...')
 
-# 1. Sentencing data 2010–22 
-# (from: https://assets.publishing.service.gov.uk/government/uploads/system/uploads/attachment_data/file/1157979/obo_sent_pivot_2010_2015.zip and 
-# https://assets.publishing.service.gov.uk/government/uploads/system/uploads/attachment_data/file/1157991/obo_sent_pivot_2016_2022.zip)
+    df_cleaned=(
+        my_df
+        .pipe(filterDataFrame)
+        .pipe(lcColumns)
+        .pipe(renameColumns)
+        .pipe(removePrefix)
+        .pipe(removeTotal, 'outcome')
+        .pipe(standardiseSentences, 'sentence_length')
+        .pipe(categoryColumns)
+        .pipe(orderColumns)   
+    )
+    sleep(5)
+    print('Data successfully cleaned')
+    return df_cleaned
 
-df=loadData()
+def main():
+    print('Loading data...')
+    df=loadData()
+    print('Data loaded')
+    df_cleaned=cleanData(df)
+    print('Saving...')
+    df_cleaned.to_csv('data/interim/PFA_2010-22_women_cust_comm_sus.csv', index=False)
+    print('Complete')
 
-## DATA CLEANING PROCESS
-
-my_df = df.copy()
-
-df_cleaned=(
-    my_df
-    .pipe(filterDataFrame)
-    .pipe(lcColumns)
-    .pipe(renameColumns)
-    .pipe(removePrefix)
-    .pipe(removeTotal, 'outcome')
-    .pipe(standardiseSentences, 'sentence_length')
-    .pipe(categoryColumns)
-    .pipe(orderColumns)   
-)
-
-## OUTPUTTING INTERIM DATASET FOR FURTHER ANALYSIS
-df_cleaned.to_csv('data/interim/PFA_2010-22_women_cust_comm_sus.csv', index=False)
+if __name__ == "__main__":
+    main()
