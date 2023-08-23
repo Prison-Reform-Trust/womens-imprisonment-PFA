@@ -1,4 +1,5 @@
 # Sentencing data 2010–22 
+# (from https://www.gov.uk/government/statistics/criminal-justice-system-statistics-quarterly-december-2022)
 # (from: https://assets.publishing.service.gov.uk/government/uploads/system/uploads/attachment_data/file/1157979/obo_sent_pivot_2010_2015.zip and 
 # https://assets.publishing.service.gov.uk/government/uploads/system/uploads/attachment_data/file/1157991/obo_sent_pivot_2016_2022.zip)
 
@@ -7,11 +8,14 @@
 import pandas as pd
 import glob
 from time import sleep
+import utilities as utils
+
+config = utils.read_config()
 
 ## FUNCTIONS
 
-def loadData():
-    path="data/external/obo_sent_pivot_2010_2022/"
+def loadData(path="data/external/obo_sent_pivot_2010_2022/"):
+    print('Loading data...')
     cols = ['Police Force Area', 'Year', 'Sex', 'Age group', 'Offence group', 'Sentence Outcome', 'Custodial Sentence Length','Sentenced']
     all_files = glob.glob(path + "*.csv")
     all_csvs = [pd.read_csv(filename, usecols=cols, encoding= 'unicode_escape', low_memory=False) for filename in all_files]
@@ -44,7 +48,7 @@ def renameColumns(x_df):    #Renaming columns
 def removePrefix(x_df):     #Removing numbered prefixes from all elements in DataFrame
     cols = x_df.select_dtypes(include='object').columns
     for col in cols:
-        x_df[col] = x_df[col].str.replace('^\d+:', '', regex=True).str.lstrip()
+        x_df[col] = x_df[col].str.replace(r'^\d+:', '', regex=True).str.lstrip()
     return x_df
     
 def removeTotal(x_df, col):     #Removing "Total" prefix
@@ -68,7 +72,7 @@ def categoryColumns(x_df):      #Converting object columns to category
             x_df[col] = x_df[col].astype('category')
     return x_df
 
-def orderColumns(x_df):     #Setting column order of dataframe
+def orderColumns(x_df):     #Setting column order of DataFrame
     column_order = ['year', 'pfa', 'sex', 'age_group', 'offence', 'outcome', 'sentence_length', 'freq']
 
     x_df = x_df.reindex(columns=column_order)
@@ -94,7 +98,6 @@ def cleanData(x_df):        #Data cleaning pipeline
     return df_cleaned
 
 def main():
-    print('Loading data...')
     df=loadData()
     print('Data loaded')
     df_cleaned=cleanData(df)

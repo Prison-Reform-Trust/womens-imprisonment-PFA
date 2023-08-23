@@ -2,8 +2,11 @@
 - data:
     rawFilePath: data/raw/
     clnFilePath: data/processed/
-    intFilePath: data/interim
+    intFilePath: data/interim/
     outPath: reports/figures/
+    downloadPaths:
+        Sentencing outcomes 2010-2015: 1157979/obo_sent_pivot_2010_2015.zip
+        Sentencing outcomes 2016-2022: 1157991/obo_sent_pivot_2016_2022.zip
 
 - viz: #These values need updating to Plotly parameters
     xtick.labelsize: 20
@@ -21,7 +24,6 @@
     legend.frameon : False
 
 - plotly: 
-    title_font: 
     title_font_family: "Helvetica Neue, Arial" 
     title_font_size: 17
     font_color: "#54565B"
