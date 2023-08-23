@@ -79,8 +79,8 @@ target/
 /data/
 
 # Visualisations
-.svg
-.eps
+*.svg
+*.eps
 
 # Mac OS-specific storage files
 .DS_Store
