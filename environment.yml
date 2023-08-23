@@ -1,0 +1,24 @@
+name: women-pfa-2022
+channels:
+  - conda-forge
+  - plotly
+  - defaults
+dependencies:
+  - matplotlib
+  - nbqa
+  - jupyterlab
+  - notebook
+  - python-kaleido
+  - python-dotenv
+  - seaborn
+  - plotly
+  - ipywidgets
+  - cookiecutter
+  - pandas
+  - plotly-geo
+  - spyder
+  - chart-studio
+  - python
+  - black
+  - poppler
+prefix: /Users/alex/opt/miniconda3/envs/women-pfa-2022
