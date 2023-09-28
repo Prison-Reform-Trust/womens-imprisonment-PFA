@@ -28,9 +28,11 @@ def sourceAnnotation(source, annotations_list):
         dict(
             xref="paper",
             yref="paper",
+            xanchor="left",
+            yanchor="top",
             x=-0.08,
             y=-0.19,
-            align="left",
+            # align="left",
             showarrow=False,
             text=f"Source: {source}",
             font_size=12,

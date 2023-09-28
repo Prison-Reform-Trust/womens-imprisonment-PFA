@@ -16,7 +16,6 @@ dependencies:
   - cookiecutter
   - pandas
   - plotly-geo
-  - spyder
   - chart-studio
   - python
   - black

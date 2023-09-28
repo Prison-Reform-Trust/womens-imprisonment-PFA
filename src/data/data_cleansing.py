@@ -8,7 +8,7 @@
 import pandas as pd
 import glob
 from time import sleep
-import utilities as utils
+import src.data.utilities as utils
 
 config = utils.read_config()
 
@@ -50,7 +50,11 @@ def removePrefix(x_df):     #Removing numbered prefixes from all elements in Dat
     for col in cols:
         x_df[col] = x_df[col].str.replace(r'^\d+:', '', regex=True).str.lstrip()
     return x_df
-    
+
+def capitalizeCaseOffences(x_df, col="offence"):
+    x_df[col] = x_df[col].str.capitalize()
+    return x_df
+
 def removeTotal(x_df, col):     #Removing "Total" prefix
     x_df[col] = x_df[col].str.replace("Total ", "").str.capitalize()
     return x_df
@@ -88,6 +92,7 @@ def cleanData(x_df):        #Data cleaning pipeline
         .pipe(lcColumns)
         .pipe(renameColumns)
         .pipe(removePrefix)
+        .pipe(capitalizeCaseOffences)
         .pipe(removeTotal, 'outcome')
         .pipe(standardiseSentences, 'sentence_length')
         .pipe(categoryColumns)
