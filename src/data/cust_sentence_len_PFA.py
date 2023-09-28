@@ -22,9 +22,9 @@ less_6months = ["Up to 1 month",
                 "More than 3 months and under 6 months"]
 
 six_12_months = ["6 months",
-                 "More than 6 months and up to 9 months",
-                 "More than 9 months and under 12 months",
-                 "12 months"]
+                "More than 6 months and up to 9 months",
+                "More than 9 months and under 12 months",
+                "12 months"]
 
 #Applying categories
 filt = df2['sentence_len'].isin(less_6months)
