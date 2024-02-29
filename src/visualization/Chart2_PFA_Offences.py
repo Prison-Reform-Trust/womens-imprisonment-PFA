@@ -91,7 +91,8 @@ class pfaOffencesChart:
 
     def chartParams(self):
         ## Chart title
-        title = textwrap.wrap(f'<b>Imprisonment of women in {self.df["pfa"].iloc[0]} by offence group in 2022</b>', width=100)
+        # title = textwrap.wrap(f'<b>Imprisonment of women in {self.df["pfa"].iloc[0]} by offence group in 2022</b>', width=100)
+        title = textwrap.wrap(f'<b>Imprisonment of women in {self.df["pfa"].iloc[0]} by offence group in 2022</b>', width=45)
 
         self.fig.update_layout(
             margin = dict(t=75, l=0, r=0, b=0),
