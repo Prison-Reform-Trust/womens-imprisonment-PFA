@@ -23,7 +23,7 @@ pio.templates["prt_template"] = go.layout.Template(
     )
 )
 ## Chart annotations
-def sourceAnnotation(source, annotations_list):
+def source_annotation(source, annotations_list):
     annotations_list.append(
         dict(
             xref="paper",
