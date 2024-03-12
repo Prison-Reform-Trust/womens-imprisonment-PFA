@@ -1,5 +1,5 @@
 """
-This script provides useful funcs to all other scripts
+This script provides useful functions to all other scripts
 """
 
 import yaml
@@ -12,7 +12,7 @@ def read_config():
             Loader=yaml.SafeLoader) for k, v in d.items()}
     return config
 
-def loadData(status: str, filename: str) -> pd.DataFrame:
+def load_data(status: str, filename: str) -> pd.DataFrame:
     """Load CSV file into Pandas DataFrame and convert object columns to categories when they meet criteria in `categoryColumns()`
 
     Parameters
