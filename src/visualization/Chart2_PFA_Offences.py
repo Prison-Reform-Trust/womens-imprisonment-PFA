@@ -91,7 +91,6 @@ class pfaOffencesChart:
 
     def chartParams(self):
         ## Chart title
-        # title = textwrap.wrap(f'<b>Imprisonment of women in {self.df["pfa"].iloc[0]} by offence group in 2022</b>', width=100)
         title = textwrap.wrap(f'<b>Imprisonment of women in {self.df["pfa"].iloc[0]} by offence group in 2022</b>', width=45)
 
         self.fig.update_layout(
@@ -99,8 +98,6 @@ class pfaOffencesChart:
             title="<br>".join(title),
             title_y=0.94,
             title_yanchor="bottom",
-            # uniformtext_minsize=8,
-            # uniformtext_mode='hide',
             width=630,
             height=630,
             )
@@ -126,7 +123,7 @@ class pfaOffencesChart:
         return self.fig.update_layout(annotations=self.annotations)
 
 
-    def saveChart(self, folder: str, filetype='pdf'):
+    def saveChart(self, folder: str, filetype: str ='pdf'):
         self.filetype = filetype
         self.folder = folder
 
@@ -153,12 +150,12 @@ class pfaOffencesChart:
         self.chartAnnotations()
         self.fig.show()
 
-def makePfaOffencesCharts(filename:str, folder:str, status='processed'):
+def makePfaOffencesCharts(filename:str, folder:str, status: str ='processed', filetype: str ='pdf'):
     df = utils.loadData(status, filename)
     df = df.rename({'Fraud Offences': 'Fraud offences'}, axis=1)
     for pfa in df['pfa'].unique():
         chart = pfaOffencesChart(pfa, df)
-        chart.saveChart(folder)
+        chart.saveChart(folder, filetype)
     print("Charts ready")
 
 if __name__ == "__main__":
