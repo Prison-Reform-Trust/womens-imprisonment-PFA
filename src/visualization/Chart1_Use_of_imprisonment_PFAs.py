@@ -5,179 +5,158 @@ import pandas as pd
 import textwrap
 import plotly.graph_objs as go
 import plotly.io as pio
-import itertools
 from pathlib import Path #To create unique filenames for each PFA chart
+import itertools
 
-##Setting template
-pio.templates
-prt_template = go.layout.Template(
-    layout=go.Layout(
-        title_font=dict(family="Helvetica Neue, Arial", size=17),
-        font_color="#54565B",
-        font_family="Helvetica Neue, Arial",
-        font_size=12,
-        paper_bgcolor="#FBFAF7",
-        plot_bgcolor="#FBFAF7",
-        colorway=("#A01D28", "#499CC9", "#F9A237", "#6FBA3A", "#573D6B"),
-    )
-)
+import src.data.utilities as utils
+import src.visualization.prt_theme as prt_theme
 
-config = dict(
-    {
-        "scrollZoom": False,
-        "displayModeBar": False,
-        "editable": False,
-        "displaylogo": False,
-        "showAxisDragHandles": False,
-    }
-)
+## Reading config file and setting Plotly template
+config = utils.read_config()
+pio.templates.default = "prt_template"
 
-##Reading in data
-df = pd.read_csv('../../data/interim/PFA_2009-21_women_cust_sentence_len.csv')
-#Replacing 6 months and under 12 months to something more chart friendly
-df['sentence_len'] = df['sentence_len'].str.replace("6 months and under 12 months", "6 months–<br>under 12 months")
+##Functions
+class SentenceLengthChart:
+    
+    def __init__(self, pfa:str, df:pd.DataFrame, labelIDX:int = 0, adjust:int = 0):
 
-##FUNCTIONS: Checking for overlapping trace labels
+        self.pfa = pfa
+        self.df = df
+        self.labelIDX = labelIDX
+        self.adjust = adjust
+        self.trace_list = [] # Need to empty my trace_list with every loop through each PFA so that charts are plotted separately
+        self.annotations: list[dict] = []  # Add this line to provide a type hint for self.annotations
+        self.fig = go.Figure() # Need to also instantiate the figure with every loop in order to clear fig.data values
+        self.pfa_df_sentence = pd.DataFrame()
 
-def annotation_yvals():
-    y_list = [fig.data[i]['y'][-1] for i in range(len(fig.data))] #selecting last y value for each trace 
-    return y_list
+    def createTraces(self):
+        pfa_df = self.df[self.df["pfa"] == self.pfa]
 
-def check_overlap(l, space):
-    return all(x2-x1 >= space for x1,x2 in itertools.pairwise(sorted(l)))
+        for i in pfa_df["sentence_length"].unique():  # Creating a for loop to extract unique values from the dataframe and make traces
+            self.pfa_df_sentence = pfa_df[pfa_df["sentence_length"] == i]
+            
+            trace = go.Scatter(
+                x=self.pfa_df_sentence["year"],
+                y=self.pfa_df_sentence["freq"],
+                mode="lines",
+                name=str(self.pfa_df_sentence["sentence_length"].iloc[0]),
+                meta=self.pfa_df_sentence["pfa"].iloc[0],   # Adding name of PFA in metadata to ensure data relates to only one area 
+                hovertemplate="%{y}<extra></extra>"
+            )
+            self.trace_list.append(trace)
 
-def adjust_overlap(l, space):
-    for (idx1,num1), (idx2,num2) in itertools.permutations(enumerate(l), 2):
-        difference = abs(l[idx1] - l[idx2])
-        if difference < space:
-            largest = max((idx1,num1), (idx2,num2), key=lambda x:x[1])
-            largest_index = largest[0]
-            l[largest_index] = l[largest_index] + (space - difference)
-            annotations[largest_index]['y'] = l[largest_index]
+        self.fig.add_traces(self.trace_list)
 
-## CHART CONSTRUCTION
-
-#Building chart traces loop
-for pfa in df['pfa'].unique():
-    pfa_df = df[df["pfa"] == pfa]
-    trace_list = [] # Need to empty my trace_list with every loop through each PFA so that charts are plotted separately
-    fig = go.Figure() # Need to also instantiate the figure with every loop in order to clear fig.data values
-
-    for i in pfa_df["sentence_len"].unique():  # Creating a for loop to extract unique values from the dataframe and make traces
-        pfa_df_sentence = pfa_df[pfa_df["sentence_len"] == i]
-        
-        trace = go.Scatter(
-            x=pfa_df_sentence["year"],
-            y=pfa_df_sentence["freq"],
-            mode="lines",
-            name=str(pfa_df_sentence["sentence_len"].iloc[0]),
-            meta=pfa_df_sentence["pfa"].iloc[0],   # Adding name of PFA in metadata to ensure data relates to only one area 
-            hovertemplate="%{y}<extra></extra>"
+    def chartParams(self):
+    # Chart title
+        title = textwrap.wrap(f'<b>Use of immediate imprisonment for women in {self.pfa_df_sentence["pfa"].iloc[0]} 2010–2022</b>', width=45)
+    
+    # Chart layout
+        self.fig.update_layout(
+            margin=dict(l=63, b=75, r=100),
+            title="<br>".join(title),
+            yaxis_title="",
+            yaxis_tickformat=",.0f",
+            yaxis_tick0=0,
+            xaxis_dtick=2,
+            xaxis_tick0=2010,
+            hovermode="x",
+            width=655,
+            height=360,
         )
 
-        trace_list.append(trace)
+    ## Chart annotations
+    def chartAnnotations(self):
 
-    fig.add_traces(trace_list)
+        # Adding trace annotations
+        for j in range(0, len(self.trace_list)):
+            self.annotations.append(
+                dict(
+                    xref="x",
+                    yref="y",
+                    x=self.fig.data[j].x[-1],
+                    y=self.fig.data[j].y[-1],
+                    text=str(self.fig.data[j].name),
+                    xanchor="left",
+                    yanchor="bottom",
+                    align="left",
+                    showarrow=False,
+                    font_color=self.fig.layout.template.layout.colorway[j],
+                    font_size=10,
+                )
+            )
+        # Adding source label
+        prt_theme.sourceAnnotation("Ministry of Justice, Criminal justice statistics", self.annotations)
 
-
-    ##Chart title and formatting
-    title = textwrap.wrap(f'<b>Use of immediate imprisonment for women in {pfa_df_sentence["pfa"].iloc[0]} 2009–2021</b>', width=45)
-
-    fig.update_layout(
-        margin=dict(l=63, b=75, r=100),
-        title="<br>".join(title),
-        title_y=0.94,
-        title_yanchor="bottom",
-        yaxis_title="",
-        yaxis_tickformat=",.0f",
-        yaxis_tick0=0,
-        yaxis_nticks=9,
-        xaxis_dtick=2,
-        xaxis_tick0=2009,    
-        xaxis_showgrid=False,
-        xaxis_tickcolor="#54565B",
-        template=prt_template,
-        showlegend=False,
-        hovermode="x",
-        modebar_activecolor="#A01D28",
-        width=655,
-        height=500,
-    )
-
-    ##Chart annotations
-    annotations = []
-
-    #Trace annotations
-    for j in range(0, len(trace_list)):
-        annotations.append(
+        # Adding y-axis label
+        self.annotations.append(
             dict(
                 xref="x",
-                yref="y",
-                x=fig.data[j].x[-1],
-                y=fig.data[j].y[-1],
-                text=str(fig.data[j].name),
-                xanchor="left",
+                yref="paper",
+                x=self.df['year'].iloc[0],
+                y=1.04,
                 align="left",
+                xanchor="left",
                 showarrow=False,
-                font_color=prt_template.layout.colorway[j],
-                font_size=10,
+                text="Women sentenced to custody",
+                font_size=12,
             )
         )
 
-    #Source label
-    annotations.append(
-        dict(
-            xref="paper",
-            yref="paper",
-            x=-0.08,
-            y=-0.19,
-            align="left",
-            showarrow=False,
-            text="<b>Source: Ministry of Justice, Criminal justice statistics</b>",
-            font_size=12,
-        )
-    )
+        if self.labelIDX is not None and self.adjust is not None:
+            self.annotations[self.labelIDX]['y'] = int(self.adjust)
+        
+        self.annotations[1]['y'] = 0
+            
+        # Adding annotations to layout
+        self.fig.update_layout(annotations=self.annotations)
 
-    #Y-axis label
-    annotations.append(
-        dict(
-            xref="x",
-            yref="paper",
-            x=df['year'].iloc[0],
-            y=1.04,
-            align="left",
-            xanchor="left",
-            showarrow=False,
-            text="Women sentenced to custody",
-            font_size=12,
-        )
-    )
+    def setYAxis(self):
+
+    ## Setting chart axis ranges
     
-    #Checking for overlapping annotations on trace labels
-    y_vals = annotation_yvals()
+        for i in range(len(self.fig.data)):
+            max_trace = (self.fig.data[i].y).max()
+            if max_trace > self.max_y_val:
+                self.max_y_val = max_trace
+
+        y_intervals = [52, 103, 210, 305, 405, 606, 1210]
+        y_max_idx = min(range(len(y_intervals)), key = lambda i: abs(y_intervals[i]-self.max_y_val))
+        if y_intervals[y_max_idx] <= self.max_y_val:
+            y_max = y_intervals[y_max_idx + 1]
+        else: 
+            y_max = y_intervals[y_max_idx]
+        
+        self.fig.update_yaxes(range=[0, y_max])
+        self.fig.update_xaxes(range=[2009.7, 2022.3])
+        
+    def saveChart(self, filetype='pdf'):
+        self.filetype = filetype
+
+        export_path = Path.joinpath(Path.cwd(), f"{config['data']['outPath']}", "custody_sentence_lengths_2022")
+        export_path.mkdir(parents=True, exist_ok=True) #generate if does not exist
+
+        # Setting filename variable and full path
+        filename = str(self.pfa_df_sentence["pfa"].iloc[0])
+        export_path = Path.joinpath(export_path, f'{filename}.{self.filetype}')
+
+        self.fig.write_image(export_path)
+
+    def outputChart(self):
+        self.createTraces()
+        self.chartParams()
+        self.chartAnnotations()
+        self.setYAxis()
+        self.fig.show()
     
-    space = 5
-    if check_overlap(y_vals, space) == False:
-        adjust_overlap(y_vals, space)
-    
-    #Adding final annotations to chart layout
-    fig.update_layout(annotations=annotations)
+def makePfaSentenceLengthCharts(filename:str, folder:str, status='interim'):
+    df = utils.load_data(status, filename)
+    for pfa in df['pfa'].unique():
+        chart = SentenceLengthChart(pfa, df)
+        chart.saveChart(folder)
+    print("Charts ready")
 
-    ##Setting chart axis ranges
-    for i in range(len(fig.data)):
-        max_trace = (fig.data[i].y).max()
-    
-    fig.update_yaxes(range=[0, max_trace + (max_trace * 0.2)])
-    fig.update_xaxes(range=[2008.7, 2021.3])
-   
-    ## Exporting to static image
-
-    # Save results to ../reports/figures/custody_sentence_lengths, generate if does not exist.
-    export_path = Path.joinpath(Path.cwd().parent.parent, "reports", "figures", "custody_sentence_lengths")
-    export_path.mkdir(parents=True, exist_ok=True)
-
-    # Setting filename variable and full path
-    filename = str(pfa_df_sentence["pfa"].iloc[0])
-    export_svg_path = Path.joinpath(export_path, f'{filename}' + '.svg')
-
-    fig.write_image(export_svg_path)
+if __name__ == "__main__":
+    filename='women_cust_sentence_length_PFA_2010-2022.csv'
+    folder='custody_sentence_lengths_2022'
+    makePfaSentenceLengthCharts(filename, folder)
