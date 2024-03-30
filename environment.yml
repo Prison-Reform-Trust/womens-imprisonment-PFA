@@ -1,4 +1,3 @@
-name: women-pfa-2022
 channels:
   - conda-forge
   - plotly
@@ -20,4 +19,3 @@ dependencies:
   - python
   - black
   - poppler
-prefix: /Users/alex/opt/miniconda3/envs/women-pfa-2022
