@@ -27,7 +27,7 @@ class SentenceLengthChart:
         self.max_y_val = 0  # Initialize max_y_val
 
     def break_trace_labels(self):
-        self.df['sentence_length'] = self.df['sentence_length'].replace("6 months to less than 12 months", "6 months—<br>less than 12 months")
+        self.df['sentence_length'] = self.df['sentence_length'].cat.rename_categories({'6 months to less than 12 months': '6 months—<br>less than 12 months'})
 
     def create_traces(self):
         pfa_df = self.df[self.df["pfa"] == self.pfa]
