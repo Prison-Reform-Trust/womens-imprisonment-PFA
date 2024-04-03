@@ -64,7 +64,8 @@ class SentenceLengthChart:
         )
 
     def chart_annotations(self):
-        
+        print(f"Label index: {self.label_idx}, Adjustment: {self.adjust}")
+
         for j in range(0, len(self.trace_list)):
             self.annotations.append(
                 dict(
@@ -82,6 +83,12 @@ class SentenceLengthChart:
                 )
             )
 
+        if self.adjust != 0:
+            print("Applying adjustment...")
+            self.annotations[self.label_idx]['y'] += int(self.adjust)
+            
+        self.annotations[1]['y'] = 0
+
         prt_theme.source_annotation("Ministry of Justice, Criminal justice statistics", self.annotations)
 
         self.annotations.append(
@@ -98,11 +105,6 @@ class SentenceLengthChart:
             )
         )
 
-        if self.label_idx != 0 and self.adjust != 0:
-            self.annotations[self.label_idx]['y'] = int(self.adjust)
-
-        self.annotations[1]['y'] = 0
-
         self.fig.update_layout(annotations=self.annotations)
 
     def set_y_axis(self):
@@ -117,38 +119,63 @@ class SentenceLengthChart:
 
         self.fig.update_yaxes(range=[0, y_max])
         self.fig.update_xaxes(range=[2009.7, 2022.3])
+    
+    def _prepare_chart(self):
+        if not self.trace_list:
+            self.break_trace_labels()
+            self.create_traces()
+            self.chart_params()
+            self.chart_annotations()
+            self.set_y_axis()
 
     def save_chart(self, folder: str, filetype: str = 'pdf'):
-            self.filetype = filetype
-            self.folder = folder
+        self._prepare_chart()
+        self.filetype = filetype
+        self.folder = folder
 
-            if not self.trace_list:
-                self.break_trace_labels()
-                self.create_traces()
-                self.chart_params()
-                self.chart_annotations()
-                self.set_y_axis()
+        export_path = Path.joinpath(Path.cwd(), f"{config['data']['outPath']}", f"{self.folder}/{self.filetype}")
+        export_path.mkdir(parents=True, exist_ok=True)
 
-            export_path = Path.joinpath(Path.cwd(), f"{config['data']['outPath']}", f"{self.folder}/{self.filetype}")
-            export_path.mkdir(parents=True, exist_ok=True)
+        filename = str(self.pfa_df_sentence["pfa"].iloc[0])
+        export_path = Path.joinpath(export_path, f'{filename}.{self.filetype}')
 
-            filename = str(self.pfa_df_sentence["pfa"].iloc[0])
-            export_path = Path.joinpath(export_path, f'{filename}.{self.filetype}')
-
-            self.fig.write_image(export_path)
+        self.fig.write_image(export_path)
+        print(f"Chart saved to: {export_path}")
 
     def output_chart(self) -> None:
-        self.break_trace_labels()
-        self.create_traces()
-        self.chart_params()
-        self.chart_annotations()
-        self.set_y_axis()
+        self._prepare_chart()
         self.fig.show()
 
+class Record:
+    """Hold a record of PFAs which require some manual adjustment of trace labels.
+
+    Parameters:
+        pfa_name (str): The name of the PFA.
+        label_idx (int): The index of the annotation in the chart that needs adjustment. Should be 0 or 2.
+        adjust (int): The adjustment value to be applied to the annotation from its existing position.
+
+    Raises:
+        ValueError: If label_idx is not 0 or 2.
+
+    Attributes:
+        pfa_name (str): The name of the PFA.
+        label_idx (int): The index of the annotation in the chart that needs adjustment.
+        adjust (int): The adjustment value to be applied to the annotation from its existing position.
+    """
+    def __init__(self, pfa_name, label_idx, adjust):
+        self.pfa_name = pfa_name
+        self.adjust = adjust
+        if label_idx in [0, 2]:
+            self.label_idx = label_idx
+        else:
+            raise ValueError("label_idx must be 0 or 2.")
+
+    def __repr__(self) -> str:
+        return f'{self.pfa_name} PFA adjustment'
 
 def make_pfa_sentence_length_charts(filename: str, folder: str, status='interim'):
     df = utils.load_data(status, filename)
-    for pfa in df['pfa'].unique():
+    for pfa in df['pfa'].unique(): #Need to change this logic to account for any Record objects with PFAs which require adjustments 
         chart = SentenceLengthChart(pfa, df)
         chart.save_chart(folder)
     print("Charts ready")
