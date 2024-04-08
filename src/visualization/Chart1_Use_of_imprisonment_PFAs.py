@@ -185,11 +185,28 @@ class Record:
     def __repr__(self) -> str:
         return f'{self.pfa_name} PFA adjustment'
 
-def make_pfa_sentence_length_charts(filename: str, folder: str, status='interim'):
+def make_pfa_sentence_length_charts(filename: str, folder: str, status='interim', output: str = 'save', pfa_adjustments: Optional[List[Record]] = None):
     df = utils.load_data(status, filename)
-    for pfa in df['pfa'].unique(): #Need to change this logic to account for any Record objects with PFAs which require adjustments 
-        chart = SentenceLengthChart(pfa, df)
-        chart.save_chart(folder)
+    for pfa in df['pfa'].unique():
+        adjusted = False
+        if pfa_adjustments:
+            for adjustment in pfa_adjustments:
+                if pfa == adjustment.pfa_name:
+                    chart = SentenceLengthChart(pfa=adjustment.pfa_name, 
+                        df=df, 
+                        label_idx=adjustment.label_idx, 
+                        adjust=adjustment.adjust
+                        )
+                    adjusted = True
+                    break
+        if not adjusted:
+            chart = SentenceLengthChart(pfa, df)
+        if output == 'save':
+            chart.save_chart(folder)
+        elif output == 'show':
+            chart.output_chart()
+        else:
+            raise ValueError("output must be 'save' or 'show'.")
     print("Charts ready")
 
 
