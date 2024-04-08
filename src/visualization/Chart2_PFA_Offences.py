@@ -1,6 +1,8 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
+# CHART 2: OFFENCES COMMITTED BY WOMEN BY PFA
+
 import pandas as pd
 import textwrap
 import plotly.graph_objs as go
