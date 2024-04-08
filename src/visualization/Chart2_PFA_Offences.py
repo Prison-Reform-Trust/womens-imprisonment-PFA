@@ -4,10 +4,10 @@
 # CHART 2: OFFENCES COMMITTED BY WOMEN BY PFA
 
 import pandas as pd
-import textwrap
+import textwrap # type: ignore
 import plotly.graph_objs as go
 import plotly.io as pio
-from pathlib import Path
+from pathlib import Path # type: ignore
 
 from src.data import utilities as utils
 from src.visualization import prt_theme
