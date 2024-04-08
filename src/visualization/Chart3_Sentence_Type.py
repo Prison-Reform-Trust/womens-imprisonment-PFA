@@ -146,5 +146,5 @@ def make_pfa_sentence_type_charts(filename: str, folder: str, status='interim'):
 
 if __name__ == "__main__":
     filename = 'sentencesByPFA.csv'
-    folder = 'sentence_types'
+    folder = '3.sentence_types'
     make_pfa_sentence_type_charts(filename, folder, status='processed')

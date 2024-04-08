@@ -215,7 +215,7 @@ def make_pfa_sentence_length_charts(filename: str, folder: str, status='interim'
 
 if __name__ == "__main__":
     filename = 'women_cust_sentence_length_PFA_2010-2022.csv'
-    folder = 'custody_sentence_lengths_2022'
+    folder = '1.custody_sentence_lengths_2022'
     
     pfa_adjustments = [
         Record('Cambridgeshire', 0, 18),
