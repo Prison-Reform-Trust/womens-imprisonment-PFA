@@ -15,7 +15,7 @@ pio.templates.default = "prt_template"
 
 class SentenceLengthChart:
 
-    def __init__(self, pfa: str, df: pd.DataFrame, label_idx: int = 0, adjust: int = 0):
+    def __init__(self, pfa: str, df: pd.DataFrame, label_idx: int | list = 0, adjust: int | list = 0):
         self.pfa = pfa
         self.df = df
         self.label_idx = label_idx
@@ -83,7 +83,12 @@ class SentenceLengthChart:
                 )
             )
 
-        if self.adjust != 0:
+        if isinstance(self.adjust, list) and isinstance(self.label_idx, list):
+            print("Applying adjustment for multiple label indices and adjustments...")
+            for idx, adjust in zip(self.label_idx, self.adjust):
+                self.annotations[idx]['y'] += int(adjust)
+        
+        elif self.adjust != 0:
             print("Applying adjustment...")
             self.annotations[self.label_idx]['y'] += int(self.adjust)
             
@@ -151,24 +156,31 @@ class Record:
 
     Parameters:
         pfa_name (str): The name of the PFA.
-        label_idx (int): The index of the annotation in the chart that needs adjustment. Should be 0 or 2.
-        adjust (int): The adjustment value to be applied to the annotation from its existing position.
+        label_idx (Union[int, List[int]]): The index of the annotation in the chart that needs adjustment. Should be an integer or a list of integers containing only the values 0 and 2.
+        adjust (Union[int, List[int]]): The adjustment value to be applied to the annotation from its existing position. Should be an integer or a list of integers.
 
     Raises:
-        ValueError: If label_idx is not 0 or 2.
+        ValueError: If label_idx and adjust are not both integers or both lists, or if label_idx contains values other than 0 and 2.
 
     Attributes:
         pfa_name (str): The name of the PFA.
-        label_idx (int): The index of the annotation in the chart that needs adjustment.
-        adjust (int): The adjustment value to be applied to the annotation from its existing position.
+        label_idx (Union[int, List[int]]): The index of the annotation in the chart that needs adjustment.
+        adjust (Union[int, List[int]]): The adjustment value to be applied to the annotation from its existing position.
     """
     def __init__(self, pfa_name, label_idx, adjust):
         self.pfa_name = pfa_name
-        self.adjust = adjust
-        if label_idx in [0, 2]:
+        if isinstance(label_idx, int) and isinstance(adjust, int):
+            if label_idx not in [0, 2]:
+                raise ValueError("label_idx must be 0 or 2.")
             self.label_idx = label_idx
+            self.adjust = adjust
+        elif isinstance(label_idx, list) and isinstance(adjust, list):
+            if any(idx not in [0, 2] for idx in label_idx):
+                raise ValueError("Values in label_idx list must be 0 or 2.")
+            self.label_idx = label_idx
+            self.adjust = adjust
         else:
-            raise ValueError("label_idx must be 0 or 2.")
+            raise ValueError("label_idx and adjust must both be integers or both be lists of integers.")
 
     def __repr__(self) -> str:
         return f'{self.pfa_name} PFA adjustment'
