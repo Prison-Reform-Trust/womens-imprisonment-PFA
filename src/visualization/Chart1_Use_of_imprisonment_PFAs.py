@@ -236,4 +236,4 @@ if __name__ == "__main__":
         Record('West Mercia', 2, 10),
         Record('West Midlands', 0, 50)]
 
-    make_pfa_sentence_length_charts(filename, folder)
+    make_pfa_sentence_length_charts(filename, folder, pfa_adjustments=pfa_adjustments)
