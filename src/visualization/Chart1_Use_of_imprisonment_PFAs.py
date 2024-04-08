@@ -27,7 +27,7 @@ class SentenceLengthChart:
         self.annotations: list[dict] = []
         self.fig = go.Figure()
         self.pfa_df_sentence = pd.DataFrame()
-        self.max_y_val = 0  # Initialize max_y_val
+        self.max_y_val = 0
 
     def break_trace_labels(self):
         self.df['sentence_length'] = self.df['sentence_length'].cat.rename_categories({'6 months to less than 12 months': '6 months—<br>less than 12 months'})
