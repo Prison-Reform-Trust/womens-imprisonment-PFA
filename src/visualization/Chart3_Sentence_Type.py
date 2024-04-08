@@ -2,12 +2,12 @@
 # -*- coding: utf-8 -*-
 
 import pandas as pd
-import textwrap
+import textwrap # type: ignore
 import plotly.graph_objs as go
 import plotly.io as pio
 from plotly.graph_objs import Figure
-from typing import List
-from pathlib import Path
+from typing import List # type: ignore
+from pathlib import Path # type: ignore
 
 from src.data import utilities as utils
 from src.visualization import prt_theme
