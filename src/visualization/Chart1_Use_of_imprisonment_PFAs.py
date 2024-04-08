@@ -1,3 +1,6 @@
+##!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+
 # CHART 1: USE OF IMPRISONMENT FOR WOMEN BY PFA
 
 import pandas as pd
