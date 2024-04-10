@@ -136,10 +136,11 @@ class SentenceLengthChart:
             self.chart_annotations()
             self.set_y_axis()
 
-    def save_chart(self, folder: str, filetype: str = 'pdf'):
+    def save_chart(self, folder: str, filetype: str):
         self._prepare_chart()
         self.filetype = filetype
         self.folder = folder
+        self.filetype = filetype
 
         export_path = Path.joinpath(Path.cwd(), f"{config['data']['outPath']}", f"{self.folder}/{self.filetype}")
         export_path.mkdir(parents=True, exist_ok=True)
@@ -188,7 +189,7 @@ class Record:
     def __repr__(self) -> str:
         return f'{self.pfa_name} PFA adjustment'
 
-def make_pfa_sentence_length_charts(filename: str, folder: str, status='interim', output: str = 'save', pfa_adjustments: Optional[List[Record]] = None):
+def make_pfa_sentence_length_charts(filename: str, folder: str, status='interim', output: str = 'save', filetype: str = 'emf', pfa_adjustments: Optional[List[Record]] = None):
     df = utils.load_data(status, filename)
     for pfa in df['pfa'].unique():
         adjusted = False
@@ -205,7 +206,7 @@ def make_pfa_sentence_length_charts(filename: str, folder: str, status='interim'
         if not adjusted:
             chart = SentenceLengthChart(pfa, df)
         if output == 'save':
-            chart.save_chart(folder)
+            chart.save_chart(folder, filetype)
         elif output == 'show':
             chart.output_chart()
         else:
@@ -216,6 +217,7 @@ def make_pfa_sentence_length_charts(filename: str, folder: str, status='interim'
 if __name__ == "__main__":
     filename = 'women_cust_sentence_length_PFA_2010-2022.csv'
     folder = '1.custody_sentence_lengths_2022'
+    filetype = 'pdf'
     
     pfa_adjustments = [
         Record('Cambridgeshire', 0, 18),
@@ -236,4 +238,4 @@ if __name__ == "__main__":
         Record('West Mercia', 2, 10),
         Record('West Midlands', 0, 50)]
 
-    make_pfa_sentence_length_charts(filename, folder, pfa_adjustments=pfa_adjustments)
+    make_pfa_sentence_length_charts(filename, folder, filetype=filetype, pfa_adjustments=pfa_adjustments)
