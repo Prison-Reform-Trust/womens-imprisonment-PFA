@@ -65,7 +65,11 @@ def standardiseSentences(x_df, col):    #Replacing wording of some sentence leng
         "(to less than)": "and under",
         "Life$": "Life sentence",
         }
-    x_df[col].replace(regex=mapping, inplace=True)
+    x_df.replace({col: mapping}, regex=True, inplace=True)
+    return x_df
+
+def replace_MetPolice(x_df, col):   #Replacing Metropolitan Police with London
+    x_df.replace({col:{"Metropolitan Police": "London"}}, inplace=True)
     return x_df
 
 def categoryColumns(x_df):      #Converting object columns to category
@@ -95,6 +99,7 @@ def cleanData(x_df):        #Data cleaning pipeline
         .pipe(capitalizeCaseOffences)
         .pipe(removeTotal, 'outcome')
         .pipe(standardiseSentences, 'sentence_length')
+        .pipe(replace_MetPolice, 'pfa')
         .pipe(categoryColumns)
         .pipe(orderColumns)   
     )
