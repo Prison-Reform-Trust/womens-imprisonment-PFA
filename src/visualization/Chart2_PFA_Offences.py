@@ -156,6 +156,6 @@ def make_pfa_offences_charts(filename: str, folder: str, status: str = 'processe
 
 
 if __name__ == "__main__":
-    filename = 'PFA_2022_offences.csv'
+    filename = 'custodial_sentences_by_offence_2022.csv'
     folder = '2.custody_offences_2022'
     make_pfa_offences_charts(filename, folder)
