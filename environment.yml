@@ -1,6 +1,7 @@
 channels:
   - conda-forge
   - defaults
+  - plotly
 dependencies:
   - matplotlib
   - nbqa
