@@ -6,7 +6,8 @@ Published at https://www.gov.uk/government/statistics/criminal-justice-system-st
 """
 
 import os
-import utilities as utils
+
+import src.utilities as utils
 
 config = utils.read_config()
 print(config['data']['downloadPaths'][0])

@@ -5,10 +5,12 @@
 # (from `data_cleansing.py`)
 # this script builds a series of refined datasets ready for further analysis and final output
 
-import pandas as pd
-import utilities as utils
-import numpy as np
 import operator
+
+import numpy as np
+import pandas as pd
+
+import src.utilities as utils
 
 config = utils.read_config()
 
