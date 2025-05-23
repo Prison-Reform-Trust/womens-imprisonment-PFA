@@ -1,8 +1,11 @@
-"""
-This script downloads the data needed for analysis from the Ministry of Justice Criminal Justice Statistics
-December 2022. 
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
 
-Published at https://www.gov.uk/government/statistics/criminal-justice-system-statistics-quarterly-december-2022
+"""
+This script downloads the data needed for analysis from the Ministry of Justice
+Criminal Justice System statistics quarterly: December 2024.
+
+Published at https://www.gov.uk/government/collections/criminal-justice-statistics-quarterly
 """
 
 import os
@@ -10,7 +13,7 @@ import os
 import src.utilities as utils
 
 config = utils.read_config()
-print(config['data']['downloadPaths'][0])
+print(config['data']['downloadPaths'])
 
 # for key, value in config['data']['downloadPaths'].keys():
 #      print(value)
