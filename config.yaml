@@ -5,8 +5,7 @@
     intFilePath: data/interim/
     outPath: reports/figures/
     downloadPaths:
-        Sentencing outcomes 2010-2015: 1157979/obo_sent_pivot_2010_2015.zip
-        Sentencing outcomes 2016-2022: 1157991/obo_sent_pivot_2016_2022.zip
+        cjs_dec_2024: https://www.gov.uk/api/content/government/statistics/criminal-justice-system-statistics-quarterly-december-2024
 
 - viz: #These values need updating to Plotly parameters
     xtick.labelsize: 20
