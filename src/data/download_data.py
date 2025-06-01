@@ -23,6 +23,11 @@ def download_files(url=config['data']['downloadPaths'].get('cjs_dec_2024'), path
     """Downloads file from a given API URL if not already downloaded."""
     response = requests.get(url, timeout=10)
     data = response.json()
+
+    """
+    NOTE: This section could be abstracted into a separate function
+    to handle the extraction of URLs from the JSON response.
+    """
     attachments = data['details']['attachments']
 
     # Filtering attachments to download
