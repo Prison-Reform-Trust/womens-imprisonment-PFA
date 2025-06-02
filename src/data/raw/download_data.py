@@ -11,31 +11,30 @@ Published at https://www.gov.uk/government/collections/criminal-justice-statisti
 import logging
 import os
 from concurrent.futures import ThreadPoolExecutor
+from typing import Callable, Dict, List
 
 import requests
 
+import src.data.raw.data_filters as data_filters
 import src.utilities as utils
 
 config = utils.read_config()
 
 
-def download_files(url=config['data']['downloadPaths'].get('cjs_dec_2024'), path=config['data']['rawFilePath']):
-    """Downloads file from a given API URL if not already downloaded."""
+def download_files(
+        url: str,
+        path: str,
+        file_filter: Callable[[List[Dict]], List[str]]
+        ):
+    """
+    Downloads file from a given API URL if not already downloaded.
+    """
     response = requests.get(url, timeout=10)
     data = response.json()
-
-    """
-    NOTE: This section could be abstracted into a separate function
-    to handle the extraction of URLs from the JSON response.
-    """
-    attachments = data['details']['attachments']
+    logging.info("Downloading data from %s", url)
 
     # Filtering attachments to download
-    files = [
-        attachment['url'] for attachment in attachments
-        if attachment.get('content_type') == 'application/zip'
-        and "outcomes by offence" in attachment.get('title', '').lower()
-    ]
+    files = file_filter(data)
 
     os.makedirs(path, exist_ok=True)  # Ensure the directory exists
 
@@ -71,7 +70,11 @@ def download_files(url=config['data']['downloadPaths'].get('cjs_dec_2024'), path
 def main():
     """Main function to download files."""
     utils.setup_logging()
-    download_files()
+    download_files(
+        url=config['data']['downloadPaths'].get('cjs_dec_2024'),
+        path=config['data']['rawFilePath'],
+        file_filter=data_filters.outcomes_by_offence_data_filter
+    )
 
 
 if __name__ == "__main__":
