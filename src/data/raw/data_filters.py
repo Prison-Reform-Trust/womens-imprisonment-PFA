@@ -21,3 +21,12 @@ def outcomes_by_offence_data_filter(data):
         if attachment.get('content_type') == 'application/zip'
         and "outcomes by offence" in attachment.get('title', '').lower()
     ]
+
+
+def population_data_filter(data):
+    """
+    Filter to locate population by age and gender for each local authority
+    in England and Wales from the Office for National Statistics (ONS).
+
+    Published at https://www.ons.gov.uk/peoplepopulationandcommunity/populationandmigration/populationestimates/datasets/populationestimatesforukenglandandwalesscotlandandnorthernireland
+    """

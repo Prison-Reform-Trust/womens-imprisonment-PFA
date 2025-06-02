@@ -67,14 +67,26 @@ def download_files(
         logging.info("All files for %s were already downloaded. No new downloads.", filename)
 
 
-def main():
-    """Main function to download files."""
-    utils.setup_logging()
+def raw_data_pipeline():
+    """
+    Function to run the raw data pipeline.
+    """
+    # Outcomes by offence data
+    logging.info("Starting raw data pipeline for outcomes by offence data.")
     download_files(
         url=config['data']['downloadPaths'].get('cjs_dec_2024'),
         path=config['data']['rawFilePath'],
         file_filter=data_filters.outcomes_by_offence_data_filter
     )
+
+    # Add more data download functions here as needed
+    logging.info("Raw data pipeline completed.")
+
+
+def main():
+    """Main function to download files."""
+    utils.setup_logging()
+    raw_data_pipeline()
 
 
 if __name__ == "__main__":
