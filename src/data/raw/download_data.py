@@ -61,7 +61,7 @@ def download_files(
 
     # Log completion message
     if files_downloaded:
-        logging.info("Download completes")
+        logging.info("Downloads complete")
     elif files_skipped == len(files):
         # Only log this message once if all files were skipped
         logging.info("All files for %s were already downloaded. No new downloads.", filename)
