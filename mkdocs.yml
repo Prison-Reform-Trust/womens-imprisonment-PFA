@@ -49,3 +49,4 @@ extra_css:
 nav:
   - Welcome: index.md
   - Downloading the data: downloading-the-data.md
+  - Processing the data: processing-the-data.md
