@@ -11,7 +11,7 @@ Published at https://www.gov.uk/government/collections/criminal-justice-statisti
 import logging
 import os
 from concurrent.futures import ThreadPoolExecutor
-from typing import Callable, Dict, List
+from typing import Callable, Dict, List, Optional
 
 import requests
 
@@ -46,7 +46,8 @@ def download_file(url: str, path: str) -> None:
 def download_files(
     url: str,
     path: str,
-    file_filter: Callable[[Dict], List[str]]
+    file_filter: Callable[[Dict], List[str]],
+    filename_fn: Optional[Callable[[str, Dict], str]] = None
 ) -> None:
     """
     Downloads files from a given API URL using a file filter function.
@@ -65,20 +66,29 @@ def download_files(
         return
 
     for file_url in file_urls:
-        filename = os.path.join(path, os.path.basename(file_url))
+        filename = filename_fn(file_url, data) if filename_fn else os.path.basename(file_url)
+        full_path = os.path.join(path, filename)
 
-        if os.path.exists(filename):
-            logging.info("Skipping %s (already downloaded).", os.path.basename(filename))
+        if os.path.exists(full_path):
+            logging.info("Skipping %s (already downloaded).", filename)
             files_skipped += 1
             continue
 
-        download_file(file_url, filename)
+        download_file(file_url, full_path)
         files_downloaded = True
 
     if files_downloaded:
         logging.info("Downloads complete.")
     elif files_skipped == len(file_urls):
         logging.info("All files were already downloaded. No new downloads.")
+
+
+def ons_filename_fn(file_url: str, metadata: Dict) -> str:
+    """
+    Custom filename function for ONS datasets to address unclear default values."""
+    edition = metadata.get("edition", "unknown-edition")
+    base = os.path.basename(file_url)
+    return f"{edition}_v{base}"
 
 
 def get_outcomes_by_offence_data():
@@ -102,7 +112,8 @@ def get_population_data():
     download_files(
         url=ons_api.get_population_url(),
         path=config['data']['rawFilePath'],
-        file_filter=data_filters.population_data_filter
+        file_filter=data_filters.population_data_filter,
+        filename_fn=ons_filename_fn
     )
     logging.info("Population data download completed.")
 
