@@ -10,7 +10,6 @@ Published at https://www.gov.uk/government/collections/criminal-justice-statisti
 
 import logging
 import os
-from concurrent.futures import ThreadPoolExecutor
 from typing import Callable, Dict, List, Optional
 
 import requests
@@ -137,7 +136,4 @@ def main():
 
 
 if __name__ == "__main__":
-    # Run the main function
-    with ThreadPoolExecutor() as executor:
-        executor.submit(main)
-    # Ensure the script runs when executed directly
+    main()

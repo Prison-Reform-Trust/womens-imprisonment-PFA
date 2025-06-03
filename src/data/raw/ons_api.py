@@ -83,7 +83,9 @@ def get_edition(dataset, preferred_edition="time-series"):
     str
         URL of edition
     """
-    editions_url = dataset.get("links").get("editions").get("href")
+    links = dataset.get("links", {})
+    editions = links.get("editions", {})
+    editions_url = editions.get("href")
     r = requests.get(editions_url, timeout=10)
     results = r.json()
     for row in results.get("items"):
