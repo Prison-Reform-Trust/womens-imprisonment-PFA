@@ -2,8 +2,16 @@
 This script provides useful functions to all other scripts
 """
 
-import yaml
+import logging
+
 import pandas as pd
+import yaml
+
+
+def setup_logging():
+    """Set up logging configuration"""
+    return logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
+
 
 def read_config():
     # Read in config file
@@ -11,6 +19,7 @@ def read_config():
         open('config.yaml'),
             Loader=yaml.SafeLoader) for k, v in d.items()}
     return config
+
 
 def load_data(status: str, filename: str) -> pd.DataFrame:
     """Load CSV file into Pandas DataFrame and convert object columns to categories when they meet criteria in `categoryColumns()`

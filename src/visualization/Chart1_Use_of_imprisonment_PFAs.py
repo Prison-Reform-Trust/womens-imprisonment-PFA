@@ -3,14 +3,16 @@
 
 # CHART 1: USE OF IMPRISONMENT FOR WOMEN BY PFA
 
+import textwrap  # type: ignore
+from pathlib import Path  # type: ignore
+from typing import List, Optional  # type: ignore
+
 import pandas as pd
-import textwrap # type: ignore
 import plotly.graph_objs as go
 import plotly.io as pio
 from plotly.graph_objs import Figure
-from typing import List, Optional # type: ignore
-from pathlib import Path # type: ignore
-from src.data import utilities as utils
+
+from src import utilities as utils
 from src.visualization import prt_theme
 
 config = utils.read_config()

@@ -5,10 +5,12 @@
 
 # Downloaded on 8 July, 2023
 
-import pandas as pd
 import glob
 from time import sleep
-import src.data.utilities as utils
+
+import pandas as pd
+
+import src.utilities as utils
 
 config = utils.read_config()
 
