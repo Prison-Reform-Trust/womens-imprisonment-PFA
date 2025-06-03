@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 """
-This script allows users to access the Office for National Statistics (ONS) API 
+This script allows users to access the Office for National Statistics (ONS) API
 to retrieve metadata about available datasets and download by name, version, and other attributes.
 
 Heavily lifted from David Corney's repo at https://github.com/dcorney/ons_api_demo/tree/main
@@ -10,7 +10,6 @@ Heavily lifted from David Corney's repo at https://github.com/dcorney/ons_api_de
 
 import logging
 
-import pandas as pd
 import requests
 
 import src.utilities as utils
@@ -22,7 +21,8 @@ def get_list_of_datasets(
         offset=0
 
         ):
-    """This function retrieves metadata for available datasets from the Office for National Statistics (ONS) API.
+    """This function retrieves metadata for available datasets from the
+    Office for National Statistics (ONS) API.
 
     Returns
     -------
@@ -67,7 +67,7 @@ def get_dataset_by_name(datasets, target_name):
     return None
 
 
-def get_edition(dataset, prefered_edition="time-series"):
+def get_edition(dataset, preferred_edition="time-series"):
     """Get one edition of a dataset. If no preferred edition is
     specified, return the most recent one.
 
@@ -75,7 +75,7 @@ def get_edition(dataset, prefered_edition="time-series"):
     ----------
     dataset : dict
         dataset metadata
-    prefered_edition : str, optional
+    preferred_edition : str, optional
         name of edition, by default "time-series"
 
     Returns
@@ -87,7 +87,7 @@ def get_edition(dataset, prefered_edition="time-series"):
     r = requests.get(editions_url, timeout=10)
     results = r.json()
     for row in results.get("items"):
-        if row.get("edition") == prefered_edition:
+        if row.get("edition") == preferred_edition:
             edition = row.get("links").get("latest_version").get("href")
             logging.info("Found dataset edition: %s", row.get("edition"))
             return edition

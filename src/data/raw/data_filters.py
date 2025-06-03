@@ -3,12 +3,8 @@
 
 """
 This script provides filter functions to locate specific data files to download
+from API responses, including GOV.UK and the Office for National Statistics (ONS).
 """
-import logging
-
-import requests
-
-import src.utilities as utils
 
 
 def outcomes_by_offence_data_filter(data):
@@ -33,7 +29,8 @@ def population_data_filter(data):
     Filter to locate population by age and gender for each local authority
     in England and Wales data from the Office for National Statistics (ONS).
 
-    Published at https://www.ons.gov.uk/peoplepopulationandcommunity/populationandmigration/populationestimates/datasets/populationestimatesforukenglandandwalesscotlandandnorthernireland
+    Published at https://www.ons.gov.uk/peoplepopulationandcommunity/populationandmigration/
+    populationestimates/datasets/populationestimatesforukenglandandwalesscotlandandnorthernireland
     """
     downloads = data['downloads']
     return [
