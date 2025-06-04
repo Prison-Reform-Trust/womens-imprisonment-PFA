@@ -6,6 +6,8 @@
     outPath: reports/figures/
     downloadPaths:
         cjs_dec_2024: https://www.gov.uk/api/content/government/statistics/criminal-justice-system-statistics-quarterly-december-2024
+    datasetFilenames:
+        outcomes_by_offence: sentence_outcomes_2017_2024.csv
 
 - viz: #These values need updating to Plotly parameters
     xtick.labelsize: 20
