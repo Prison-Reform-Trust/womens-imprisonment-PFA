@@ -46,10 +46,12 @@ def load_data(status: str, filename: str) -> pd.DataFrame:
     }
     config = read_config()
 
-    dfPath=f"{config['data'][paths[status]]}{filename}"
-    df = pd.read_csv(dfPath)
-    print('Data loaded')
+    df_path = f"{config['data'][paths[status]]}{filename}"
+    df = pd.read_csv(df_path, encoding='latin1', low_memory=False)
+    setup_logging()
+    logging.info("Loaded data from %s", df_path)
     return categoryColumns(df)
+
 
 def categoryColumns(df):
     """Convert columns to category data type if they meet ratio
