@@ -10,6 +10,8 @@ Published at https://www.gov.uk/government/collections/criminal-justice-statisti
 
 import logging
 import os
+import zipfile
+from io import BytesIO
 from typing import Callable, Dict, List, Optional
 
 import requests
@@ -46,23 +48,25 @@ def download_files(
     url: str,
     path: str,
     file_filter: Callable[[Dict], List[str]],
-    filename_fn: Optional[Callable[[str, Dict], str]] = None
+    filename_fn: Optional[Callable[[str, Dict], str]] = None,
+    zip_filter: Optional[Callable[[str], bool]] = None
 ) -> None:
     """
     Downloads files from a given API URL using a file filter function.
     Skips files that already exist locally.
+    Automatically detects and extracts ZIP files if necessary.
     """
     data = fetch_json(url)
     file_urls = file_filter(data)
 
     ensure_directory(path)
 
-    files_downloaded = False
-    files_skipped = 0
-
     if not file_urls:
         logging.warning("No files matched the filter criteria.")
         return
+
+    files_downloaded = False
+    files_skipped = 0
 
     for file_url in file_urls:
         filename = filename_fn(file_url, data) if filename_fn else os.path.basename(file_url)
@@ -73,8 +77,25 @@ def download_files(
             files_skipped += 1
             continue
 
-        download_file(file_url, full_path)
-        files_downloaded = True
+        response = requests.get(file_url, timeout=100)
+        response.raise_for_status()
+
+        content = BytesIO(response.content)
+
+        if zipfile.is_zipfile(content):
+            logging.info("Detected ZIP file: %s", file_url)
+            with zipfile.ZipFile(content) as zf:
+                to_extract = [f for f in zf.namelist() if zip_filter is None or zip_filter(f)]
+                for f in to_extract:
+                    extracted_path = os.path.join(path, f)
+                    if os.path.exists(extracted_path):
+                        logging.info("Skipping %s (already extracted).", f)
+                        files_skipped += 1
+                        continue
+
+                    zf.extract(f, path)
+                    logging.info("Extracted: %s", f)
+                    files_downloaded = True
 
     if files_downloaded:
         logging.info("Downloads complete.")
@@ -98,7 +119,8 @@ def get_outcomes_by_offence_data():
     download_files(
         url=config['data']['downloadPaths'].get('cjs_dec_2024'),
         path=config['data']['rawFilePath'],
-        file_filter=data_filters.outcomes_by_offence_data_filter
+        file_filter=data_filters.outcomes_by_offence_data_filter,
+        zip_filter=data_filters.zip_filter_csv_outcomes,
     )
     logging.info("Outcomes by offence data download completed.")
 

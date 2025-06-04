@@ -24,6 +24,15 @@ def outcomes_by_offence_data_filter(data):
     ]
 
 
+def zip_filter_csv_outcomes(name: str) -> bool:
+    """
+    Filter to locate CSV files that contain outcomes data in ZIP files.
+    This is used to filter files in ZIP archives that are relevant to the
+    Criminal Justice System statistics outcomes data.
+    """
+    return name.endswith(".csv") and "outcomes" in name.lower()
+
+
 def population_data_filter(data):
     """
     Filter to locate population by age and gender for each local authority
