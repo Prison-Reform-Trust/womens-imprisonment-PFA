@@ -21,8 +21,9 @@ def read_config():
     return config
 
 
-def load_data(status: str, filename: str) -> pd.DataFrame:
-    """Load CSV file into Pandas DataFrame and convert object columns to categories when they meet criteria in `categoryColumns()`
+def load_data(status: str, filename: str, usecols: Optional[List[str]] = None) -> pd.DataFrame:
+    """Load CSV file into Pandas DataFrame and convert object columns
+    to categories when they meet criteria in `set_columns_to_category()`
 
     Parameters
     ----------
@@ -33,11 +34,19 @@ def load_data(status: str, filename: str) -> pd.DataFrame:
         * If 'processed', file is located in "clnFilePath"
     filename : str
         Name of CSV file to be loaded.
+    usecols : list of str, optional
+        Subset of columns to read from the CSV file.
 
     Returns
     -------
     DataFrame
-        CSV data is returned as Pandas DataFrame with any eligible object columns converted into category columns to limit memory requirements
+        CSV data is returned as Pandas DataFrame with any eligible object columns
+        converted into category columns to limit memory requirements.
+
+    Raises
+    ------
+    FileNotFoundError
+        If the specified file does not exist.
     """
     paths = {
         "raw": 'rawFilePath',
@@ -45,15 +54,20 @@ def load_data(status: str, filename: str) -> pd.DataFrame:
         "processed": 'clnFilePath'
     }
     config = read_config()
+    df_path = os.path.join(config['data'][paths[status]], filename)
 
-    df_path = f"{config['data'][paths[status]]}{filename}"
-    df = pd.read_csv(df_path, encoding='latin1', low_memory=False)
     setup_logging()
-    logging.info("Loaded data from %s", df_path)
-    return categoryColumns(df)
+
+    try:
+        df = pd.read_csv(df_path, encoding='latin1', low_memory=False, usecols=usecols)
+        logging.info("Loaded data from %s", df_path)
+        return set_columns_to_category(df)
+    except FileNotFoundError:
+        logging.error("File not found: %s", df_path)
+        raise  # Still raise it so the calling code can choose how to handle
 
 
-def categoryColumns(df):
+def set_columns_to_category(df):
     """Convert columns to category data type if they meet ratio
 
     Parameters
