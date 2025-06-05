@@ -3,6 +3,8 @@ This script provides useful functions to all other scripts
 """
 
 import logging
+import os
+from typing import List, Optional
 
 import pandas as pd
 import yaml
@@ -10,14 +12,17 @@ import yaml
 
 def setup_logging():
     """Set up logging configuration"""
-    return logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
+    return logging.basicConfig(
+        level=logging.INFO,
+        format='%(asctime)s - %(levelname)s - %(message)s'
+        )
 
 
 def read_config():
-    # Read in config file
+    """Read in config file"""
     config = {k: v for d in yaml.load(
-        open('config.yaml'),
-            Loader=yaml.SafeLoader) for k, v in d.items()}
+        open('config.yaml', encoding='utf-8'),
+        Loader=yaml.SafeLoader) for k, v in d.items()}
     return config
 
 
