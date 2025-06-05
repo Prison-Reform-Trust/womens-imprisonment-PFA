@@ -97,6 +97,12 @@ def download_files(
                     logging.info("Extracted: %s", f)
                     files_downloaded = True
 
+        else:
+            with open(full_path, 'wb') as f:
+                f.write(response.content)
+            logging.info("Downloaded file %s to %s", filename, path)
+            files_downloaded = True
+
     if files_downloaded:
         logging.info("Downloads complete.")
     elif files_skipped == len(file_urls):
