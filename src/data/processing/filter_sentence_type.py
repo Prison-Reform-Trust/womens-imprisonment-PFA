@@ -53,7 +53,7 @@ def load_outcomes_data() -> pd.DataFrame:
         else:
             dataframes.append(df)
 
-    return dataframes
+    return pd.concat(dataframes, ignore_index=True)
 
 
 def join_dataframes(dataframes: list) -> pd.DataFrame:
