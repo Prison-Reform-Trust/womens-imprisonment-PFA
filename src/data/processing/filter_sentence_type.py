@@ -16,6 +16,8 @@ import pandas as pd
 
 import src.utilities as utils
 
+utils.setup_logging()
+
 config = utils.read_config()
 
 OUTCOMES_BY_OFFENCE = config['data']['datasetFilenames']['outcomes_by_offence']
@@ -38,6 +40,7 @@ def load_outcomes_data() -> pd.DataFrame:
     ]
     dataframes = []
 
+    logging.info("Loading outcomes by offence data...")
     for filename in [OUTCOMES_BY_OFFENCE, OUTCOMES_BY_OFFENCE_EARLIER]:
         try:
             df = utils.load_data(
@@ -78,4 +81,4 @@ def main():
     Main function to process the sentencing data.
     It loads the data, applies filters, and returns a cleaned DataFrame.
     """
-    utils.setup_logging()
+
