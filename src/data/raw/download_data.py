@@ -31,11 +31,6 @@ def fetch_json(url: str, timeout: int = 10) -> Dict:
     return response.json()
 
 
-def ensure_directory(path: str) -> None:
-    """Ensure the download directory exists."""
-    os.makedirs(path, exist_ok=True)
-
-
 def download_file(url: str, path: str) -> None:
     """Download a file from a URL to a given path."""
     response = requests.get(url, timeout=10)
@@ -59,7 +54,7 @@ def download_files(
     data = fetch_json(url)
     file_urls = file_filter(data)
 
-    ensure_directory(path)
+    utils.ensure_directory(path)
 
     if not file_urls:
         logging.warning("No files matched the filter criteria.")

@@ -91,3 +91,8 @@ def set_columns_to_category(df):
         if ratio < 0.05:
             df[col] = df[col].astype('category')
     return df
+
+
+def ensure_directory(path: str) -> None:
+    """Ensure the download directory exists."""
+    os.makedirs(path, exist_ok=True)
