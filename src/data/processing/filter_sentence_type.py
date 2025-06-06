@@ -3,12 +3,21 @@
 
 """
 This script processes the Criminal Justice System statistics quarterly: December 2024
-datasets for analysis. It filters the data to include only relevant records which are
+Outcomes by Offence datasets. It filters the data to include only relevant records which are
 set in config['outcomes_by_offence_filter']. This includes sentence types such as
 'Immediate custody', 'Community sentence', and 'Suspended sentence',
 and excludes 'Not known' police force areas, it also excludes children.
 
-Published at https://www.gov.uk/government/collections/criminal-justice-statistics-quarterly
+It renames and reorders columns, applies regex replacements to clean up the data,
+and saves the processed DataFrame to a CSV file in the `intFilePath` directory.
+
+This script is part of the data processing pipeline, and results in a cleaned interim
+DataFrame ready for further processing to produce the following dataset:
+    * The number of women in each Police Force Area who received an immediate custodial sentence of:
+        - Less than six months
+        - Six to less than 12 months
+        - 12 months or more
+    [Used to produce Figure 2 and further processing].
 """
 
 import logging
