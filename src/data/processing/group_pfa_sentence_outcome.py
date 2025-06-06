@@ -3,7 +3,7 @@
 
 """
 This script processes the Criminal Justice System statistics quarterly: December 2024
-Outcomes by Offence datasets. 
+Outcomes by Offence datasets.
 
 Using the interim dataset produced by the `filter_sentence_type` module, it groups the
 data by Police Force Area (PFA), year, and sentence outcome, summing the frequency of
