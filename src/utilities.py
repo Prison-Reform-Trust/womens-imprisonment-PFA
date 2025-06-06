@@ -96,3 +96,27 @@ def set_columns_to_category(df):
 def ensure_directory(path: str) -> None:
     """Ensure the download directory exists."""
     os.makedirs(path, exist_ok=True)
+
+
+def save_data(df: pd.DataFrame, path: str, filename: str) -> bool:
+    """Save the processed DataFrame to a CSV file.
+
+    Parameters
+    ----------
+    df : pd.DataFrame
+        The DataFrame to save.
+    path : str
+        The directory path where the file will be saved.
+    filename : str
+        The name of the file to save the DataFrame to.
+    Returns
+    -------
+    bool
+        True if the data was saved successfully, False otherwise.
+    """
+    logging.info('Saving...')
+    ensure_directory(path)
+    save_path = os.path.join(path, filename)
+    df.to_csv(save_path, index=False)
+    logging.info('Data successfully saved to %s', save_path)
+    return True

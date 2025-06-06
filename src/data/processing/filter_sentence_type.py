@@ -240,20 +240,6 @@ def load_and_process_data() -> pd.DataFrame:
     return df
 
 
-def save_data(
-    df,
-    path=config["data"]["intFilePath"],
-    filename=config['data']['datasetFilenames']['filter_sentence_type']
-):
-    """Save the processed DataFrame to a CSV file."""
-    logging.info('Saving...')
-    utils.ensure_directory(path)
-    save_path = os.path.join(path, filename)
-    df.to_csv(save_path, index=False)
-    logging.info('Data successfully saved to %s', save_path)
-    return True
-
-
 def main():
     """
     Main function to process the sentencing data.
@@ -261,7 +247,12 @@ def main():
     """
 
     df = load_and_process_data()
-    success = save_data(df)
+    success = (
+        utils.save_data(
+            df,
+            path=config["data"]["intFilePath"],
+            filename=config['data']['datasetFilenames']['filter_sentence_type'])
+        )
     if not success:
         logging.error('Data processing failed')
 
