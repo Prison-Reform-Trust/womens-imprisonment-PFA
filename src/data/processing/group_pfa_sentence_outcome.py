@@ -18,7 +18,6 @@ This script is part of the data processing pipeline, and results in a cleaned da
 """
 
 import logging
-import os
 
 import pandas as pd
 
