@@ -120,3 +120,27 @@ def save_data(df: pd.DataFrame, path: str, filename: str) -> bool:
     df.to_csv(save_path, index=False)
     logging.info('Data successfully saved to %s', save_path)
     return True
+
+
+def safe_save_data(df: pd.DataFrame, path: str, filename: str) -> bool:
+    """
+    Save a DataFrame and log an error if saving fails.
+
+    Parameters
+    ----------
+    df : pd.DataFrame
+        The DataFrame to save.
+    path : str
+        The directory path to save the file.
+    filename : str
+        The filename to use when saving the file.
+
+    Returns
+    -------
+    bool
+        True if saving was successful, False otherwise.
+    """
+    success = save_data(df, path, filename)
+    if not success:
+        logging.error("Failed to save data to %s/%s", path, filename)
+    return success

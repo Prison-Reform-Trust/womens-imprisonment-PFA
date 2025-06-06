@@ -21,7 +21,6 @@ DataFrame ready for further processing to produce the following dataset:
 """
 
 import logging
-import os
 import re
 
 import pandas as pd
@@ -246,15 +245,13 @@ def main():
     It loads the data, applies filters, and returns a cleaned DataFrame.
     """
 
-    df = load_and_process_data()
-    success = (
-        utils.save_data(
-            df,
-            path=config["data"]["intFilePath"],
-            filename=config['data']['datasetFilenames']['filter_sentence_type'])
-        )
-    if not success:
-        logging.error('Data processing failed')
+    (
+        load_and_process_data()
+        .pipe(utils.safe_save_data,
+              path=config['data']['intFilePath'],
+              filename=config['data']['datasetFilenames']['filter_sentence_type']
+              )
+    )
 
 
 if __name__ == "__main__":
