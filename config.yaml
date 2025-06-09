@@ -6,6 +6,29 @@
     outPath: reports/figures/
     downloadPaths:
         cjs_dec_2024: https://www.gov.uk/api/content/government/statistics/criminal-justice-system-statistics-quarterly-december-2024
+    datasetFilenames:
+        outcomes_by_offence: sentence_outcomes_2017_2024.csv
+        outcomes_by_offence_earlier: sentence_outcomes_2010_2016.csv
+        filter_sentence_type: women_cust_comm_sus.csv
+        group_pfa_sentence_outcome: women_cust_comm_sus_FINAL.csv
+
+- outcomes_by_offence_filter:
+    include:
+        sex:
+            - Female
+        outcome:
+            - Immediate Custody
+            - Community Sentence
+            - Suspended Sentence
+        age_group:
+            - Adults
+            - Young adults
+    exclude:
+        pfa:
+            - Not known
+    sort_by:
+        - year
+        - pfa
 
 - viz: #These values need updating to Plotly parameters
     xtick.labelsize: 20

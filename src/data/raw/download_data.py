@@ -31,11 +31,6 @@ def fetch_json(url: str, timeout: int = 10) -> Dict:
     return response.json()
 
 
-def ensure_directory(path: str) -> None:
-    """Ensure the download directory exists."""
-    os.makedirs(path, exist_ok=True)
-
-
 def download_file(url: str, path: str) -> None:
     """Download a file from a URL to a given path."""
     response = requests.get(url, timeout=10)
@@ -59,7 +54,7 @@ def download_files(
     data = fetch_json(url)
     file_urls = file_filter(data)
 
-    ensure_directory(path)
+    utils.ensure_directory(path)
 
     if not file_urls:
         logging.warning("No files matched the filter criteria.")
@@ -96,6 +91,12 @@ def download_files(
                     zf.extract(f, path)
                     logging.info("Extracted: %s", f)
                     files_downloaded = True
+
+        else:
+            with open(full_path, 'wb') as f:
+                f.write(response.content)
+            logging.info("Downloaded file %s to %s", filename, path)
+            files_downloaded = True
 
     if files_downloaded:
         logging.info("Downloads complete.")
