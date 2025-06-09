@@ -13,7 +13,7 @@ and `clnFilePath` directories.
 import logging
 
 import src.utilities as utils
-from src.data.processing import (filter_sentence_type,
+from src.data.processing import (filter_sentence_length, filter_sentence_type,
                                  group_pfa_sentence_outcome)
 
 utils.setup_logging()
@@ -30,6 +30,7 @@ def process_data():
 
     filter_sentence_type.main()
     group_pfa_sentence_outcome.main()
+    filter_sentence_length.main()
 
     logging.info("Data processing pipeline completed successfully.")
 
