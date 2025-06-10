@@ -113,26 +113,6 @@ def group_by_pfa_and_sentence_length(df: pd.DataFrame) -> pd.DataFrame:
     return df_grouped
 
 
-def get_sentence_length(df: pd.DataFrame, category: str) -> pd.DataFrame:
-    """
-    Filter the DataFrame to include only records with a specified sentence length.
-    Parameters
-    ----------
-    df : pd.DataFrame
-        The DataFrame containing the interim dataset.
-    
-    category : str 
-        Sentence length category. Must be one of ["all", "6 months", "12 months"]
-    Returns
-    -------
-    pd.DataFrame
-        A DataFrame containing only records with the sentence length specified
-        by category.
-    """
-
-    pass
-
-
 def load_and_process_data() -> pd.DataFrame:
     """
     Load the interim dataset and process it to filter custodial sentences
@@ -149,6 +129,7 @@ def load_and_process_data() -> pd.DataFrame:
         .pipe(group_sentence_lengths)
         .pipe(group_by_pfa_and_sentence_length)
     )
+
     return df
 
 
