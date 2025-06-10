@@ -50,12 +50,12 @@ def filter_custodial_sentences(df: pd.DataFrame) -> pd.DataFrame:
 def group_sentence_lengths(df: pd.DataFrame) -> pd.DataFrame:
     """
     Group the DataFrame by simplified sentence length categories.
-    
+
     Parameters
     ----------
     df : pd.DataFrame
         The DataFrame containing the filtered custodial sentences.
-    
+
     Returns
     -------
     pd.DataFrame
@@ -109,13 +109,14 @@ def group_by_pfa_and_sentence_length(df: pd.DataFrame) -> pd.DataFrame:
     """
     logging.info("Grouping data by PFA, year, and sentence length...")
     # Group by PFA, year, and sentence length
-    grouped_df = df.groupby(['pfa', 'year', 'sentence_len'], as_index=False)['freq'].sum()
-    return grouped_df
+    df_grouped = df.groupby(['pfa', 'year', 'sentence_len'], as_index=False, observed=True)['freq'].sum()
+    return df_grouped
 
 
 def load_and_process_data() -> pd.DataFrame:
     """
-    Load the interim dataset and process it to filter custodial sentences and group by sentence length.
+    Load the interim dataset and process it to filter custodial sentences
+    and group by sentence length.
 
     Returns
     -------
@@ -126,6 +127,7 @@ def load_and_process_data() -> pd.DataFrame:
         utils.load_data(status='interim', filename=INPUT_FILENAME)
         .pipe(filter_custodial_sentences)
         .pipe(group_sentence_lengths)
+        .pipe(group_by_pfa_and_sentence_length)
     )
     return df
 
