@@ -61,11 +61,13 @@ def get_sentence_length(df: pd.DataFrame, category: str) -> pd.DataFrame:
 
 
 def perform_crosstab(df: pd.DataFrame) -> pd.DataFrame:
-    """This function takes the dataframe from the `get_sentence_length function and
+    """This function takes the dataframe from the `get_sentence_length` function and
     cross tabulates it for readability."""
 
-    return pd.crosstab(index=df['pfa'], columns=df['year'],
-                       values=df['freq'], aggfunc='sum')
+    df_crosstab = pd.crosstab(index=df['pfa'], columns=df['year'],
+                              values=df['freq'], aggfunc='sum')
+
+    return df_crosstab.reset_index(names=['pfa'])
 
 
 def get_output_filename(category: str, template: str) -> str:
