@@ -29,7 +29,7 @@ VALID_CATEGORIES = {
     },
     "6 months": {
         "filter": ["Less than 6 months"],
-        "slug": "six_months"
+        "slug": "6_months"
     },
     "12 months": {
         "filter": ["Less than 6 months", "6 months to less than 12 months"],
