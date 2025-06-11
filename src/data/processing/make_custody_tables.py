@@ -23,9 +23,18 @@ config = utils.read_config()
 
 INPUT_FILENAME = config['data']['datasetFilenames']['filter_sentence_length']
 VALID_CATEGORIES = {
-    "all": None,
-    "6 months": ["Less than 6 months"],
-    "12 months": ["Less than 6 months", "6 months to less than 12 months"]
+    "all": {
+        "filter": None,
+        "slug": "all"
+    },
+    "6 months": {
+        "filter": ["Less than 6 months"],
+        "slug": "six_months"
+    },
+    "12 months": {
+        "filter": ["Less than 6 months", "6 months to less than 12 months"],
+        "slug": "12_months"
+    }
 }
 OUTPUT_FILENAME_TEMPLATE = config['data']['datasetFilenames']['make_custody_tables_template']
 
@@ -47,7 +56,7 @@ def get_sentence_length(df: pd.DataFrame, category: str) -> pd.DataFrame:
         return df.groupby(['pfa', 'year'], as_index=False, observed=True)['freq'].sum()
 
     logging.info("Filtering for custodial sentences of less than %s", category)
-    filt = df['sentence_len'].isin(VALID_CATEGORIES[category])
+    filt = df['sentence_len'].isin(VALID_CATEGORIES[category]['filter'])
     return df[filt].groupby(['pfa', 'year'], as_index=False, observed=True)['freq'].sum()
 
 
@@ -60,17 +69,33 @@ def perform_crosstab(df: pd.DataFrame) -> pd.DataFrame:
 
 
 def get_output_filename(category: str, template: str) -> str:
-    category_slug_map = {
-        "all": "all",
-        "6 months": "six_months",
-        "12 months": "12_months"
-    }
+    """
+    Generate the output filename based on the selected category.
 
-    if category not in category_slug_map:
-        valid_categories = ', '.join(repr(key) for key in category_slug_map.keys())
-        raise ValueError(f"Invalid category: {category!r}. Must be one of: {valid_categories}")
+    Parameters
+    ----------
+    category : str
+        One of the valid sentence length categories.
+    template : str
+        A filename template, e.g., 'PFA_custodial_sentences_{category}_FINAL.csv'
 
-    return template.format(category=category_slug_map[category])
+    Returns
+    -------
+    str
+        The formatted output filename.
+
+    Raises
+    ------
+    ValueError
+        If the category is invalid.
+    """
+    if category not in VALID_CATEGORIES:
+        raise ValueError(
+            f"Invalid category: {category!r}. Must be one of: {list(VALID_CATEGORIES)}"
+        )
+
+    slug = VALID_CATEGORIES[category]["slug"]
+    return template.format(category=slug)
 
 
 def make_sentence_length_tables(df: pd.DataFrame):
