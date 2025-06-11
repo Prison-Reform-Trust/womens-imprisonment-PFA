@@ -61,13 +61,36 @@ def get_sentence_length(df: pd.DataFrame, category: str) -> pd.DataFrame:
 
 
 def perform_crosstab(df: pd.DataFrame) -> pd.DataFrame:
-    """This function takes the dataframe from the `get_sentence_length` function and
+    """This function takes the DataFrame from the `get_sentence_length` function and
     cross tabulates it for readability."""
 
     df_crosstab = pd.crosstab(index=df['pfa'], columns=df['year'],
                               values=df['freq'], aggfunc='sum')
 
-    return df_crosstab.reset_index(names=['pfa'])
+    return df_crosstab
+
+
+def calculate_percentage_change(df: pd.DataFrame) -> pd.DataFrame:
+    """This function calculates the percentage change between the first and last year
+    in the dataframe and adds a new column.
+
+    Parameters
+    ----------
+    df : pd.DataFrame
+        DataFrame for processing
+
+    Returns
+    -------
+    pd.DataFrame
+        DataFrame with additional column showing percentage change since first year.
+    """
+    periods = len(df.columns) - 1
+    col_name = f"per_change_{df.columns[0]}"
+    
+    percentage_change = df.pct_change(axis='columns', periods=periods).dropna(axis='columns')
+    df[col_name] = percentage_change
+    
+    return df
 
 
 def get_output_filename(category: str, template: str) -> str:
@@ -118,6 +141,7 @@ def make_sentence_length_tables(df: pd.DataFrame):
             .pipe(get_sentence_length, category)
             .pipe(filter_years.get_year)
             .pipe(perform_crosstab)
+            .pipe(calculate_percentage_change)
             )
 
         filename = get_output_filename(category, OUTPUT_FILENAME_TEMPLATE)
@@ -125,7 +149,8 @@ def make_sentence_length_tables(df: pd.DataFrame):
         utils.safe_save_data(
             df=df_sentence,
             path=config['data']['clnFilePath'],
-            filename=filename
+            filename=filename,
+            index=True
         )
 
     return None
