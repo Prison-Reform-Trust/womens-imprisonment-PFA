@@ -86,10 +86,10 @@ def calculate_percentage_change(df: pd.DataFrame) -> pd.DataFrame:
     """
     periods = len(df.columns) - 1
     col_name = f"per_change_{df.columns[0]}"
-    
+
     percentage_change = df.pct_change(axis='columns', periods=periods).dropna(axis='columns')
     df[col_name] = percentage_change
-    
+
     return df
 
 
