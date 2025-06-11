@@ -131,13 +131,17 @@ def make_sentence_length_tables(df: pd.DataFrame):
     return None
 
 
-def load_and_process_data():
+def main():
     """
     Load the dataset and process it to output the final dataframes
     """
-    df = (
+    (
         utils.load_data(status='processed', filename=INPUT_FILENAME)
         .pipe(make_sentence_length_tables)
     )
 
-    return df
+    return None
+
+
+if __name__ == "__main__":
+    main()
