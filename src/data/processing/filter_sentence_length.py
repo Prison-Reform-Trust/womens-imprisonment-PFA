@@ -82,11 +82,11 @@ def group_sentence_lengths(df: pd.DataFrame) -> pd.DataFrame:
 
     # Apply grouping logic
     df.loc[df['sentence_len'].isin(less_6months), 'sentence_len'] = "Less than 6 months"
-    df.loc[df['sentence_len'].isin(six_12_months), 'sentence_len'] = "6–12 months"
-    df.loc[~df['sentence_len'].isin(["Less than 6 months", "6–12 months"]), 'sentence_len'] = "Over 12 months"
+    df.loc[df['sentence_len'].isin(six_12_months), 'sentence_len'] = "6 months to less than 12 months"
+    df.loc[~df['sentence_len'].isin(["Less than 6 months", "6 months to less than 12 months"]), 'sentence_len'] = "12 months or more"
 
     # Convert back to ordered categorical
-    sentence_order = ["Less than 6 months", "6–12 months", "Over 12 months"]
+    sentence_order = ["Less than 6 months", "6 months to less than 12 months", "12 months or more"]
     df['sentence_len'] = pd.Categorical(df['sentence_len'], categories=sentence_order, ordered=True)
 
     logging.info("Sentence lengths grouped and recategorised.")
@@ -129,6 +129,7 @@ def load_and_process_data() -> pd.DataFrame:
         .pipe(group_sentence_lengths)
         .pipe(group_by_pfa_and_sentence_length)
     )
+
     return df
 
 

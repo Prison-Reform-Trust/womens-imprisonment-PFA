@@ -98,7 +98,7 @@ def ensure_directory(path: str) -> None:
     os.makedirs(path, exist_ok=True)
 
 
-def save_data(df: pd.DataFrame, path: str, filename: str) -> bool:
+def save_data(df: pd.DataFrame, path: str, filename: str, index: bool) -> bool:
     """Save the processed DataFrame to a CSV file.
 
     Parameters
@@ -109,6 +109,8 @@ def save_data(df: pd.DataFrame, path: str, filename: str) -> bool:
         The directory path where the file will be saved.
     filename : str
         The name of the file to save the DataFrame to.
+    index : bool
+        Whether to keep the current index as a column on save
     Returns
     -------
     bool
@@ -117,12 +119,12 @@ def save_data(df: pd.DataFrame, path: str, filename: str) -> bool:
     logging.info('Saving...')
     ensure_directory(path)
     save_path = os.path.join(path, filename)
-    df.to_csv(save_path, index=False)
+    df.to_csv(save_path, index=index)
     logging.info('Data successfully saved to %s', save_path)
     return True
 
 
-def safe_save_data(df: pd.DataFrame, path: str, filename: str) -> bool:
+def safe_save_data(df: pd.DataFrame, path: str, filename: str, index: bool = False) -> bool:
     """
     Save a DataFrame and log an error if saving fails.
 
@@ -134,13 +136,14 @@ def safe_save_data(df: pd.DataFrame, path: str, filename: str) -> bool:
         The directory path to save the file.
     filename : str
         The filename to use when saving the file.
-
+    index : bool
+        Whether to keep the current index as a column on save
     Returns
     -------
     bool
         True if saving was successful, False otherwise.
     """
-    success = save_data(df, path, filename)
+    success = save_data(df, path, filename, index)
     if not success:
         logging.error("Failed to save data to %s/%s", path, filename)
     return success
