@@ -109,18 +109,24 @@ def make_sentence_length_tables(df: pd.DataFrame):
     df : pd.DataFrame
         The DataFrame containing the interim dataset.
     """
-    for sentence in VALID_CATEGORIES:
+    for category in VALID_CATEGORIES:
         df_sentence = (
             df
-            .pipe(get_sentence_length, sentence)
+            .copy()
+            .pipe(get_sentence_length, category)
             .pipe(filter_years.get_year)
             .pipe(perform_crosstab)
-            .pipe(utils.safe_save_data,
-                  path=config['data']['clnFilePath'],
-                  filename="PLACEHOLDER"
-                  )
             )
-        return df_sentence
+
+        filename = get_output_filename(category, OUTPUT_FILENAME_TEMPLATE)
+
+        utils.safe_save_data(
+            df=df_sentence,
+            path=config['data']['clnFilePath'],
+            filename=filename
+        )
+
+    return None
 
 
 def load_and_process_data():
