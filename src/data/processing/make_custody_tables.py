@@ -137,6 +137,7 @@ def load_and_process_data():
     """
     df = (
         utils.load_data(status='processed', filename=INPUT_FILENAME)
+        .pipe(make_sentence_length_tables)
     )
 
     return df
