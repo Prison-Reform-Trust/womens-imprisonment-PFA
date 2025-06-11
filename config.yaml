@@ -13,6 +13,7 @@
         group_pfa_sentence_outcome: women_cust_comm_sus_FINAL.csv
         filter_sentence_length: women_cust_sentence_len_FINAL.csv
         make_custody_tables_template: PFA_custodial_sentences_{category}_FINAL.csv
+        filter_custody_offences: PFA_custodial_sentences_by_offence_{year}_FINAL.csv
 
 - outcomes_by_offence_filter:
     include:
