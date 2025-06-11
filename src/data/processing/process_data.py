@@ -14,7 +14,8 @@ import logging
 
 import src.utilities as utils
 from src.data.processing import (filter_sentence_length, filter_sentence_type,
-                                 group_pfa_sentence_outcome)
+                                 group_pfa_sentence_outcome,
+                                 make_custody_tables)
 
 utils.setup_logging()
 
@@ -31,6 +32,7 @@ def process_data():
     filter_sentence_type.main()
     group_pfa_sentence_outcome.main()
     filter_sentence_length.main()
+    make_custody_tables.main()
 
     logging.info("Data processing pipeline completed successfully.")
 
