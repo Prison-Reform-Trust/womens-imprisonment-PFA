@@ -7,6 +7,7 @@ import os
 from typing import List, Optional
 
 import pandas as pd
+import plotly.graph_objs as go
 import yaml
 
 
@@ -97,7 +98,7 @@ def ensure_directory(path: str) -> None:
     """Ensure the download directory exists."""
     os.makedirs(path, exist_ok=True)
 
-
+# TODO: #20 Refactor the save and safe_save functions to be more concise and reduce repetition
 def save_data(df: pd.DataFrame, path: str, filename: str, index: bool) -> bool:
     """Save the processed DataFrame to a CSV file.
 
@@ -146,4 +147,54 @@ def safe_save_data(df: pd.DataFrame, path: str, filename: str, index: bool = Fal
     success = save_data(df, path, filename, index)
     if not success:
         logging.error("Failed to save data to %s/%s", path, filename)
+    return success
+
+
+def save_chart(fig: go.Figure, path: str, filename: str) -> bool:
+    """
+    Save a chart figure to a file.
+
+    Parameters
+    ----------
+    fig : go.Figure
+        The figure to save.
+    path : str
+        The directory path where the file will be saved.
+    filename : str
+        The name of the file to save the figure to.
+
+    Returns
+    -------
+    bool
+        True if the figure was saved successfully, False otherwise.
+    """
+    logging.info('Saving chart...')
+    ensure_directory(path)
+    fig_path = os.path.join(path, filename)
+    fig.write_image(fig_path)
+    logging.info('Figure saved to %s', fig_path)
+    return True
+
+
+def safe_save_chart(fig: go.Figure, path: str, filename: str) -> bool:
+    """
+    Save a chart and log an error if saving fails.
+
+    Parameters
+    ----------
+    fig : go.Figure
+        The figure to save.
+    path : str
+        The directory path where the file will be saved.
+    filename : str
+        The name of the file to save the figure to.
+
+    Returns
+    -------
+    bool
+        True if saving was successful, False otherwise.
+    """
+    success = save_chart(fig, path, filename)
+    if not success:
+        logging.error("Failed to save chart to %s/%s", path, filename)
     return success
