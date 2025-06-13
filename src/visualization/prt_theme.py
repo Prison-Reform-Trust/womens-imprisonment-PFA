@@ -72,6 +72,7 @@ pio.templates["prt_template"].data.scatter = [
 
 # Chart annotations
 def add_annotation(
+    # TODO: #21 Refactor add_annotation() to reduce number of arguments and complexity
     annotations_list: Optional[List[dict]] = None,
     text: Optional[str] = None,
     x: Optional[Union[float, List[float]]] = None,
