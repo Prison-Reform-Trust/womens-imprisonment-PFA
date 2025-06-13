@@ -1,6 +1,6 @@
 # Custom Plotly template for all charts in this project
 # Created by Alex Hewson
-# Last updated 12 March 2025
+# Last updated 13 June 2025
 """
 This module provides utilities for creating and customizing Plotly visualizations
 with a standardized template and additional helper functions for annotations,
@@ -46,19 +46,19 @@ pio.templates["prt_template"] = go.layout.Template(
         font_color="#54565B",
         font_family="Helvetica Neue, Arial",
         font_size=14,
-        paper_bgcolor="rgba(1,1,1,0)",
-        plot_bgcolor="rgba(1,1,1,0)",
+        paper_bgcolor="#F7F2F2",
+        plot_bgcolor="#F7F2F2",
         colorway=("#A01D28", "#499CC9", "#F9A237", "#6FBA3A", "#573D6B"),
         modebar_activecolor="#A01D28",
         showlegend=False,
         xaxis_showgrid=False,
-        xaxis_ticks='inside',
+        xaxis_ticks='outside',
         xaxis_tickcolor="#54565B",
         xaxis_gridcolor="rgba(84, 86, 91, 0.15)",
         yaxis_gridcolor="rgba(84, 86, 91, 0.15)",
         width=655,
         height=360,
-        margin=dict(l=63, b=75, r=100),
+        margin=dict(l=40, r=100, t=80, b=70),
         dragmode=False,
     )
 )
@@ -181,7 +181,7 @@ def add_annotation(
         if not text:
             raise ValueError("Text must be provided for source annotation.")
         text = f"Source: {text}"
-        x, y = x or 0, y or -0.1
+        x, y = x or -0.015, y or -0.15
         font_size, align = 12, "left"
 
     elif annotation_type == "y-axis":
@@ -272,7 +272,7 @@ def add_title(
         title_automargin=True,
         title_yref='container',
         title_xanchor='left',
-        title_x=0)
+        title_x=0.025)
 
 
 def wrap_labels(text, max_chars=20):
