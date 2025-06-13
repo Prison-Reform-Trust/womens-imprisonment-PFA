@@ -94,14 +94,6 @@ class SentenceLengthChart:
         self.pfa_df_sentence = pd.DataFrame()
         self.max_y_val = 0
 
-    def break_trace_labels(self):
-        """
-        Renames the categories of the 'sentence_len' column in the DataFrame to improve
-        label formatting for visualisation.
-        """
-        self.df['sentence_len'] = self.df['sentence_len'].cat.rename_categories(
-            {'6 months to less than 12 months': '6 months—<br>less than 12 months'})
-
     def create_traces(self):
         """
         Generates Plotly Scatter traces for each unique sentence length group within the selected
@@ -234,13 +226,13 @@ class SentenceLengthChart:
 
         min_year, max_year = self.get_year_range()
         title = (
-            f'Use of immediate imprisonment for women in '
-            f'{self.pfa_df_sentence["pfa"].iloc[0]} {min_year}—{max_year}'
+            f'Use of immediate imprisonment for women '
+            f'{self.pfa_df_sentence["pfa"].iloc[0]}, {min_year}—{max_year}'
         )
         prt_theme.add_title(
             self.fig,
             title=title,
-            width=45
+            width=40
         )
 
     def set_source(self):
@@ -311,7 +303,7 @@ class SentenceLengthChart:
             max_trace = (data.y).max()
             self.max_y_val = max(self.max_y_val, max_trace)
 
-        y_intervals = [52, 103, 210, 305, 405, 606, 1210]
+        y_intervals = [52, 101, 203, 305, 405, 606, 1210]
         y_max_idx = min(range(len(y_intervals)), key=lambda i: abs(y_intervals[i] - self.max_y_val))
         y_max = y_intervals[y_max_idx + 1] if y_intervals[y_max_idx] <= self.max_y_val else y_intervals[y_max_idx]
 
@@ -337,7 +329,6 @@ class SentenceLengthChart:
         properly set up.
         """
         if not self.trace_list:
-            self.break_trace_labels()
             self.create_traces()
             self.chart_params()
             self.chart_annotations()
@@ -419,6 +410,17 @@ class Record:
         return f'{self.pfa_name} PFA adjustment'
 
 
+def break_trace_labels(df):
+    """
+    Renames the categories of the 'sentence_len' column in the DataFrame to improve
+    label formatting for visualisation.
+    """
+    if 'sentence_len' in df.columns and hasattr(df['sentence_len'], 'cat'):
+        df['sentence_len'] = df['sentence_len'].cat.rename_categories(
+            {'6 months to less than 12 months': '6 months—<br>less than 12 months'})
+    return df
+
+
 def make_pfa_sentence_len_charts(
         filename: str,
         path: str,
@@ -447,7 +449,11 @@ def make_pfa_sentence_len_charts(
     Side Effects:
         - Saves or displays sentence length charts for each unique PFA in the dataset.
     """
-    df = utils.load_data(status, filename)
+    df = (
+        utils.load_data(status, filename)
+        .pipe(break_trace_labels)
+    )
+
     for pfa in df['pfa'].unique():
         adjusted = False
         if pfa_adjustments:
@@ -482,7 +488,8 @@ def test_chart():
     """
     df = utils.load_data("processed", INPUT_FILENAME)
     chart = SentenceLengthChart('Gwent', df)
-    chart.output_chart()
+    # chart.output_chart()
+    chart.save_chart(OUTPUT_PATH, 'pdf')
 
 
 def main():
