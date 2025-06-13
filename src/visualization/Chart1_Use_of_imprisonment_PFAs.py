@@ -43,6 +43,7 @@ class SentenceLengthChart:
     Attributes:
         pfa (str): The Police Force Area to visualize.
         df (pd.DataFrame): The input DataFrame containing sentencing data.
+        pfa_df (pd.DataFrame): A filtered DataFrame showing data for the pfa.
         label_idx (int | list): Index or indices of trace labels to adjust for annotation positioning.
         adjust (int | list): Adjustment value(s) for annotation y-positions.
         trace_list (List[go.Scatter]): List of Plotly Scatter traces for each sentence length group.
@@ -84,6 +85,7 @@ class SentenceLengthChart:
     def __init__(self, pfa: str, df: pd.DataFrame, label_idx: int | list = 0, adjust: int | list = 0):
         self.pfa = pfa
         self.df = df
+        self.pfa_df = self.df[self.df["pfa"] == self.pfa]
         self.label_idx = label_idx
         self.adjust = adjust
         self.trace_list: List[go.Scatter] = []
@@ -117,10 +119,10 @@ class SentenceLengthChart:
         Returns:
             None
         """
-        pfa_df = self.df[self.df["pfa"] == self.pfa]
+        # pfa_df = self.df[self.df["pfa"] == self.pfa]
 
-        for i in pfa_df["sentence_len"].unique():
-            self.pfa_df_sentence = pfa_df[pfa_df["sentence_len"] == i]
+        for i in self.pfa_df["sentence_len"].unique():
+            self.pfa_df_sentence = self.pfa_df[self.pfa_df["sentence_len"] == i]
 
             trace = go.Scatter(
                 x=self.pfa_df_sentence["year"],
@@ -145,8 +147,8 @@ class SentenceLengthChart:
         Returns:
             tuple: A tuple containing the start and end years (min_year, max_year).
         """
-        min_year = self.pfa_df_sentence['year'].min()
-        max_year = self.pfa_df_sentence['year'].max()
+        min_year = self.pfa_df['year'].min()
+        max_year = self.pfa_df['year'].max()
         return min_year, max_year
 
     def chart_params(self):
@@ -479,7 +481,7 @@ def test_chart():
     purposes to ensure that the chart generation works as expected.
     """
     df = utils.load_data("processed", INPUT_FILENAME)
-    chart = SentenceLengthChart('Avon and Somerset', df)
+    chart = SentenceLengthChart('Gwent', df)
     chart.output_chart()
 
 
