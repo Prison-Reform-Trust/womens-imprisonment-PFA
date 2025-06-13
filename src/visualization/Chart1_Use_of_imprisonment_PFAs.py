@@ -1,4 +1,4 @@
-##!/usr/bin/env python3
+# !/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
 """
@@ -13,7 +13,6 @@ It provides a standardised line chart for each Police Force Area to show:
 """
 
 import logging
-from pathlib import Path
 from typing import List, Optional
 
 import pandas as pd
@@ -29,6 +28,7 @@ config = utils.read_config()
 pio.templates.default = "prt_template"
 
 INPUT_FILENAME = config['data']['datasetFilenames']['filter_sentence_length']
+OUTPUT_PATH = config['viz']['filePaths']['custody_sentence_lengths']
 
 
 class SentenceLengthChart:
@@ -170,7 +170,7 @@ class SentenceLengthChart:
             hovermode="x",
         )
 
-    def set_trace_labels(self): 
+    def set_trace_labels(self):
         # NOTE: This method may be able to be replaced with prt_theme.add_annotation
         """
         Adds annotation labels to the end of each trace in the plotly figure.
@@ -222,8 +222,8 @@ class SentenceLengthChart:
     def set_title(self):
         """
         Sets the chart title to reflect the use of immediate imprisonment for women in a specific PFA
-        (Police Force Area) over a range of years. The title is dynamically generated based on the PFA
-        name and the minimum and maximum years present in the data. 
+        (Police Force Area) over a range of years. The title is dynamically generated based on the
+        PFA name and the minimum and maximum years present in the data.
         The title is then added to the chart using the prt_theme.add_title method.
 
         Returns:
@@ -231,7 +231,10 @@ class SentenceLengthChart:
         """
 
         min_year, max_year = self.get_year_range()
-        title = f'Use of immediate imprisonment for women in {self.pfa_df_sentence["pfa"].iloc[0]} {min_year}—{max_year}'
+        title = (
+            f'Use of immediate imprisonment for women in '
+            f'{self.pfa_df_sentence["pfa"].iloc[0]} {min_year}—{max_year}'
+        )
         prt_theme.add_title(
             self.fig,
             title=title,
@@ -357,6 +360,7 @@ class SentenceLengthChart:
         self._prepare_chart()
 
         filename = f"{self.pfa_df_sentence['pfa'].iloc[0]}.{filetype}"
+        path = config['data']['outPath'] + path
 
         utils.safe_save_chart(
             fig=self.fig,
@@ -381,8 +385,10 @@ class Record:
 
     Attributes:
         pfa_name (str): The name of the PFA.
-        label_idx (int or list of int): The label index or indices. Must be 0 or 2, or a list containing only 0 and/or 2.
-        adjust (int or list of int): The adjustment value(s). Must be an integer if label_idx is an integer, or a list of integers if label_idx is a list.
+        label_idx (int or list of int): The label index or indices.
+        Must be 0 or 2, or a list containing only 0 and/or 2.
+        adjust (int or list of int): The adjustment value(s).
+        Must be an integer if label_idx is an integer, or a list of integers if label_idx is a list.
 
     Raises:
         ValueError: If label_idx and adjust are not both integers or both lists of integers.
@@ -424,11 +430,14 @@ def make_pfa_sentence_len_charts(
     Parameters:
         filename (str): The name of the data file to load.
         path (str): The directory where charts will be saved if output is set to 'save'.
-        status (str, optional): The data status to use when loading data (e.g., 'interim', 'processed'). Defaults to 'processed'.
-        output (str, optional): Determines whether to save charts to disk ('save') or display them ('show'). Defaults to 'save'.
+        status (str, optional): The data status to use when loading data (e.g., 'interim', 'processed').
+        Defaults to 'processed'.
+        output (str, optional): Determines whether to save charts to disk ('save') or display them ('show').
+        Defaults to 'save'.
         filetype (str, optional): The file type for saving charts (e.g., 'emf', 'png'). Defaults to 'emf'
         a Windows file format designed to store large amounts of image detail for high quality printing.
-        pfa_adjustments (Optional[List[Record]], optional): A list of adjustment records for specific PFAs. Each record should have attributes 'pfa_name', 'label_idx', and 'adjust'. Defaults to None.
+        pfa_adjustments (Optional[List[Record]], optional): A list of adjustment records for specific PFAs.
+        Each record should have attributes 'pfa_name', 'label_idx', and 'adjust'. Defaults to None.
 
     Raises:
         ValueError: If the 'output' parameter is not 'save' or 'show'.
@@ -483,15 +492,13 @@ def main():
     """
     make_pfa_sentence_len_charts(
         filename=INPUT_FILENAME,
-        path='1.custody_sentence_lens_2022',
+        path=OUTPUT_PATH,
         filetype='pdf',
         pfa_adjustments=None,
-        output='show'
     )
 
 
 if __name__ == "__main__":
-    PATH = '1.custody_sentence_lens_2022'
     FILETYPE = 'pdf'
 
     PFA_ADJUSTMENTS = [
@@ -515,7 +522,7 @@ if __name__ == "__main__":
 
     make_pfa_sentence_len_charts(
         filename=INPUT_FILENAME,
-        path=PATH,
+        path=OUTPUT_PATH,
         filetype=FILETYPE,
         pfa_adjustments=PFA_ADJUSTMENTS
         )
