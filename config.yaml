@@ -33,27 +33,7 @@
         - year
         - pfa
 
-- viz: #These values need updating to Plotly parameters
-    xtick.labelsize: 20
-    ytick.labelsize: 20
-    font.size: 20
-    figure.autolayout: False
-    figure.figsize: 10,5.5
-    axes.titlesize : 22
-    axes.labelsize : 20
-    lines.linewidth : 2
-    lines.markersize : 6
-    legend.fontsize: 16
-    mathtext.fontset: stix
-    font.family : STIXGeneral
-    legend.frameon : False
-
-- plotly: 
-    title_font_family: "Helvetica Neue, Arial" 
-    title_font_size: 17
-    font_color: "#54565B"
-    font_family: "Helvetica Neue, Arial"
-    font_size: 12
-    paper_bgcolor: "#FBFAF7"
-    plot_bgcolor: "#FBFAF7"
-    colorway: ("#A01D28", "#499CC9", "#F9A237", "#6FBA3A", "#573D6B")
+- viz:
+    filePaths:
+        custody_sentence_lengths: custody_sentence_lengths
+    
