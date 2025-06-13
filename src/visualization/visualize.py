@@ -1,8 +1,23 @@
-from src.visualization import Chart1_Use_of_imprisonment_PFAs as chart1
-from src.visualization import Chart2_PFA_Offences as chart2
-from src.visualization import Chart3_Sentence_Type as chart3
+# !/usr/bin/env python3
+# -*- coding: utf-8 -*-
+
+"""
+This script is part of the data visualisation pipeline for the Criminal Justice System
+statistics quarterly: December 2024 Outcomes by Offence dataset.
+
+It is intended to be run as a standalone script to generate all publication ready visualisations
+in this project.
+"""
+
+from src.visualization import custody_sentence_lengths
+
+
+def main():
+    """
+    Main function to run all visualisations.
+    """
+    custody_sentence_lengths.main()
+
 
 if __name__ == "__main__":
-    chart1.make_pfa_sentence_length_charts(chart1.filename, chart1.folder)
-    chart2
-    chart3
+    main()
