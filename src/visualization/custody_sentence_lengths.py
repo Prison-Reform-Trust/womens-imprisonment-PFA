@@ -111,7 +111,6 @@ class SentenceLengthChart:
         Returns:
             None
         """
-        # pfa_df = self.df[self.df["pfa"] == self.pfa]
 
         for i in self.pfa_df["sentence_len"].unique():
             self.pfa_df_sentence = self.pfa_df[self.pfa_df["sentence_len"] == i]
