@@ -18,10 +18,10 @@ The transition to more modern data processing methods explicitly affects offence
 ## Examining the discrepancies
 Discrepancies were particularly notable when visualising data on custodial sentence lengths for two of the four Welsh Police Force Areas (PFAs) — Dyfed-Powys and Gwent, which in some cases reported no cases of some sentence lengths for multiple years.
 
-[Custodial sentences for women in Gwent](reports/figures/custody_sentence_lengths/Gwent.pdf)
+![Custodial sentences for women in Gwent](assets/current_gwent.svg)
 
 This was in contrast to our own previously published data, which included no such breaks during the time series.
-[Previous edition](docs/assets/previous_gwent.pdf)
+![Previous edition](assets/previous_gwent.svg)
 
 Having checked figures on immediate custody for all four Welsh PFAs ['Dyfed-Powys', 'Gwent', 'North Wales', 'South Wales'], the totals between 2010–2016 are in line with the latest revised figures (±3 sentences).
 
