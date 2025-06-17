@@ -150,6 +150,9 @@ class SentenceLengthChart:
 
     def set_trace_labels(self):
         # NOTE: This method may be able to be replaced with prt_theme.add_annotation
+        # However, it is important to refactor the other methods that use it to set
+        # source and y-axis labels. This requires assignment of the annotations to self.annotations
+        # see sentence_types.py for example
         """
         Adds annotation labels to the end of each trace in the plotly figure.
 
