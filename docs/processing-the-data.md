@@ -17,7 +17,7 @@ graph TD
   A --> D[filter_custody_offences.py];
   B -->  E[\Viz data: Sentence type\];
   C -->  F[\Viz data: Custodial sentences by length\];
-  C -->  G[make_custody_tables.py];
+  F -->  G[make_custody_tables.py];
   D -->  H[\Viz data: Custodial sentences, by offence\];
   G --> I@{ shape: docs, label: "Custodial sentence tables (all and by length)" };
 ```
@@ -82,8 +82,9 @@ This output provides a detailed breakdown of the types of offences leading to im
 
 ### Custodial sentence PFA tables
 
-`make_custody_tables.py`
+`make_custody_tables.py` processes the visualisation dataset produced by `filter_sentence_length.py` to produce three sets of summary statistics on the number of women in each Police Force Area (PFA) who received custodial sentences by sentence length over the entire time period, and the percentage change between the first and last year.
 
+The script defines the valid categories to be produced ("all", "less than 6 months", "less than 12 months"). It then groups the data by PFA and year, before cross-tabbing to organise the data in a publication ready format, before calculating the percentage change and appending to the dataset.
 
 !!! success "Data produced"
 
