@@ -198,3 +198,19 @@ def safe_save_chart(fig: go.Figure, path: str, filename: str) -> bool:
     if not success:
         logging.error("Failed to save chart to %s/%s", path, filename)
     return success
+
+
+def get_year_range(df: pd.DataFrame, column: str = 'year') -> tuple:
+    """
+    Retrieves the minimum and maximum years from a specified column in a DataFrame.
+
+    Args:
+        df (pd.DataFrame): The DataFrame containing the year data.
+        column (str, optional): The name of the column to extract years from. Defaults to 'year'.
+
+    Returns:
+        tuple: A tuple containing the start and end years (min_year, max_year).
+    """
+    min_year = df[column].min()
+    max_year = df[column].max()
+    return min_year, max_year

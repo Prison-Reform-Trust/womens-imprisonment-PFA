@@ -128,21 +128,6 @@ class SentenceLengthChart:
 
         self.fig.add_traces(self.trace_list)
 
-    def get_year_range(self):
-        """
-        Retrieves the range of years from the DataFrame for the current PFA.
-
-        This method extracts the minimum and maximum years from the 'year' column of
-        the DataFrame filtered for the current PFA. It returns a tuple containing
-        the start and end years.
-
-        Returns:
-            tuple: A tuple containing the start and end years (min_year, max_year).
-        """
-        min_year = self.pfa_df['year'].min()
-        max_year = self.pfa_df['year'].max()
-        return min_year, max_year
-
     def chart_params(self):
         """
         Configures the layout parameters for the chart.
@@ -153,7 +138,7 @@ class SentenceLengthChart:
         Returns:
             None
         """
-        min_year, _ = self.get_year_range()
+        min_year, _ = utils.get_year_range(self.pfa_df)
 
         self.fig.update_layout(
             yaxis_title="",
@@ -224,7 +209,7 @@ class SentenceLengthChart:
             None
         """
 
-        min_year, max_year = self.get_year_range()
+        min_year, max_year = utils.get_year_range(self.pfa_df)
         title = (
             f'Use of immediate imprisonment for women '
             f'{self.pfa_df_sentence["pfa"].iloc[0]}, {min_year}—{max_year}'
@@ -309,7 +294,7 @@ class SentenceLengthChart:
 
         self.fig.update_yaxes(range=[0, y_max])
 
-        min_year, max_year = self.get_year_range()
+        min_year, max_year = utils.get_year_range(self.pfa_df)
         xaxis_range = [min_year - 0.3, max_year + 0.3]
         self.fig.update_xaxes(range=xaxis_range)
 
