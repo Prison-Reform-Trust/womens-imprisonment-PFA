@@ -211,6 +211,6 @@ def get_year_range(df: pd.DataFrame, column: str = 'year') -> tuple:
     Returns:
         tuple: A tuple containing the start and end years (min_year, max_year).
     """
-    min_year = df[column].min()
-    max_year = df[column].max()
+    min_year = int(df[column].min())
+    max_year = int(df[column].max())
     return min_year, max_year
