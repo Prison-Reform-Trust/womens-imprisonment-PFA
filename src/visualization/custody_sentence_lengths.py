@@ -408,54 +408,35 @@ def break_trace_labels(df):
     return df
 
 
-def make_pfa_sentence_len_charts(
-        filename: str,
-        path: str,
-        status='processed',
-        output: str = 'save',
-        filetype: str = 'emf',
-        pfa_adjustments: Optional[List[Record]] = None):
+def generate_sentence_len_chart(
+    df: pd.DataFrame,
+    path: str,
+    output: str = 'save',
+    filetype: str = 'emf',
+    pfa: Optional[str] = None,
+    pfa_adjustments: Optional[List[Record]] = None
+):
     """
-    Generates and outputs sentence length charts for each PFA (Police Force Area) in the provided dataset.
+    Generates and outputs sentence length charts for one or all PFAs.
 
-    Parameters:
-        filename (str): The name of the data file to load.
-        path (str): The directory where charts will be saved if output is set to 'save'.
-        status (str, optional): The data status to use when loading data (e.g., 'interim', 'processed').
-        Defaults to 'processed'.
-        output (str, optional): Determines whether to save charts to disk ('save') or display them ('show').
-        Defaults to 'save'.
-        filetype (str, optional): The file type for saving charts (e.g., 'emf', 'png'). Defaults to 'emf'
-        a Windows file format designed to store large amounts of image detail for high quality printing.
-        pfa_adjustments (Optional[List[Record]], optional): A list of adjustment records for specific PFAs.
-        Each record should have attributes 'pfa_name', 'label_idx', and 'adjust'. Defaults to None.
-
-    Raises:
-        ValueError: If the 'output' parameter is not 'save' or 'show'.
-
-    Side Effects:
-        - Saves or displays sentence length charts for each unique PFA in the dataset.
+    If pfa is provided, only that PFA is processed.
     """
-    df = (
-        utils.load_data(status, filename)
-        .pipe(break_trace_labels)
-    )
-
-    for pfa in df['pfa'].unique():
+    pfas = [pfa] if pfa else df['pfa'].unique()
+    for pfa_name in pfas:
         adjusted = False
         if pfa_adjustments:
             for adjustment in pfa_adjustments:
-                if pfa == adjustment.pfa_name:
+                if pfa_name == adjustment.pfa_name:
                     chart = SentenceLengthChart(
                         pfa=adjustment.pfa_name,
                         df=df,
                         label_idx=adjustment.label_idx,
                         adjust=adjustment.adjust
-                        )
+                    )
                     adjusted = True
                     break
         if not adjusted:
-            chart = SentenceLengthChart(pfa, df)
+            chart = SentenceLengthChart(pfa_name, df)
         if output == 'save':
             chart.save_chart(path, filetype)
         elif output == 'show':
@@ -465,18 +446,45 @@ def make_pfa_sentence_len_charts(
     logging.info("Charts ready")
 
 
-def test_chart():
+def make_pfa_sentence_len_charts(
+        filename: str,
+        path: str,
+        status='processed',
+        output: str = 'save',
+        filetype: str = 'emf',
+        pfa_adjustments: Optional[List[Record]] = None,
+        pfa: Optional[str] = None):
     """
-    Test function to generate and display a sample chart for a specific PFA.
+    Generates and outputs sentence length charts for each (or a single) PFA.
+    """
+    df = (
+        utils.load_data(status, filename)
+        .pipe(break_trace_labels)
+    )
+    generate_sentence_len_chart(
+        df=df,
+        path=path,
+        output=output,
+        filetype=filetype,
+        pfa=pfa,
+        pfa_adjustments=pfa_adjustments
+    )
 
-    This function creates a sample DataFrame with sentence length data for a specific PFA
-    and generates a chart using the SentenceLengthChart class. It is intended for testing
-    purposes to ensure that the chart generation works as expected.
+
+def test_chart(pfa: str = 'Gwent', pfa_adjustments: Optional[List[Record]] = None):
     """
-    df = utils.load_data("processed", INPUT_FILENAME)
-    chart = SentenceLengthChart('Gwent', df)
-    # chart.output_chart()
-    chart.save_chart(OUTPUT_PATH, 'pdf')
+    Test function to generate and display a sample chart for a specific PFA,
+    with optional PFA adjustments.
+    """
+    make_pfa_sentence_len_charts(
+        filename=INPUT_FILENAME,
+        path=OUTPUT_PATH,
+        status="processed",
+        output="save",
+        filetype="pdf",
+        pfa=pfa,
+        pfa_adjustments=pfa_adjustments
+    )
 
 
 def main():
