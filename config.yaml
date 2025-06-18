@@ -36,4 +36,5 @@
 - viz:
     filePaths:
         custody_sentence_lengths: custody_sentence_lengths
+        sentence_types: sentence_types
     

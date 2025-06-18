@@ -193,6 +193,7 @@ def process_data(df: pd.DataFrame, config_file: dict) -> pd.DataFrame:
 
     # Defining regex replacements for specific columns
     regex_replacements = {
+        'pfa': [(r"Metropolitan", "London")],
         'sex': [(r"\d\d: ", "")],
         'age_group': [(r"\d\d: ", "")],
         'offence': [(r"\d\d: ", "")],
