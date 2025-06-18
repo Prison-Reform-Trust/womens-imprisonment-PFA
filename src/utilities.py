@@ -100,6 +100,7 @@ def ensure_directory(path: str) -> None:
     """Ensure the download directory exists."""
     os.makedirs(path, exist_ok=True)
 
+
 # TODO: #20 Refactor the save and safe_save functions to be more concise and reduce repetition
 def save_data(df: pd.DataFrame, path: str, filename: str, index: bool) -> bool:
     """Save the processed DataFrame to a CSV file.
