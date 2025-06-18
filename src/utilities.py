@@ -2,8 +2,10 @@
 This script provides useful functions to all other scripts
 """
 
+import glob
 import logging
 import os
+import re
 from typing import List, Optional
 
 import pandas as pd
@@ -214,3 +216,22 @@ def get_year_range(df: pd.DataFrame, column: str = 'year') -> tuple:
     min_year = int(df[column].min())
     max_year = int(df[column].max())
     return min_year, max_year
+
+
+def get_latest_year_from_files(path: str, template: str) -> int:
+    """
+    Find the latest year from files matching the template pattern.
+    Example template: 'PFA_custodial_sentences_by_offence_{year}_FINAL.csv'
+    """
+    # Build a glob pattern by replacing {year} with *
+    pattern = template.replace("{year}", "*")
+    files = glob.glob(os.path.join(path, pattern))
+    years = []
+    for f in files:
+        # Extract year using regex
+        match = re.search(r'(\d{4})', os.path.basename(f))
+        if match:
+            years.append(int(match.group(1)))
+    if not years:
+        raise FileNotFoundError("No files matching pattern found.")
+    return max(years)
