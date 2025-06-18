@@ -494,18 +494,7 @@ def main():
     This function calls the make_pfa_sentence_len_charts function with predefined parameters
     to generate and save sentence length charts for each PFA in the dataset.
     """
-    make_pfa_sentence_len_charts(
-        filename=INPUT_FILENAME,
-        path=OUTPUT_PATH,
-        filetype='pdf',
-        pfa_adjustments=None,
-    )
-
-
-if __name__ == "__main__":
-    FILETYPE = 'pdf'
-
-    PFA_ADJUSTMENTS = [
+    pfa_adjustments = [
         Record('Cambridgeshire', 2, 10),
         Record('Cumbria', 2, 2),
         Record('Derbyshire', 2, 10),
@@ -513,11 +502,16 @@ if __name__ == "__main__":
         Record('Northamptonshire', 2, 3),
         Record('Suffolk', 2, -2),
         Record('Surrey', [0, 2], [4, 2]),
-        Record('Warwickshire', 0, 7)]
+        Record('Warwickshire', 0, 7)
+    ]
 
     make_pfa_sentence_len_charts(
         filename=INPUT_FILENAME,
         path=OUTPUT_PATH,
-        filetype=FILETYPE,
-        pfa_adjustments=PFA_ADJUSTMENTS
-        )
+        filetype='pdf',
+        pfa_adjustments=pfa_adjustments,
+    )
+
+
+if __name__ == "__main__":
+    main()
