@@ -230,7 +230,7 @@ class SentenceTypeChart:
             max_trace = (data.y).max()
             self.max_y_val = max(self.max_y_val, max_trace)
 
-        y_intervals = [52, 101, 203, 305, 405, 540, 606, 830, 909, 1210, 1550, 2080, 3100]
+        y_intervals = [52, 101, 203, 305, 405, 505, 606, 806, 907, 1210, 1550, 2030, 3050]
         y_max_idx = min(range(len(y_intervals)), key=lambda i: abs(y_intervals[i] - self.max_y_val))
         y_max = y_intervals[y_max_idx + 1] if y_intervals[y_max_idx] <= self.max_y_val else y_intervals[y_max_idx]
 
