@@ -9,14 +9,15 @@ It is intended to be run as a standalone script to generate all publication read
 in this project.
 """
 
-from src.visualization import custody_sentence_lengths
+from src.visualization import custody_sentence_lengths, sentence_types
 
 
 def main():
     """
-    Main function to run all visualisations.
+    Main function to produce all visualisations for the fact sheets.
     """
     custody_sentence_lengths.main()
+    sentence_types.main()
 
 
 if __name__ == "__main__":
