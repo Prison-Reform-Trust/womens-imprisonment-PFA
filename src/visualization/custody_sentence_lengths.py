@@ -506,23 +506,14 @@ if __name__ == "__main__":
     FILETYPE = 'pdf'
 
     PFA_ADJUSTMENTS = [
-        Record('Cambridgeshire', 0, 18),
-        Record('Dorset', 2, 5),
-        Record('Cumbria', 0, 7),
-        Record('Derbyshire', 0, 15),
-        Record('Dyfed-Powys', 0, 10),
-        Record('Gloucestershire', 0, -2),
-        Record('Gwent', [0, 2], [17, 12]),
-        Record('Lancashire', 2, 20),
-        Record('Merseyside', 2, -10),
-        Record('North Yorkshire', 0, 7),
-        Record('Northumbria', 0, -10),
-        Record('South Yorkshire', 0, -10),
-        Record('Suffolk', 0, 8),
-        Record('Surrey', [0, 2], [7, 12]),
-        Record('Sussex', 2, 20),
-        Record('West Mercia', 2, 10),
-        Record('West Midlands', 0, 50)]
+        Record('Cambridgeshire', 2, 10),
+        Record('Cumbria', 2, 2),
+        Record('Derbyshire', 2, 10),
+        Record('Durham', 2, 5),
+        Record('Northamptonshire', 2, 3),
+        Record('Suffolk', 2, -2),
+        Record('Surrey', [0, 2], [4, 2]),
+        Record('Warwickshire', 0, 7)]
 
     make_pfa_sentence_len_charts(
         filename=INPUT_FILENAME,
