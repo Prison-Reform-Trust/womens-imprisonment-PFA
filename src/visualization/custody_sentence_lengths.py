@@ -169,7 +169,7 @@ class SentenceLengthChart:
         Logging is used to provide information about the labeling and adjustment process.
         """
         logging.info("Setting trace labels...")
-        logging.info("Label index: %s, Adjustment: %s", {self.label_idx}, {self.adjust})
+        logging.info("Label index: %s, Adjustment: %s", self.label_idx, self.adjust)
 
         for i, trace in enumerate(self.trace_list):
             self.annotations.append(
