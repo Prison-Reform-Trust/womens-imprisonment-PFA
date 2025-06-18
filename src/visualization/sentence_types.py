@@ -127,8 +127,8 @@ class SentenceTypeChart:
             showlegend=True,
             hovermode="x",
             legend=dict(
-                yanchor="top",
-                y=1.05,
+                yanchor="bottom",
+                y=1,
                 xanchor="right",
                 x=1,
             )
