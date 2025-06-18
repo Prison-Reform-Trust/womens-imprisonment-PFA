@@ -33,7 +33,8 @@ OUTPUT_PATH = config['viz']['filePaths']['sentence_types']
 
 class SentenceTypeChart:
     """
-    A class for generating and visualizing bar charts of women's sentencing outcomes by year and Police Force Area (PFA).
+    A class for generating and visualizing bar charts of women's
+    sentencing outcomes by year and Police Force Area (PFA).
     Attributes:
         pfa (str): The Police Force Area to filter data for.
         df (pd.DataFrame): The input DataFrame containing sentencing data.
@@ -75,9 +76,11 @@ class SentenceTypeChart:
     def create_traces(self):
         """
         Generates bar chart traces for each unique outcome in the DataFrame filtered by the specified 'pfa' value.
-        This method filters the main DataFrame (`self.df`) to include only rows where the 'pfa' column matches `self.pfa`.
-        For each unique value in the 'outcome' column, it creates a Plotly Bar trace representing the frequency ('freq')
-        of that outcome per year. The traces are appended to `self.trace_list` and then added to the figure (`self.fig`).
+        This method filters the main DataFrame (`self.df`) to include only rows where the 'pfa' column
+        matches `self.pfa`.
+        For each unique value in the 'outcome' column, it creates a Plotly Bar trace representing the
+        frequency ('freq') of that outcome per year. The traces are appended to `self.trace_list` and then
+        added to the figure (`self.fig`).
         The hover template displays the frequency and the outcome (in lowercase) for each bar.
         Side Effects:
             - Modifies `self.trace_list` by appending new traces.
@@ -85,8 +88,8 @@ class SentenceTypeChart:
         Returns:
             None
         """
-
-        for i in self.df["outcome"].unique():  # Creating a for loop to extract unique values from the dataframe and make traces
+        # Creating a for loop to extract unique values from the dataframe and make traces
+        for i in self.df["outcome"].unique():
             self.pfa_df_sentence = self.pfa_df[self.pfa_df["outcome"] == i]
 
             trace = go.Bar(
@@ -103,7 +106,8 @@ class SentenceTypeChart:
 
     def chart_params(self):
         """
-        Updates the layout parameters of the chart figure for grouped bar mode and customizes axis ticks, legend position, and hover behaviour.
+        Updates the layout parameters of the chart figure for grouped bar mode and customizes
+        axis ticks, legend position, and hover behaviour.
 
         This method sets:
         - Bar mode to "group" for grouped bar charts.
