@@ -35,32 +35,62 @@ OUTPUT_PATH = config['viz']['filePaths']['custody_offences']
 
 
 class PfaOffencesChart:
+    """
+    PfaOffencesChart generates and manages a sunburst chart visualizing the proportion of women imprisoned by offence group for a specified Police Force Area (PFA).
+
+    Attributes:
+        pfa (str): The Police Force Area to visualize.
+        df (pd.DataFrame): The input DataFrame containing offence data.
+        pfa_df (pd.DataFrame): Filtered DataFrame for the selected PFA.
+        trace_list (list): List to store chart traces.
+        annotations (list[dict]): List of annotation dictionaries for the chart.
+        fig (go.Figure): Plotly Figure object for the chart.
+
+    Methods:
+        __init__(pfa: str, df: pd.DataFrame):
+            Initializes the chart with a PFA and its corresponding data.
+
+        create_traces():
+            Creates and adds a sunburst trace to the figure, including aggregation of non-highlighted offences.
+
+        chart_params():
+            Sets chart layout parameters such as title, size, and margins.
+
+        chart_annotations():
+            Adds source and other annotations to the chart layout.
+
+        save_chart(folder: str, filetype: str = 'pdf'):
+            Saves the chart to a specified folder and file type (default: PDF).
+
+        output_chart():
+            Renders the chart in an interactive window.
+    """
 
     def __init__(self, pfa: str, df: pd.DataFrame):
         self.pfa = pfa
         self.df = df
+        self.pfa_df = self.df[self.df["pfa"] == self.pfa]
         self.trace_list = []
         self.annotations: list[dict] = []
         self.fig = go.Figure()
 
-    # NOTE: Currently here. Trying to unpick trace creation.
     def create_traces(self):
-        self.df = self.df[self.df["pfa"] == self.pfa]
-        self.df = pd.concat([
-            self.df,
+        mask_filter = ~filter_offences(self.pfa_df)  # Filter out highlighted offences
+        self.pfa_df = pd.concat([
+            self.pfa_df,
             pd.DataFrame.from_records([{
-                'pfa': self.df['pfa'].iloc[0],
+                'pfa': self.pfa_df['pfa'].iloc[0],
                 'offence': "All other<br>offences",
-                'proportion': self.df.loc[not filter_offences(self.df), 'proportion'].sum(),
+                'proportion': self.pfa_df.loc[mask_filter, 'proportion'].sum(),
                 'parent': "All offences",
                 'plot_order': 0
             }])
         ], ignore_index=True).sort_values(by=['plot_order', 'proportion'], ascending=True)
 
         sunburst_trace = go.Sunburst(
-            labels=self.df['offence'],
-            parents=self.df['parent'],
-            values=self.df['proportion'],
+            labels=self.pfa_df['offence'],
+            parents=self.pfa_df['parent'],
+            values=self.pfa_df['proportion'],
             sort=False,
             branchvalues='total',
             texttemplate="%{label} <b>%{percentRoot: .0%}</b>",
@@ -75,7 +105,7 @@ class PfaOffencesChart:
         return self.fig.add_trace(sunburst_trace)
 
     def chart_params(self):
-        title = textwrap.wrap(f'<b>Imprisonment of women in {self.df["pfa"].iloc[0]} by offence group in 2022</b>',
+        title = textwrap.wrap(f'<b>Imprisonment of women in {self.pfa_df["pfa"].iloc[0]} by offence group in 2022</b>',
                               width=45)
 
         self.fig.update_layout(
@@ -111,7 +141,6 @@ class PfaOffencesChart:
         self.folder = folder
 
         if not self.trace_list:
-            self.prepare_data()
             self.create_traces()
             self.chart_params()
             self.chart_annotations()
@@ -124,11 +153,20 @@ class PfaOffencesChart:
 
         self.fig.write_image(export_path)
 
-    def output_chart(self):
+    def output_chart(self) -> go.Figure:
+        """
+        Generates and returns the final chart figure.
+
+        This method orchestrates the creation of chart traces, sets chart parameters,
+        adds annotations, and returns the resulting Plotly figure object.
+
+        Returns:
+            plotly.graph_objs._figure.Figure: The generated chart figure.
+        """
         self.create_traces()
         self.chart_params()
         self.chart_annotations()
-        self.fig.show()
+        return self.fig
 
 
 def make_pfa_offences_charts(filename: str, folder: str, status: str = 'processed', filetype: str = 'pdf'):
@@ -139,6 +177,20 @@ def make_pfa_offences_charts(filename: str, folder: str, status: str = 'processe
     print("Charts ready")
 
 
+def test_chart(pfa: str = 'Gwent'):
+    """
+    Test function to generate and display a sample chart for a specific PFA.
+
+    This function creates a sample DataFrame with sentence length data for a specific PFA
+    and generates a chart using the SentenceLengthChart class. It is intended for testing
+    purposes to ensure that the chart generation works as expected.
+    """
+    df = utils.load_data("processed", INPUT_FILENAME)
+    chart = PfaOffencesChart(pfa, df)
+    return chart.output_chart()
+    # chart.save_chart(OUTPUT_PATH, 'pdf')
+
+
 def main():
     """
     Main function to produce all visualisations for the fact sheets.
@@ -147,4 +199,4 @@ def main():
 
 
 if __name__ == "__main__":
-    main()
+    test_chart()  #Temporary debugging statement
