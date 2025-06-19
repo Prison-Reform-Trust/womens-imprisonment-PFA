@@ -106,7 +106,8 @@ def filter_offences(df: pd.DataFrame) -> bool:
         A boolean mask indicating whether each row's offence is in the specified groups.
     """
     logging.info("Creating filter for highlighted offence groups...")
-    highlighted_offence_groups = ['Theft offences', 'Drug offences', 'Violence against the person']
+    # TODO: #24 Replace hardcoded new line breaks with a more robust solution
+    highlighted_offence_groups = ['Theft\noffences', 'Drug\noffences', 'Violence\nagainst the\nperson']
     return df['offence'].isin(highlighted_offence_groups)
 
 
