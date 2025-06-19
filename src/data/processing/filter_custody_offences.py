@@ -90,7 +90,7 @@ def melt_dataframe(df: pd.DataFrame) -> pd.DataFrame:
         value_name='proportion')
 
 
-def filter_offences(df: pd.DataFrame) -> bool:
+def filter_offences(df: pd.DataFrame) -> pd.Series:
     """
     Creates a boolean mask to filter processing on DataFrame rows that
     are in the specified offence groups.
@@ -102,7 +102,7 @@ def filter_offences(df: pd.DataFrame) -> bool:
 
     Returns
     -------
-    bool
+    pd.Series
         A boolean mask indicating whether each row's offence is in the specified groups.
     """
     logging.info("Creating filter for highlighted offence groups...")
