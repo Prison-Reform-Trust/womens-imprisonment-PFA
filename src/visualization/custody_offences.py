@@ -72,7 +72,12 @@ class PfaOffencesChart:
         self.annotations: list[dict] = []
         self.fig = go.Figure()
 
-    def create_traces(self):
+    def create_all_offences_group(self):
+        """
+        This method filters out the highlighted offences and aggregates the remaining offences
+        into a single group. It then creates a new row in the DataFrame for "All other offences"
+        with the sum of their proportions.
+        """
         mask_filter = ~filter_offences(self.pfa_df)  # Filter out highlighted offences
         self.pfa_df = pd.concat([
             self.pfa_df,
@@ -85,6 +90,8 @@ class PfaOffencesChart:
             }])
         ], ignore_index=True).sort_values(by=['plot_order', 'proportion'], ascending=True)
 
+    def create_traces(self):
+        """ Creates a sunburst trace for the PFA offences chart."""
         sunburst_trace = go.Sunburst(
             labels=self.pfa_df['offence'],
             parents=self.pfa_df['parent'],
@@ -138,10 +145,10 @@ class PfaOffencesChart:
         self.filetype = filetype
         self.folder = folder
 
-        if not self.trace_list:
-            self.create_traces()
-            self.chart_params()
-            self.chart_annotations()
+        self.create_all_offences_group()
+        self.create_traces()
+        self.chart_params()
+        self.chart_annotations()
 
         export_path = Path.joinpath(Path.cwd(), f"{config['data']['outPath']}", f"{self.folder}/{self.filetype}")
         export_path.mkdir(parents=True, exist_ok=True)
@@ -161,6 +168,7 @@ class PfaOffencesChart:
         Returns:
             plotly.graph_objs._figure.Figure: The generated chart figure.
         """
+        self.create_all_offences_group()
         self.create_traces()
         self.chart_params()
         self.chart_annotations()
@@ -187,6 +195,22 @@ def test_chart(pfa: str = 'Gwent'):
     chart = PfaOffencesChart(pfa, df)
     return chart.output_chart()
     # chart.save_chart(OUTPUT_PATH, 'pdf')
+
+
+def dummy_chart():
+    """
+    Dummy function to create a chart with no data.
+    This is used for testing purposes to ensure that the chart generation works without actual data.
+    """
+    df = pd.DataFrame({
+        'pfa': ['Dummy PFA'],
+        'offence': ['Dummy Offence'],
+        'proportion': [0.5],
+        'parent': ['All offences'],
+        'plot_order': [0]
+    })
+    chart = PfaOffencesChart('Dummy PFA', df)
+    return chart.output_chart()
 
 
 def main():
