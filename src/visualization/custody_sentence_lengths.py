@@ -348,15 +348,18 @@ class SentenceLengthChart:
             filename=filename,
         )
 
-    def output_chart(self) -> None:
+    def output_chart(self) -> go.Figure:
         """
-        Generates and displays the prepared chart.
+        Generates and returns the final chart figure.
 
-        This method prepares the chart by calling the internal _prepare_chart method,
-        and then displays the resulting figure using the fig.show() method.
+        This method orchestrates the creation of chart traces, sets chart parameters,
+        adds annotations, and returns the resulting Plotly figure object.
+
+        Returns:
+            plotly.graph_objs._figure.Figure: The generated chart figure.
         """
         self._prepare_chart()
-        self.fig.show()
+        return self.fig
 
 
 class Record:
@@ -408,6 +411,7 @@ def break_trace_labels(df):
     return df
 
 
+# TODO: Refactor this function to reduce redundant code and improve interaction with SentenceLengthChart and test_chart.
 def generate_sentence_len_chart(
     df: pd.DataFrame,
     path: str,
