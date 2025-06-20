@@ -78,7 +78,7 @@ class PfaOffencesChart:
             self.pfa_df,
             pd.DataFrame.from_records([{
                 'pfa': self.pfa_df['pfa'].iloc[0],
-                'offence': "All other<br>offences",
+                'offence': "All other\noffences",
                 'proportion': self.pfa_df.loc[mask_filter, 'proportion'].sum(),
                 'parent': "All offences",
                 'plot_order': 0
