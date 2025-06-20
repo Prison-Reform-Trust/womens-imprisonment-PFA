@@ -107,7 +107,7 @@ def filter_offences(df: pd.DataFrame) -> pd.Series:
     """
     logging.info("Creating filter for highlighted offence groups...")
     # TODO: #24 Replace hardcoded new line breaks with a more robust solution
-    highlighted_offence_groups = ['Theft\noffences', 'Drug\noffences', 'Violence\nagainst the\nperson']
+    highlighted_offence_groups = ['Theft offences', 'Drug offences', 'Violence against the person']
     return df['offence'].isin(highlighted_offence_groups)
 
 
@@ -131,7 +131,7 @@ def set_parent_column(df: pd.DataFrame, filter_mask: pd.Series) -> pd.DataFrame:
     """
     logging.info("Setting parent column for offence groups...")
     df.loc[filter_mask, 'parent'] = "All offences"
-    df.loc[~filter_mask, 'parent'] = "All other\noffences"
+    df.loc[~filter_mask, 'parent'] = "All other offences"
     return df
 
 
@@ -154,14 +154,6 @@ def set_plot_order(df: pd.DataFrame) -> pd.DataFrame:
         'Violence against the person': 3
     }
     df['plot_order'] = df["offence"].map(plot_dict).fillna(0)
-    return df
-
-
-def wrap_offence_text(df: pd.DataFrame, filter_mask: pd.Series) -> pd.DataFrame:
-    df['offence'] = df.apply(
-        lambda row: textwrap.fill(row['offence'], width=12 if filter_mask.loc[row.name] else 19),
-        axis=1
-    )
     return df
 
 
@@ -195,7 +187,6 @@ def load_and_process_data() -> tuple[pd.DataFrame, int]:
     df = (
         set_parent_column(df, filter_mask)
         .pipe(set_plot_order)
-        .pipe(wrap_offence_text, filter_mask)
         )
     logging.info("Data successfully processed for PFA offences charts")
     return df, max_year
