@@ -42,7 +42,6 @@ class PfaOffencesChart:
         pfa (str): The Police Force Area to visualize.
         df (pd.DataFrame): The input DataFrame containing offence data.
         pfa_df (pd.DataFrame): Filtered DataFrame for the selected PFA.
-        trace_list (list): List to store chart traces.
         annotations (list[dict]): List of annotation dictionaries for the chart.
         fig (go.Figure): Plotly Figure object for the chart.
 
@@ -70,7 +69,6 @@ class PfaOffencesChart:
         self.pfa = pfa
         self.df = df
         self.pfa_df = self.df[self.df["pfa"] == self.pfa]
-        self.trace_list = []
         self.annotations: list[dict] = []
         self.fig = go.Figure()
 
@@ -199,4 +197,4 @@ def main():
 
 
 if __name__ == "__main__":
-    test_chart()  #Temporary debugging statement
+    test_chart()  # Temporary debugging statement
