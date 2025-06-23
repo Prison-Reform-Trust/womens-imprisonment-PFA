@@ -83,17 +83,22 @@ class PfaOffencesChart:
             self.pfa_df,
             pd.DataFrame.from_records([{
                 'pfa': self.pfa_df['pfa'].iloc[0],
-                'offence': "All other\noffences",
+                'offence': "All other offences",
                 'proportion': self.pfa_df.loc[mask_filter, 'proportion'].sum(),
                 'parent': "All offences",
                 'plot_order': 0
             }])
         ], ignore_index=True).sort_values(by=['plot_order', 'proportion'], ascending=True)
 
-    def create_traces(self):
-        """ Creates a sunburst trace for the PFA offences chart."""
+    def create_traces(self, max_chars=19):
+        """Creates a sunburst trace for the PFA offences chart, skipping wrap for 'All other offences'."""
+        def wrap_or_not(label):
+            if label == "All other offences":
+                return label
+            return prt_theme.wrap_labels(label, max_chars=max_chars)
+
         sunburst_trace = go.Sunburst(
-            labels=self.pfa_df['offence'],
+            labels=self.pfa_df['offence'].apply(wrap_or_not),
             parents=self.pfa_df['parent'],
             values=self.pfa_df['proportion'],
             sort=False,
@@ -107,56 +112,128 @@ class PfaOffencesChart:
             domain_row=0
         )
 
-        return self.fig.add_trace(sunburst_trace)
+        self.fig.add_trace(sunburst_trace)
 
     def chart_params(self):
-        title = textwrap.wrap(f'<b>Imprisonment of women in {self.pfa_df["pfa"].iloc[0]} by offence group in 2022</b>',
-                              width=45)
+        """
+        Configures the layout parameters for the chart.
 
+        This method sets the chart's layout and size in addition to
+        the default template values, using Plotly's `update_layout` method.
+
+        Returns:
+            None
+        """
         self.fig.update_layout(
             margin=dict(t=75, l=0, r=0, b=0),
-            title="<br>".join(title),
-            title_y=0.94,
-            title_yanchor="bottom",
             width=630,
             height=630,
+            uniformtext=dict(minsize=8, mode='hide')
+        )
+
+    def set_title(self):
+        """
+        Sets the chart title to reflect the proportion of women in a specific PFA
+        (Police Force Area) who received a sentence of immediate imprisonment, by offence
+        group, for the latest year available in the dataset.
+        The title is dynamically generated based on the PFA name and the maximum
+        year present in the data.
+        The title is then added to the chart using the prt_theme.add_title method.
+
+        Returns:
+            None
+        """
+
+        title = (
+            f'Imprisonment of women in {self.pfa_df["pfa"].iloc[0]} '
+            f'by offence group, {max_year}'
+        )
+
+        prt_theme.add_title(
+            self.fig,
+            title=title,
+            width=40
+        )
+
+    def set_source(self):
+        """
+        Adds a source annotation to the chart using the prt_theme's add_annotation method.
+        The annotation specifies "Ministry of Justice, Criminal justice statistics" as the
+        data source and sets the annotation type to "source".
+        Returns:
+            None
+        """
+        logging.info("Setting source annotation...")
+        prt_theme.add_annotation(
+            self.annotations,
+            text="Ministry of Justice, Criminal justice statistics",
+            annotation_type="source",
         )
 
     def chart_annotations(self):
-        # Adding source label
-        self.annotations.append(
-            dict(
-                xref="paper",
-                yref="paper",
-                xanchor="left",
-                yanchor="top",
-                x=0.05,
-                y=0.07,
-                showarrow=False,
-                text=f"Source: Ministry of Justice, Criminal justice statistics",
-                font_size=12,
-            )
-        )
+        """
+        Adds annotations and labels to the chart.
 
-        # Adding annotations to layout
-        return self.fig.update_layout(annotations=self.annotations)
+        This method performs the following actions:
+        - Sets the chart title.
+        - Adds a source annotation.
 
-    def save_chart(self, folder: str, filetype: str = 'pdf'):
-        self.filetype = filetype
-        self.folder = folder
+        - Updates the figure layout with the collected annotations.
 
+        Logs the process at the start and upon successful completion.
+        """
+        logging.info("Adding chart annotations...")
+        self.set_title()
+        self.set_source()
+
+        self.fig.update_layout(annotations=self.annotations)
+        logging.info("Annotations added successfully.")
+
+    def _prepare_chart(self):
+        """
+        Prepares the chart for visualization by initialising and configuring chart components
+        if no traces exist.
+
+        This method checks if the trace list is empty. If so, it sequentially:
+            - Breaks trace labels for better readability.
+            - Creates the necessary chart traces.
+            - Sets chart parameters.
+            - Adds chart annotations.
+
+        Intended to be called before rendering or updating the chart to ensure all components are
+        properly set up.
+        """
         self.create_all_offences_group()
         self.create_traces()
         self.chart_params()
         self.chart_annotations()
 
-        export_path = Path.joinpath(Path.cwd(), f"{config['data']['outPath']}", f"{self.folder}/{self.filetype}")
-        export_path.mkdir(parents=True, exist_ok=True)
+    def save_chart(self, path: str, filetype: str):
+        """
+        Saves the current chart to a specified path and file type.
 
-        filename = str(self.df["pfa"].iloc[0])
-        export_path = Path.joinpath(export_path, f'{filename}.{self.filetype}')
+        This method prepares the chart and exports it as an image file to the designated
+        output directory. The output path is constructed using the current working directory,
+        a configured output path, the specified folder, and file type. The filename is derived
+        from the first value in the 'pfa' column of the 'pfa_df' DataFrame.
 
-        self.fig.write_image(export_path)
+        Args:
+            path (str): The name of the folder where the chart will be saved.
+            filetype (str): The file type/extension for the saved chart (e.g., 'png', 'jpg', 'svg').
+
+        Raises:
+            Any exceptions raised by Path operations or self.fig.write_image will propagate.
+        """
+        self._prepare_chart()
+
+        filename = f"{self.pfa_df['pfa'].iloc[0]}.{filetype}"
+        path = config['data']['outPath'] + path
+
+        utils.safe_save_chart(
+            fig=self.fig,
+            path=path,
+            filename=filename,
+        )
 
     def output_chart(self) -> go.Figure:
         """
@@ -168,19 +245,41 @@ class PfaOffencesChart:
         Returns:
             plotly.graph_objs._figure.Figure: The generated chart figure.
         """
-        self.create_all_offences_group()
-        self.create_traces()
-        self.chart_params()
-        self.chart_annotations()
+        self._prepare_chart()
         return self.fig
 
 
-def make_pfa_offences_charts(filename: str, folder: str, status: str = 'processed', filetype: str = 'pdf'):
-    df = utils.load_data(filename, status)
+def make_pfa_offences_charts(
+        filename: str,
+        path: str,
+        status='processed',
+        output: str = 'save',
+        filetype: str = 'emf'):
+    """
+    Generates and outputs offences charts for each unique PFA in the dataset.
+    Parameters:
+        filename (str): Name of the data file to load.
+        path (str): Directory path where charts will be saved if output is 'save'.
+        status (str, optional): Status of the data to load (default is 'processed').
+        output (str, optional): Determines whether to save ('save') or display ('show') the charts (default is 'save').
+        filetype (str, optional): File type for saving charts (default is 'emf').
+    Raises:
+        ValueError: If the output parameter is not 'save' or 'show'.
+    Side Effects:
+        Saves or displays charts for each unique PFA in the dataset.
+        Logs a message when charts are ready.
+    """
+
+    df = utils.load_data(status, filename)
     for pfa in df['pfa'].unique():
         chart = PfaOffencesChart(pfa, df)
-        chart.save_chart(folder, filetype)
-    print("Charts ready")
+        if output == 'save':
+            chart.save_chart(path, filetype)
+        elif output == 'show':
+            chart.output_chart()
+        else:
+            raise ValueError("output must be 'save' or 'show'.")
+    logging.info("Charts ready")
 
 
 def test_chart(pfa: str = 'Gwent'):
@@ -217,8 +316,12 @@ def main():
     """
     Main function to produce all visualisations for the fact sheets.
     """
-    # make_pfa_offences_charts(INPUT_FILENAME, OUTPUT_PATH)
+    make_pfa_offences_charts(
+        filename=INPUT_FILENAME,
+        path=OUTPUT_PATH,
+        filetype='pdf'
+    )
 
 
 if __name__ == "__main__":
-    test_chart()  # Temporary debugging statement
+    main()
