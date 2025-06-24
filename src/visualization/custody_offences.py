@@ -164,10 +164,14 @@ class PfaOffencesChart:
             None
         """
         logging.info("Setting source annotation...")
-        prt_theme.add_annotation(
-            self.annotations,
-            text="Ministry of Justice, Criminal justice statistics",
-            annotation_type="source",
+        self.annotations = (
+            prt_theme.add_annotation(
+                self.annotations,
+                text="Ministry of Justice, Criminal justice statistics",
+                annotation_type="source",
+                x=0.03,
+                y=0.05,
+            )
         )
 
     def chart_annotations(self):
