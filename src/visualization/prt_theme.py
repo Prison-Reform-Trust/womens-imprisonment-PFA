@@ -250,6 +250,7 @@ def add_annotation(
 def add_title(
         fig,
         title,
+        wrap=True,
         width=80,
         bold=True):
     """Adds a styled title to a Plotly figure.
@@ -257,6 +258,8 @@ def add_title(
     Parameters:
         fig (plotly.graph_objects.Figure): The Plotly figure to which the title will be added.
         title (str): The text of the title to be displayed.
+        wrap (bool, optional): Whether to wrap the title text. Defaults to True.
+        If True, the title will be wrapped to fit within the specified width.
         width (int, optional): The maximum width of the title in characters before wrapping.
         Defaults to 80.
         bold (bool, optional): Whether the title text should be bold. Defaults to True.
@@ -264,12 +267,14 @@ def add_title(
     Returns:
         None: The function modifies the figure in place.
     """
-    wrapped_title = "<br>".join(textwrap.wrap(title, width=width))
+    if wrap:
+        title = "<br>".join(textwrap.wrap(title, width=width))
+
     if bold:
-        wrapped_title = f"<b>{wrapped_title}</b>"
+        title = f"<b>{title}</b>"
 
     fig.update_layout(
-        title=wrapped_title,
+        title=title,
         title_automargin=True,
         title_yref='container',
         title_xanchor='left',

@@ -292,15 +292,18 @@ class SentenceTypeChart:
             filename=filename,
         )
 
-    def output_chart(self) -> None:
+    def output_chart(self) -> go.Figure:
         """
-        Generates and displays the prepared chart.
+        Generates and returns the final chart figure.
 
-        This method prepares the chart by calling the internal _prepare_chart method,
-        and then displays the resulting figure using the fig.show() method.
+        This method orchestrates the creation of chart traces, sets chart parameters,
+        adds annotations, and returns the resulting Plotly figure object.
+
+        Returns:
+            plotly.graph_objs._figure.Figure: The generated chart figure.
         """
         self._prepare_chart()
-        return self.fig.show()
+        return self.fig
 
 
 def make_pfa_sentence_type_charts(
@@ -346,7 +349,7 @@ def test_chart(pfa: str = 'Gwent'):
     """
     df = utils.load_data("processed", INPUT_FILENAME)
     chart = SentenceTypeChart(pfa, df)
-    chart.output_chart()
+    return chart.output_chart()
     # chart.save_chart(OUTPUT_PATH, 'pdf')
 
 
