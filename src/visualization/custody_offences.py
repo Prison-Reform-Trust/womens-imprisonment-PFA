@@ -90,16 +90,18 @@ class PfaOffencesChart:
             }])
         ], ignore_index=True).sort_values(by=['plot_order', 'proportion'], ascending=True)
 
-    def create_traces(self, max_chars=19):
-        """Creates a sunburst trace for the PFA offences chart, skipping wrap for 'All other offences'."""
-        def wrap_or_not(label):
-            if label == "All other offences":
-                return label
-            return prt_theme.wrap_labels(label, max_chars=max_chars)
+    def create_traces(self, max_chars=16):
+        """Creates a sunburst trace for the PFA offences chart, wrapping all labels and parents."""
+
+        def wrap_series(series):
+            return series.apply(lambda x: prt_theme.wrap_labels(x, max_chars=max_chars))
+
+        wrapped_labels = wrap_series(self.pfa_df['offence'])
+        wrapped_parents = wrap_series(self.pfa_df['parent'])
 
         sunburst_trace = go.Sunburst(
-            labels=self.pfa_df['offence'].apply(wrap_or_not),
-            parents=self.pfa_df['parent'],
+            labels=wrapped_labels,
+            parents=wrapped_parents,
             values=self.pfa_df['proportion'],
             sort=False,
             branchvalues='total',
