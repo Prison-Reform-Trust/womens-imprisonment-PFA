@@ -25,16 +25,6 @@ This was in contrast to our own previously published data, which included no suc
 
 Having checked figures on immediate custody for all four Welsh PFAs ['Dyfed-Powys', 'Gwent', 'North Wales', 'South Wales'], the totals between 2010–2016 are in line with the latest revised figures (±3 sentences).
 
-*Previous edition*
-
-| Police Force Area | 2010   | 2011   | 2012   | 2013   | 2014   | 2015   | 2016   |
-| ------------------| -------|--------|--------|--------|--------|--------|--------|
-| Dyfed Powys       | 48     | 58     | 42     | 44     | 37     | 33     | 32     |
-| Gwent             | 59     | 69     | 92     | 84     | 90     | 76     | 88     |
-| North Wales       | 71     | 70     | 93     | 98     | 91     | 106    | 115    |
-| South Wales       | 317    | 324    | 288    | 341    | 343    | 327    | 387    |
-| Grand Total       | 495    | 521    | 515    | 567    | 561    | 542    | 622    |
-
 *New edition*
 
 | Police Force Area | 2010   | 2011   | 2012   | 2013   | 2014   | 2015   | 2016   |
@@ -44,6 +34,16 @@ Having checked figures on immediate custody for all four Welsh PFAs ['Dyfed-Powy
 | North Wales       | 74     | 72     | 94     | 100    | 91     | 109    | 117    |
 | South Wales       | 359    | 374    | 331    | 392    | 399    | 365    | 432    |
 | Grand Total       | 496    | 522    | 515    | 570    | 564    | 544    | 623    |
+
+*Previous edition*
+
+| Police Force Area | 2010   | 2011   | 2012   | 2013   | 2014   | 2015   | 2016   |
+| ------------------| -------|--------|--------|--------|--------|--------|--------|
+| Dyfed Powys       | 48     | 58     | 42     | 44     | 37     | 33     | 32     |
+| Gwent             | 59     | 69     | 92     | 84     | 90     | 76     | 88     |
+| North Wales       | 71     | 70     | 93     | 98     | 91     | 106    | 115    |
+| South Wales       | 317    | 324    | 288    | 341    | 343    | 327    | 387    |
+| Grand Total       | 495    | 521    | 515    | 567    | 561    | 542    | 622    |
 
 However, there has been a redistribution away from Dyfed-Powys and Gwent towards South Wales, quite possibly to do with Crown Court availability and women being sentenced in a different PFA. This could also see some women in Gwent and Dyfed-Powys possibly being sentenced in England e.g. Gloucestershire, Devon, Merseyside, rather than in another Welsh PFA.
 
