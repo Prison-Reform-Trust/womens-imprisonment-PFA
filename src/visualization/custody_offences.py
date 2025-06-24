@@ -10,8 +10,6 @@ who received a custodial sentence in 2024, broken down by offence group.
 """
 
 import logging
-import textwrap
-from typing import List
 
 import pandas as pd
 import plotly.graph_objs as go
@@ -36,7 +34,8 @@ OUTPUT_PATH = config['viz']['filePaths']['custody_offences']
 
 class PfaOffencesChart:
     """
-    PfaOffencesChart generates and manages a sunburst chart visualizing the proportion of women imprisoned by offence group for a specified Police Force Area (PFA).
+    PfaOffencesChart generates and manages a sunburst chart visualizing the proportion
+    of women imprisoned by offence group for a specified Police Force Area (PFA).
 
     Attributes:
         pfa (str): The Police Force Area to visualize.
@@ -50,7 +49,8 @@ class PfaOffencesChart:
             Initializes the chart with a PFA and its corresponding data.
 
         create_traces():
-            Creates and adds a sunburst trace to the figure, including aggregation of non-highlighted offences.
+            Creates and adds a sunburst trace to the figure, including aggregation
+            of non-highlighted offences.
 
         chart_params():
             Sets chart layout parameters such as title, size, and margins.
@@ -267,7 +267,8 @@ def make_pfa_offences_charts(
         filename (str): Name of the data file to load.
         path (str): Directory path where charts will be saved if output is 'save'.
         status (str, optional): Status of the data to load (default is 'processed').
-        output (str, optional): Determines whether to save ('save') or display ('show') the charts (default is 'save').
+        output (str, optional): Determines whether to save ('save') or display ('show')
+        the charts (default is 'save').
         filetype (str, optional): File type for saving charts (default is 'emf').
     Raises:
         ValueError: If the output parameter is not 'save' or 'show'.
