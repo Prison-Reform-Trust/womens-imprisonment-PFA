@@ -145,14 +145,14 @@ class PfaOffencesChart:
         """
 
         title = (
-            f'Imprisonment of women in {self.pfa_df["pfa"].iloc[0]} '
+            f'Imprisonment of women in {self.pfa_df["pfa"].iloc[0]}<br>'
             f'by offence group, {max_year}'
         )
 
         prt_theme.add_title(
             self.fig,
             title=title,
-            width=40
+            wrap=False,
         )
 
     def set_source(self):
