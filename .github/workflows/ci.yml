@@ -3,7 +3,6 @@ on:
   push:
     branches:
       - master 
-      - main
 permissions:
   contents: write
 jobs:
@@ -25,5 +24,6 @@ jobs:
           path: .cache 
           restore-keys: |
             mkdocs-material-
-      - run: pip install mkdocs-material 
-      - run: mkdocs gh-deploy --force
+      - run: pip install mkdocs-material
+      - working-directory: ./docs
+        run: mkdocs gh-deploy --force
