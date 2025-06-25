@@ -83,6 +83,9 @@ target/
 *.eps
 *.pdf
 
+# Adding SVG exception for docs
+!docs/assets/*.svg
+
 # Excel
 *.xlsx
 
