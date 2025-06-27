@@ -236,3 +236,17 @@ def get_latest_year_from_files(path: str, template: str) -> int:
     if not years:
         raise FileNotFoundError("No files matching pattern found.")
     return max(years)
+
+
+def get_output_filename(year, template: str) -> str:
+    """
+    Add the year parameter(s) to the template filename.
+    Accepts str, int, tuple, or dict for year.
+    """
+    if isinstance(year, dict):
+        return template.format(**year)
+    elif isinstance(year, tuple):
+        # Assume tuple is (min_year, max_year)
+        return template.format(min_year=year[0], max_year=year[1])
+    else:
+        return template.format(year=year)
