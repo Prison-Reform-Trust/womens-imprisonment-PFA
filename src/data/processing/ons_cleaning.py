@@ -145,7 +145,7 @@ def combine_ages(df: pd.DataFrame) -> pd.DataFrame:
     missing_cols = [col for col in required_columns if col not in df.columns]
     if missing_cols:
         raise KeyError(f"Missing columns in DataFrame: {missing_cols}")
-    return df.groupby(['ladcode', 'laname', 'year'], as_index=False, observed=True)['freq'].sum()
+    return df.groupby(['ladcode', 'laname', 'year'], as_index=False, observed=True).agg({'freq': 'sum'})
 
 
 def process_data(df: pd.DataFrame) -> pd.DataFrame:
