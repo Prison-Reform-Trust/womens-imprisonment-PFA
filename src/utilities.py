@@ -68,7 +68,7 @@ def load_data(status: str, filename: str, usecols: Optional[List[str]] = None) -
     setup_logging()
 
     try:
-        df = pd.read_csv(df_path, encoding='latin1', low_memory=False, usecols=usecols)
+        df = pd.read_csv(df_path, encoding='utf-8-sig', low_memory=False, usecols=usecols)
         logging.info("Loaded data from %s", df_path)
         return set_columns_to_category(df)
     except FileNotFoundError:
