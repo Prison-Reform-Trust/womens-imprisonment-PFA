@@ -84,7 +84,7 @@ def melt_data(df: pd.DataFrame) -> pd.DataFrame:
     """
     logging.info("Melting DataFrame from wide to long format...")
 
-    return df.melt(id_vars=["ladcode", "laname", "country", "sex", "age"], var_name="year", value_name="population")
+    return df.melt(id_vars=["ladcode", "laname", "country", "sex", "age"], var_name="year", value_name="freq")
 
 
 def clean_year_column(df: pd.DataFrame) -> pd.DataFrame:
@@ -101,11 +101,11 @@ def combine_ages(df: pd.DataFrame) -> pd.DataFrame:
     logging.info("Combining age groups for aggregation...")
 
     # Ensure columns exist before grouping
-    required_columns = ['ladcode', 'laname', 'year', 'population']
+    required_columns = ['ladcode', 'laname', 'year', 'freq']
     missing_cols = [col for col in required_columns if col not in df.columns]
     if missing_cols:
         raise KeyError(f"Missing columns in DataFrame: {missing_cols}")
-    return df.groupby(['ladcode', 'laname', 'year'], as_index=False, observed=True).agg({'population': 'sum'})
+    return df.groupby(['ladcode', 'laname', 'year'], as_index=False, observed=True).agg({'freq': 'sum'})
 
 
 def process_data(df: pd.DataFrame) -> pd.DataFrame:
