@@ -15,6 +15,7 @@
         make_custody_tables_template: PFA_custodial_sentences_{category}_FINAL.csv
         filter_custody_offences: PFA_custodial_sentences_by_offence_{year}_FINAL.csv
         ons_cleaning: LA_population_women_{min_year}-{max_year}.csv
+        ons_comparator: ons_comparator_{min_year}-{max_year}.csv
 
 - outcomes_by_offence_filter:
     include:
