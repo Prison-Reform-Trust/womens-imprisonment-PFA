@@ -12,7 +12,6 @@ This script is part of the data processing pipeline, and results the following d
 """
 
 import logging
-import textwrap
 
 import pandas as pd
 
