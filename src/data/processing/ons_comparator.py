@@ -2,7 +2,8 @@
 # -*- coding: utf-8 -*-
 
 """
-This script processes an earlier NSMid-2001 to mid-2020 detailed time series edition of the ONS population data for QA purposes.
+This script processes an earlier ONS Mid-2001 to mid-2020 detailed time series
+edition of the ONS population data for QA purposes.
 
 Available at: https://www.ons.gov.uk/peoplepopulationandcommunity/populationandmigration/populationestimates/datasets/populationestimatesforukenglandandwalesscotlandandnorthernireland
 
