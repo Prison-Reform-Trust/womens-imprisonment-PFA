@@ -66,6 +66,9 @@ def main():
     _, df = request_to_df(ENDPOINT, PARAMS)
     logging.info("Successfully retrieved data from ONS Open Geography Portal.")
 
+    if utils.check_file_exists(PATH, FILENAME):
+        return
+
     utils.safe_save_data(
         df,
         PATH,

@@ -19,6 +19,7 @@ import requests
 
 import src.data.raw.data_filters as data_filters
 import src.data.raw.ons_api as ons_api
+import src.data.raw.ons_ogp_api as ons_ogp_api
 import src.utilities as utils
 
 config = utils.read_config()
@@ -66,10 +67,8 @@ def download_files(
 
     for file_url in file_urls:
         filename = filename_fn(file_url, data) if filename_fn else os.path.basename(file_url)
-        full_path = os.path.join(path, filename)
 
-        if os.path.exists(full_path):
-            logging.info("Skipping %s (already downloaded).", filename)
+        if utils.check_file_exists(path, filename):
             files_skipped += 1
             continue
 
@@ -94,6 +93,7 @@ def download_files(
                     files_downloaded = True
 
         else:
+            full_path = os.path.join(path, filename)
             with open(full_path, 'wb') as f:
                 f.write(response.content)
             logging.info("Downloaded file %s to %s", filename, path)
@@ -141,6 +141,14 @@ def get_population_data():
     logging.info("Population data download completed.")
 
 
+def get_la_pfa_lookup_data():
+    """
+    Function to download Local Authority to Police Force Area lookup data.
+    """
+    logging.info("Starting download of Local Authority to PFA lookup data.")
+    ons_ogp_api.main()
+
+
 def raw_data_pipeline():
     """
     Function to run the raw data pipeline.
@@ -148,6 +156,7 @@ def raw_data_pipeline():
     logging.info("Starting raw data pipeline.")
     get_outcomes_by_offence_data()
     get_population_data()
+    get_la_pfa_lookup_data()
 
     # Add more data download functions here as needed
     logging.info("Raw data pipeline completed.")

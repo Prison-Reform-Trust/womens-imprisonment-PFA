@@ -101,6 +101,29 @@ def ensure_directory(path: str) -> None:
     os.makedirs(path, exist_ok=True)
 
 
+def check_file_exists(path: str, filename: str) -> bool:
+    """Check if a file already exists in the specified path.
+
+    Parameters
+    ----------
+    path : str
+        The directory path where the file is expected to be.
+    filename : str
+        The name of the file to check for existence.
+
+    Returns
+    -------
+    bool
+        True if the file exists, False otherwise.
+    """
+
+    full_path = os.path.join(path, filename)
+    exists = os.path.exists(full_path)
+    if exists:
+        logging.info("Skipping %s. It already exists in %s", filename, path)
+    return exists
+
+
 # TODO: #20 Refactor the save and safe_save functions to be more concise and reduce repetition
 def save_data(df: pd.DataFrame, path: str, filename: str, index: bool) -> bool:
     """Save the processed DataFrame to a CSV file.
