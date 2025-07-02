@@ -33,15 +33,14 @@ config = utils.read_config()
 OUTPUT_FILENAME_TEMPLATE = config['data']['datasetFilenames']['ons_cleaning']
 
 
-def find_latest_ons_population_file(pattern: str = "*ONS*_v*.csv") -> str:
+def find_latest_ons_population_file(pattern: str = "*ONS*_v*.csv", path: str = config['data']['rawFilePath']) -> str:
     """
     Find the latest ONS population file in the given directory matching the pattern.
     Returns the filename (not the full path).
     """
-    raw_path = config['data']['rawFilePath']
-    files = glob.glob(os.path.join(raw_path, pattern))
+    files = glob.glob(os.path.join(path, pattern))
     if not files:
-        raise FileNotFoundError("No ONS population files found in raw data directory.")
+        raise FileNotFoundError(f"No ONS population files found in {path}.")
     # Sort by modification time, newest last
     files.sort(key=os.path.getmtime)
     return os.path.basename(files[-1])
