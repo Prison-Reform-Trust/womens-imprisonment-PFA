@@ -20,6 +20,7 @@ DataFrame by:
 import glob
 import logging
 import os
+from typing import Tuple
 
 import pandas as pd
 
@@ -173,19 +174,19 @@ def process_data(df: pd.DataFrame) -> pd.DataFrame:
     return df
 
 
-def load_and_process_data() -> pd.DataFrame:
+def load_and_process_data() -> Tuple[pd.DataFrame, int, int]:
     """
     Load the ONS population data, rename and reorder columns, and apply filters.
 
     Returns
     -------
-    DataFrame
-        The processed DataFrame ready for further analysis.
+    Tuple[DataFrame, int, int]
+        The processed DataFrame, minimum year, and maximum year.
     """
     df = load_population_data()
     if df.empty:
         logging.error("No data loaded from ONS population file.")
-        return pd.DataFrame()
+        return pd.DataFrame(), 0, 0
 
     df = process_data(df)
     min_year, max_year = utils.get_year_range(df)
