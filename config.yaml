@@ -18,6 +18,7 @@
         ons_cleaning: LA_population_women_{min_year}-{max_year}.csv
         ons_comparator: ons_comparator_{min_year}-{max_year}.csv
         ons_la_pfa: LA_to_PFA_(December_2024)_Lookup_in_EW.csv
+        match_la_to_pfa: LA_PFA_population_women_{min_year}-{max_year}.csv
 
 - outcomes_by_offence_filter:
     include:
