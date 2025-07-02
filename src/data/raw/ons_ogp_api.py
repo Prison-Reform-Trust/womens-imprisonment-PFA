@@ -20,7 +20,7 @@ utils.setup_logging()
 
 ENDPOINT = config['data']['downloadPaths']['ons_la_pfa_2024']
 PARAMS = config['ons_ogp_params']
-PATH = config['data']['intFilePath']
+PATH = config['data']['rawFilePath']
 FILENAME = config['data']['datasetFilenames']['ons_la_pfa']
 
 
