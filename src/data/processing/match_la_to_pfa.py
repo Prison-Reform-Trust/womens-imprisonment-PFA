@@ -25,7 +25,6 @@ from typing import Tuple
 import pandas as pd
 
 import src.utilities as utils
-from src.data.processing.ons_cleaning import find_latest_ons_population_file
 
 config = utils.read_config()
 utils.setup_logging()
@@ -36,7 +35,7 @@ OUTPUT_FILENAME_TEMPLATE = config['data']['datasetFilenames']['match_la_to_pfa']
 def load_data() -> tuple[pd.DataFrame, pd.DataFrame]:
     """Load the Local Authority to PFA lookup file and population data."""
     ons_la_pfa = config['data']['datasetFilenames']['ons_la_pfa']
-    ons_la_data = find_latest_ons_population_file(
+    ons_la_data = utils.fetch_latest_file(
         pattern="*LA_population*.csv",  # NOTE: Would be better to draw this from config
         path=config['data']['intFilePath']
     )

@@ -33,19 +33,6 @@ config = utils.read_config()
 OUTPUT_FILENAME_TEMPLATE = config['data']['datasetFilenames']['ons_cleaning']
 
 
-def find_latest_ons_population_file(pattern: str = "*ONS*_v*.csv", path: str = config['data']['rawFilePath']) -> str:
-    """
-    Find the latest ONS population file in the given directory matching the pattern.
-    Returns the filename (not the full path).
-    """
-    files = glob.glob(os.path.join(path, pattern))
-    if not files:
-        raise FileNotFoundError(f"No ONS population files found in {path}.")
-    # Sort by modification time, newest last
-    files.sort(key=os.path.getmtime)
-    return os.path.basename(files[-1])
-
-
 def load_population_data() -> pd.DataFrame:
     """
     Load the ONS population data from the raw data directory.
@@ -60,7 +47,10 @@ def load_population_data() -> pd.DataFrame:
     ]
 
     logging.info("Loading ONS population data...")
-    input_filename = find_latest_ons_population_file()
+    input_filename = utils.fetch_latest_file(
+        pattern="*ONS*_v*.csv",
+        path=config['data']['rawFilePath']
+    )
     try:
         df = utils.load_data(
             status='raw',

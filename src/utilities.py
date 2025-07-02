@@ -273,3 +273,16 @@ def get_output_filename(year, template: str) -> str:
         return template.format(min_year=year[0], max_year=year[1])
     else:
         return template.format(year=year)
+
+
+def fetch_latest_file(pattern: str, path: str) -> str:
+    """
+    Find the latest file in the given directory matching the pattern.
+    Returns the filename (not the full path).
+    """
+    files = glob.glob(os.path.join(path, pattern))
+    if not files:
+        raise FileNotFoundError(f"No files matching {pattern} found in {path}.")
+    # Sort by modification time, newest last
+    files.sort(key=os.path.getmtime)
+    return os.path.basename(files[-1])
