@@ -62,7 +62,7 @@ def filter_and_clean_data(df_pop: pd.DataFrame) -> pd.DataFrame:
     logging.info("Filtering and cleaning population data...")
     return (
         df_pop
-        .dropna(subset=['pfa'])
+        .dropna(subset=['pfa'])  # NOTE: These PFA values probably should be removed earlier in the pipeline. They are E10 (Counties) and E11 codes (Metropolitan Counties) and are at a higher geographic level than is required.
         .loc[lambda df: df['pfa'] != 'London, City of']
         .assign(pfa=lambda df: df['pfa'].replace({'Devon & Cornwall': 'Devon and Cornwall'}))
     )
