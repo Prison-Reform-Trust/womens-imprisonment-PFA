@@ -5,7 +5,8 @@
 This script allows users to access the Office for National Statistics (ONS) Open Geography Portal
 to retrieve a lookup file between Local Authority Districts and Police Force Areas in England and Wales.
 
-Heavily lifted from Rich Leyshon's helpful blog at https://thedatasavvycorner.com/blogs/06-working-with-ons-open-geo-portal
+Rich Leyshon's blog at https://thedatasavvycorner.com/blogs/06-working-with-ons-open-geo-portal was particularly
+helpful in understanding how to use the ONS Open Geography Portal API.
 """
 
 import logging
