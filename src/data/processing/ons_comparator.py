@@ -42,14 +42,14 @@ def load_population_data(filename: str = "MYEB1_detailed_population_estimates_se
 
 def rename_columns(df: pd.DataFrame) -> pd.DataFrame:
     """
-    Rename columns: if a column contains 'ladcode' or 'laname', strip any extra characters after.
+    Rename columns: if a column contains 'ladcode', 'laname', or 'ladname', strip any extra characters after.
     """
     logging.info("Renaming columns with regex...")
 
     def clean_col(col):
         if re.match(r"ladcode", col):
             return "ladcode"
-        elif re.match(r"laname", col):
+        elif re.match(r"laname|ladname", col):
             return "laname"
         return col
 
