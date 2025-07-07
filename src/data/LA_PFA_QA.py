@@ -20,6 +20,7 @@ from typing import Tuple
 
 import pandas as pd
 
+import src.data.processing.ons_comparator as data_processor
 import src.utilities as utils
 
 config = utils.read_config()
@@ -32,31 +33,69 @@ def load_data() -> Tuple[pd.DataFrame, pd.DataFrame]:
     """Load the population estimates and reconciliation data."""
     df_population = utils.load_data('raw', 'MYEB1_detailed_population_estimates_series_UK_(2021_geog21).csv')
     df_reconciliation = utils.load_data('raw', 'MYEB2_detailed_components_of_change_for reconciliation_EW_(2021_geog21).csv',
-                                        usecols=range(26))
+                                        usecols=range(25))  # Not including 'population_2021' column
     return df_population, df_reconciliation
 
 
-df = pd.read_csv('data/raw/MYEB1_detailed_population_estimates_series_UK_(2021_geog21).csv')
-filt = df['country'].str.contains("(?:^E|^W)", regex=True)
-df_eng_wales = df[filt].reset_index(drop=True)
+def preprocess_data(df: pd.DataFrame) -> pd.DataFrame:
+    """Preprocess DataFrame to:
+    - Rename columns
+    - Filter for England and Wales
+    - Filter for adult women
+    """
+    logging.info("Preprocessing population data...")
+    df = (
+        df
+        .pipe(data_processor.rename_columns)
+        .pipe(data_processor.filter_england_wales)
+        .pipe(data_processor.filter_adult_women)
+    )
+    return df
 
-df_recon = pd.read_csv('data/raw/MYEB2_detailed_components_of_change_for reconciliation_EW_(2021_geog21).csv',
-                       usecols=range(26))
 
-df_merged = df_recon.merge(df_eng_wales, how='inner', on=['ladcode21', 'sex', 'age'], suffixes=(None, '_census'))
-df_merged.drop(columns=['population_2021', 'ladname21_census', 'country_census'], inplace=True)
-df_merged.rename(columns={'population_2021_census': 'population_2021'}, inplace=True)
+def combine_population_data(df_population: pd.DataFrame, df_reconciliation: pd.DataFrame) -> pd.DataFrame:
+    """Combine the population estimates with the reconciliation data."""
+    logging.info("Combining 2021 census population figures with reconciliation data...")
+    df_population, df_reconciliation = map(preprocess_data, [df_population, df_reconciliation])
 
-filt1 = df_merged['age'] >= 18
-filt2 = df_merged['sex'] == 2
-filt = filt1 & filt2
-df3 = df_merged[filt]
+    df_merged = df_reconciliation.merge(
+        df_population[['ladcode', 'sex', 'age', 'population_2021']],
+        how='inner',
+        on=['ladcode', 'sex', 'age']
+    )
+    return df_merged
 
-df4 = df3.melt(id_vars=["ladcode21", "ladname21", "country", "sex", "age"], var_name="year", value_name="population")
-df4['year'] = df4['year'].str.replace("population_", "", regex=True)
 
-df5 = df4.groupby(['ladcode21', 'ladname21', 'year'], as_index=False, sort=False).agg({'population': 'sum'})
-df5['year'] = df5['year'].astype('int')
+def process_data(df: pd.DataFrame) -> pd.DataFrame:
+    """
+    Process the DataFrame to:
+    - Melt the DataFrame to long format
+    - Clean the year column
+    - Combine age groups for aggregation
+    """
+    df = (
+        df
+        .pipe(data_processor.melt_data)
+        .pipe(data_processor.clean_year_column)
+        .pipe(data_processor.combine_ages)
+        .assign(year=lambda df: df['year'].astype(int))
+    )
+    return df
+
+
+
+
+
+
+def main():
+
+    utils.safe_save_data(
+        df=df,
+        path=config['data']['intFilePath'],
+        filename=filename
+    )
+
+
 df5.to_csv('data/interim/LA_population_female_2001_2021_NOT_REBASED.csv', index=False)
 
 
