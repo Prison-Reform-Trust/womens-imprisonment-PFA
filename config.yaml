@@ -7,6 +7,7 @@
     downloadPaths:
         cjs_dec_2024: https://www.gov.uk/api/content/government/statistics/criminal-justice-system-statistics-quarterly-december-2024
         ons_la_pfa: https://services1.arcgis.com/ESMARspQHYMw9BZ9/arcgis/rest/services/LAD24_CSP24_PFA24_EW_LU/FeatureServer/0/query
+        ons_la_pfa_earlier_qa: https://services1.arcgis.com/ESMARspQHYMw9BZ9/arcgis/rest/services/LAD22_CSP22_PFA22_EW_LU/FeatureServer/0/query
     datasetFilenames:
         outcomes_by_offence: sentence_outcomes_2017_2024.csv
         outcomes_by_offence_earlier: sentence_outcomes_2010_2016.csv
@@ -18,6 +19,7 @@
         ons_cleaning: LA_population_women_{min_year}-{max_year}.csv
         ons_comparator: ons_comparator_{min_year}-{max_year}.csv
         ons_la_pfa: LA_to_PFA_(December_2024)_Lookup_in_EW.csv
+        ons_la_pfa_earlier_qa: LA_to_PFA_(December_2022)_Lookup_in_EW.csv
         match_la_to_pfa: LA_PFA_population_women_{min_year}-{max_year}.csv
 
 - outcomes_by_offence_filter:
@@ -38,9 +40,16 @@
         - year
         - pfa
 
-- ons_ogp_params: {
+- ons_pfa_params: {
     "where": "1=1",
     "outFields": "LAD24CD,LAD24NM,PFA24CD,PFA24NM",
+    "outSR": 4326,
+    "f": "json"
+    }
+
+- ons_pfa_earlier_params: {
+    "where": "1=1",
+    "outFields": "LAD22CD,LAD22NM,PFA22CD,PFA22NM",
     "outSR": 4326,
     "f": "json"
     }

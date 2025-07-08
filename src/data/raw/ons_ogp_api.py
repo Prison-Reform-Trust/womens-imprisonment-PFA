@@ -19,11 +19,6 @@ import src.utilities as utils
 config = utils.read_config()
 utils.setup_logging()
 
-ENDPOINT = config['data']['downloadPaths']['ons_la_pfa']
-PARAMS = config['ons_ogp_params']
-PATH = config['data']['rawFilePath']
-FILENAME = config['data']['datasetFilenames']['ons_la_pfa']
-
 
 def request_to_df(url: str, query_params: dict) -> tuple[requests.Response, pd.DataFrame]:
     """Send a get request to ArcGIS API & store the response as a DataFrame.
@@ -62,20 +57,16 @@ def request_to_df(url: str, query_params: dict) -> tuple[requests.Response, pd.D
         )
 
 
-def main():
+def main(endpoint: str, params: dict, path: str, filename: str) -> None:
     """Main function to set up logging and return the response and DataFrame."""
-    _, df = request_to_df(ENDPOINT, PARAMS)
+    _, df = request_to_df(endpoint, params)
     logging.info("Successfully retrieved data from ONS Open Geography Portal.")
 
-    if utils.check_file_exists(PATH, FILENAME):
+    if utils.check_file_exists(path, filename):
         return
 
     utils.safe_save_data(
         df,
-        PATH,
-        FILENAME,
+        path,
+        filename,
     )
-
-
-if __name__ == "__main__":
-    main()

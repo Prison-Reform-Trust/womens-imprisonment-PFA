@@ -146,7 +146,18 @@ def get_la_pfa_lookup_data():
     Function to download Local Authority to Police Force Area lookup data.
     """
     logging.info("Starting download of Local Authority to PFA lookup data.")
-    ons_ogp_api.main()
+    for version in ['latest', 'earlier']:  # Loop through both versions for QA purposes
+        keys = data_filters.ons_la_pfa_filter(version)
+        if not keys:
+            logging.warning("No data found for version '%s'. Skipping download.", version)
+            continue
+
+        ons_ogp_api.main(
+            endpoint=keys['endpoint'],
+            params=keys['params'],
+            path=keys['path'],
+            filename=keys['filename']
+        )
 
 
 def raw_data_pipeline():
