@@ -6,7 +6,7 @@
     outPath: reports/figures/
     downloadPaths:
         cjs_dec_2024: https://www.gov.uk/api/content/government/statistics/criminal-justice-system-statistics-quarterly-december-2024
-        ons_la_pfa_2024: https://services1.arcgis.com/ESMARspQHYMw9BZ9/arcgis/rest/services/LAD24_CSP24_PFA24_EW_LU/FeatureServer/0/query
+        ons_la_pfa: https://services1.arcgis.com/ESMARspQHYMw9BZ9/arcgis/rest/services/LAD24_CSP24_PFA24_EW_LU/FeatureServer/0/query
     datasetFilenames:
         outcomes_by_offence: sentence_outcomes_2017_2024.csv
         outcomes_by_offence_earlier: sentence_outcomes_2010_2016.csv

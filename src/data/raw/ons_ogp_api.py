@@ -19,7 +19,7 @@ import src.utilities as utils
 config = utils.read_config()
 utils.setup_logging()
 
-ENDPOINT = config['data']['downloadPaths']['ons_la_pfa_2024']
+ENDPOINT = config['data']['downloadPaths']['ons_la_pfa']
 PARAMS = config['ons_ogp_params']
 PATH = config['data']['rawFilePath']
 FILENAME = config['data']['datasetFilenames']['ons_la_pfa']
