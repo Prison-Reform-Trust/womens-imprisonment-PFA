@@ -5,7 +5,8 @@
 This script processes an earlier ONS Mid-2001 to mid-2020 detailed time series
 edition of the ONS population data for QA purposes.
 
-Available at: https://www.ons.gov.uk/peoplepopulationandcommunity/populationandmigration/populationestimates/datasets/populationestimatesforukenglandandwalesscotlandandnorthernireland
+Available at:
+https://www.ons.gov.uk/peoplepopulationandcommunity/populationandmigration/populationestimates/datasets/populationestimatesforukenglandandwalesscotlandandnorthernireland
 
 """
 
@@ -14,6 +15,7 @@ import re
 
 import pandas as pd
 
+import src.data.processing.common_ons_processing as common
 import src.utilities as utils
 
 utils.setup_logging()
@@ -28,7 +30,7 @@ def load_population_data(filename: str = "MYEB1_detailed_population_estimates_se
     Load the ONS population data from the raw data directory.
     """
 
-    logging.info("Loading ONS population data...")
+    logging.info("Loading comparator ONS population data...")
     try:
         df = utils.load_data(
             status='raw',
@@ -44,7 +46,7 @@ def rename_columns(df: pd.DataFrame) -> pd.DataFrame:
     """
     Rename columns: if a column contains 'ladcode', 'laname', or 'ladname', strip any extra characters after.
     """
-    logging.info("Renaming columns with regex...")
+    logging.info("Renaming columns...")
 
     def clean_col(col):
         if re.match(r"ladcode", col):
@@ -61,21 +63,10 @@ def filter_england_wales(df: pd.DataFrame) -> pd.DataFrame:
     """
     Filter the DataFrame to only include data for England and Wales.
     """
+    logging.info("Filtering for England and Wales...")
     filt = df['country'].str.contains("(?:^E|^W)", regex=True)
     df_eng_wales = df[filt]
     return df_eng_wales
-
-
-def filter_adult_women(df: pd.DataFrame) -> pd.DataFrame:
-    """
-    Filter the DataFrame to include only adult women (age >= 18, sex == 2).
-    Sex 2 corresponds to female in the dataset.
-    """
-    logging.info("Filtering for adult women...")
-
-    df = df[(df['age'] >= 18) & (df['sex'] == 2)]
-
-    return df
 
 
 def melt_data(df: pd.DataFrame) -> pd.DataFrame:
@@ -97,18 +88,6 @@ def clean_year_column(df: pd.DataFrame) -> pd.DataFrame:
     return df
 
 
-def combine_ages(df: pd.DataFrame) -> pd.DataFrame:
-    """Combine age groups for aggregation."""
-    logging.info("Combining age groups for aggregation...")
-
-    # Ensure columns exist before grouping
-    required_columns = ['ladcode', 'laname', 'year', 'freq']
-    missing_cols = [col for col in required_columns if col not in df.columns]
-    if missing_cols:
-        raise KeyError(f"Missing columns in DataFrame: {missing_cols}")
-    return df.groupby(['ladcode', 'laname', 'year'], as_index=False, observed=True).agg({'freq': 'sum'})
-
-
 def process_data(df: pd.DataFrame) -> pd.DataFrame:
     """
     Process the DataFrame to:
@@ -123,10 +102,10 @@ def process_data(df: pd.DataFrame) -> pd.DataFrame:
         df
         .pipe(rename_columns)
         .pipe(filter_england_wales)
-        .pipe(filter_adult_women)
+        .pipe(common.filter_adult_women, sex_value=2)
         .pipe(melt_data)
         .pipe(clean_year_column)
-        .pipe(combine_ages)
+        .pipe(common.combine_ages)
     )
 
     return df
@@ -161,6 +140,10 @@ def main():
 
     df, min_year, max_year = load_and_process_data()
     filename = utils.get_output_filename(year=(min_year, max_year), template=OUTPUT_FILENAME_TEMPLATE)
+
+    if not isinstance(df, pd.DataFrame):
+        logging.error("Data processing failed, no DataFrame returned.")
+        return
 
     utils.safe_save_data(
         df=df,

@@ -17,13 +17,12 @@ DataFrame by:
     - Saves the processed DataFrame to a CSV file in the `intFilePath` directory.
 
 """
-import glob
 import logging
-import os
 from typing import Tuple
 
 import pandas as pd
 
+import src.data.processing.common_ons_processing as common
 import src.utilities as utils
 
 utils.setup_logging()
@@ -77,6 +76,7 @@ def rename_and_reorder_columns(df: pd.DataFrame) -> pd.DataFrame:
     DataFrame
         The DataFrame with renamed columns.
     """
+    logging.info("Renaming columns...")
     df.columns = [
         'freq',
         'year',
@@ -85,81 +85,23 @@ def rename_and_reorder_columns(df: pd.DataFrame) -> pd.DataFrame:
         'sex',
         'age',
     ]
+    logging.info("Reordering columns...")
     column_order = ['ladcode', 'laname', 'year', 'sex', 'age', 'freq']
 
     return df[column_order]
 
 
-def remove_regional_and_national_aggregates(
-        df: pd.DataFrame,
-        name_col: str = 'laname',
-        code_col: str = 'ladcode') -> pd.DataFrame:
-    """
-    Drop rows containing aggregated regional or national data,
-    which are not relevant for local area analysis.
-    """
-    logging.info("Finding aggregated national and regional data codes...")
-    logging.info("Current number of rows: %d", len(df))
-
-    drop_codes = list(df[df[name_col].str.isupper()][code_col].unique())
-    logging.info("Aggregated codes found: %s", drop_codes)
-
-    logging.info("Dropping unwanted rows...")
-    df = df[~df[code_col].isin(drop_codes)]
-
-    logging.info("Rows dropped. Remaining rows: %d", len(df))
-    return df
-
-
-def filter_adult_women(df: pd.DataFrame) -> pd.DataFrame:
-    """
-    Filter the DataFrame to include only adult women (age >= 18, sex == "Female").
-    Handles "90+" by treating it as 90 for filtering.
-    """
-    logging.info("Filtering for adult women...")
-
-    # Replacing "90+" with 90 to allow for filtering
-    df['age'] = df['age'].cat.rename_categories({"90+": 90})
-    df['age'] = pd.to_numeric(df['age'], errors='coerce')
-    df = df[(df['age'] >= 18) & (df['sex'] == "Female")]
-
-    return df
-
-
-def combine_ages(df: pd.DataFrame) -> pd.DataFrame:
-    """Combine age groups for aggregation."""
-    logging.info("Combining age groups for aggregation...")
-
-    # Ensure columns exist before grouping
-    required_columns = ['ladcode', 'laname', 'year', 'freq']
-    missing_cols = [col for col in required_columns if col not in df.columns]
-    if missing_cols:
-        raise KeyError(f"Missing columns in DataFrame: {missing_cols}")
-    return df.groupby(['ladcode', 'laname', 'year'], as_index=False, observed=True).agg({'freq': 'sum'})
-
-
 def process_data(df: pd.DataFrame) -> pd.DataFrame:
     """
     Apply filters to the DataFrame to include only relevant records.
-
-    Parameters
-    ----------
-    df : DataFrame
-        The DataFrame to be filtered.
-
-    Returns
-    -------
-    DataFrame
-        The filtered DataFrame.
     """
     logging.info("Processing data...")
     df = (
         rename_and_reorder_columns(df)
-        .pipe(remove_regional_and_national_aggregates)
-        .pipe(filter_adult_women)
-        .pipe(combine_ages)
-        )
-
+        .pipe(common.remove_regional_and_national_aggregates)
+        .pipe(common.filter_adult_women, sex_value='Female')
+        .pipe(common.combine_ages)
+    )
     return df
 
 

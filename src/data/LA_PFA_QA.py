@@ -83,22 +83,27 @@ def process_data(df: pd.DataFrame) -> pd.DataFrame:
     return df
 
 
-
-
+def load_and_process_data() -> pd.DataFrame:
+    """Load, process, and return the combined population DataFrame."""
+    df_population, df_reconciliation = load_data()
+    df = (
+        combine_population_data(df_population, df_reconciliation)
+        .pipe(process_data)
+        )
+    return df
 
 
 def main():
-
+    df = load_and_process_data()
+    min_year, max_year = utils.get_year_range(df)
+    filename = utils.get_output_filename(year=(min_year, max_year), template=config['data']['datasetFilenames']['la_pfa_qa'])
     utils.safe_save_data(
         df=df,
         path=config['data']['intFilePath'],
         filename=filename
     )
 
-
-df5.to_csv('data/interim/LA_population_female_2001_2021_NOT_REBASED.csv', index=False)
-
-
+"""
 # 2. Matching local authorities to police force areas for QA querying
 
 df = pd.read_csv('data/interim/LA_population_female_2001_2021_NOT_REBASED.csv')
@@ -114,3 +119,4 @@ df2.replace(to_replace='Devon & Cornwall', value="Devon and Cornwall", inplace=T
 df2.reset_index(drop=True)
 df2.to_csv('data/interim/LA_population_female_2001_2021_PFAs_NOT_REBASED.csv', index=False)
 
+"""

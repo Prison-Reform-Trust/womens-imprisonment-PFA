@@ -99,9 +99,10 @@ The script defines the valid categories to be produced ("all", "less than 6 mont
 ### Processing steps of the data pipeline
 ``` mermaid
 graph TD
-  A[download_data.py] --> B@{ shape: bow-rect, label: "Latest ONS population data" }
-  B --> C[ons_cleaning.py]
-  C --> D@{ shape: bow-rect, label: "LA_population_women_{min_year}-{max_year}.csv" }
+  A[download_data.py] --> B@{ shape: bow-rect, label: "ONS population data" }
+  A --> C@{ shape: bow-rect, label: "LA to PFA lookup table" }
+  B --> D[ons_cleaning.py]
+  D --> E@{ shape: bow-rect, label: "LA_population_women_{min_year}-{max_year}.csv" }
 ```
 
 ### Cleaning
