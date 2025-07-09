@@ -6,7 +6,7 @@ In this section we examine how to process the raw data ready for analysis. The f
 
 !!! warning "Data revision"
 
-    The Ministry of Justice published [revised outcomes by offence data](https://www.gov.uk/government/statistics/criminal-justice-system-statistics-quarterly-december-2022) for 2022 in January 2024. This means that there are discrepancies observed in PRT's previously published Police Force Area factsheets and the data produced in this edition. Our 2022 edition reports fewer women sentenced to a community sentence; suspended sentence; or immediate custody than in this edition. This was not an error in our data analysis, but the result of the limitations with the raw dataset explained in the Ministry of Justice's [technical appendix](https://assets.publishing.service.gov.uk/media/65a7e5feb2f3c60013e5d44b/criminal-justice-statistics-technical-appendix-june-2023.pdf#page=20). Go to [Criminal Justice System statistics: Police Force Area data quality assurance](CJS_PFA_QA.md) for more information about the revision and internal QA checks that have been made for the datasets produced in this pipeline.
+    The Ministry of Justice published [revised outcomes by offence data](https://www.gov.uk/government/statistics/criminal-justice-system-statistics-quarterly-december-2022) for 2022 in January 2024. This means that there are discrepancies observed in PRT's previously published Police Force Area factsheets and the data produced in this edition. Our 2022 edition reports fewer women sentenced to a community sentence; suspended sentence; or immediate custody than in this edition. This was not an error in our data analysis, but the result of the limitations with the raw dataset explained in the Ministry of Justice's [technical appendix](https://assets.publishing.service.gov.uk/media/65a7e5feb2f3c60013e5d44b/criminal-justice-statistics-technical-appendix-june-2023.pdf#page=20). Go to [Criminal Justice System statistics: Police Force Area data quality assurance](../quality-assurance/CJS_PFA.md) for more information about the revision and internal QA checks that have been made for the datasets produced in this pipeline.
 
 ### Processing steps of the data pipeline
 ``` mermaid
@@ -93,3 +93,27 @@ The script defines the valid categories to be produced ("all", "less than 6 mont
     * All custodial sentences
     * Custodial sentences of less than six months
     * Custodial sentences of less than 12 months
+
+
+## ONS mid-year population estimates
+### Processing steps of the data pipeline
+``` mermaid
+graph TD
+  A[download_data.py] --> B@{ shape: bow-rect, label: "Latest ONS population data" }
+  B --> C[ons_cleaning.py]
+  C --> D@{ shape: bow-rect, label: "LA_population_women_{min_year}-{max_year}.csv" }
+```
+
+### Cleaning
+The processing begins with some initial cleaning and filtering of the dataset in `ons_cleaning.py`.
+
+The script loads the ONS population data from the raw data directory, which was downloaded by `download_data.py` and performs the following cleaning steps:
+
+* Renames and reorder columns to a standardised format
+* Discards any aggregated regional or national data
+* Filters for adult women
+* Aggregates all age groups into a single annual value by local authority
+* Retrieves the minimum year and maximum year values in the DataFrame
+* Saves the processed DataFrame to a CSV file with the filename `ons_cleaning` in the `intFilePath` directory as set in `config.yaml` (`data/interim/LA_population_women_{min_year}-{max_year}.csv` by default)
+
+

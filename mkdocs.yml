@@ -2,7 +2,7 @@ site_name: Imprisonment of women
 site_description: An analysis of sentencing outcomes for women by police force area in England and Wales 
 repo_url: https://github.com/Prison-Reform-Trust/womens-imprisonment-PFA
 edit_uri: edit/master/docs/
-copyright: Written by Prison Reform Trust.
+copyright: Written by Prison Reform Trust
 markdown_extensions:
   - admonition
   - pymdownx.details
@@ -24,9 +24,10 @@ theme:
   favicon: assets/favicon.ico
   features:
     - navigation.sections
-    - navigation.path
     - navigation.indexes
     - content.code.copy
+    - navigation.instant
+    - navigation.footer
   palette:
     # Palette toggle for automatic mode
     - media: "(prefers-color-scheme)"
@@ -54,5 +55,11 @@ extra_css:
   - css/extra.css
 nav:
   - Welcome: index.md
-  - Downloading the data: downloading-the-data.md
-  - Processing the data: processing-the-data.md
+  - Getting started:
+    - getting-started/index.md
+    - Downloading the data: getting-started/downloading-the-data.md
+    - Processing the data: getting-started/processing-the-data.md
+  - Quality assurance:
+    - Criminal Justice Statistics: quality-assurance/CJS_PFA.md
+    - ONS population estimates: quality-assurance/ONS-population.md
+    - Matching populations to PFAs: quality-assurance/population-to-pfa.md
