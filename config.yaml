@@ -20,7 +20,7 @@
         ons_comparator: LA_population_women_{min_year}-{max_year}.csv
         la_to_pfa_lookup: LA_to_PFA_(December_2024)_Lookup_in_EW.csv
         la_to_pfa_lookup_earlier_qa: LA_to_PFA_(December_2022)_Lookup_in_EW.csv
-        match_la_to_pfa: LA_PFA_population_women_{min_year}-{max_year}.csv
+        la_to_pfa_matching: LA_PFA_population_women_{min_year}-{max_year}.csv
         la_pfa_qa: QA_LA_PFA_population_women_{min_year}-{max_year}.csv
 
 - outcomes_by_offence_filter:

@@ -17,7 +17,7 @@ import src.utilities as utils
 config = utils.read_config()
 utils.setup_logging()
 
-OUTPUT_FILENAME_TEMPLATE = config['data']['datasetFilenames']['match_la_to_pfa']
+OUTPUT_FILENAME_TEMPLATE = config['data']['datasetFilenames']['la_to_pfa_matching']
 
 
 def load_data() -> tuple[pd.DataFrame, pd.DataFrame]:
@@ -82,7 +82,7 @@ def load_and_process_data() -> Tuple[pd.DataFrame, int, int]:
     """Load, process, and return the population DataFrame with PFA mapping."""
     la_pfa, df_pop = load_data()
     df_pop = (
-        match_la_to_pfa(la_pfa, df_pop)
+        la_to_pfa_matching(la_pfa, df_pop)
         .pipe(filter_and_clean_data)
     )
     min_year, max_year = utils.get_year_range(df_pop)

@@ -29,24 +29,24 @@ import src.utilities as utils
 config = utils.read_config()
 utils.setup_logging()
 
-OUTPUT_FILENAME_TEMPLATE = config['data']['datasetFilenames']['match_la_to_pfa']
+OUTPUT_FILENAME_TEMPLATE = config['data']['datasetFilenames']['la_to_pfa_matching']
 
 
 def load_data() -> tuple[pd.DataFrame, pd.DataFrame]:
     """Load the Local Authority to PFA lookup file and population data."""
-    ons_la_pfa = config['data']['datasetFilenames']['ons_la_pfa']
+    la_to_pfa_lookup = config['data']['datasetFilenames']['la_to_pfa_lookup']
     ons_la_data = utils.fetch_latest_file(
         pattern="*LA_population*.csv",  # NOTE: Would be better to draw this from config
         path=config['data']['intFilePath']
     )
 
-    la_pfa = utils.load_data('raw', ons_la_pfa)
+    la_pfa = utils.load_data('raw', la_to_pfa_lookup)
     df_pop = utils.load_data('interim', ons_la_data)
     return la_pfa, df_pop
 
 
-def match_la_to_pfa(la_pfa: pd.DataFrame, df_pop: pd.DataFrame) -> pd.DataFrame:
-    """Match Local Authority Districts to Police Force Areas in the population dataset
+def assign_pfa(la_pfa: pd.DataFrame, df_pop: pd.DataFrame) -> pd.DataFrame:
+    """Map Local Authority Districts to Police Force Areas in the population dataset
     using the lookup file and add a new PFA column."""
 
     # Create lookup dictionary and map to population data
@@ -72,7 +72,7 @@ def load_and_process_data() -> Tuple[pd.DataFrame, int, int]:
     """Load, process, and return the population DataFrame with PFA mapping."""
     la_pfa, df_pop = load_data()
     df_pop = (
-        match_la_to_pfa(la_pfa, df_pop)
+        assign_pfa(la_pfa, df_pop)
         .pipe(filter_and_clean_data)
     )
     min_year, max_year = utils.get_year_range(df_pop)
