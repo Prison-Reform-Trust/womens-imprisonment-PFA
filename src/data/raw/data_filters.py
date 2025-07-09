@@ -50,7 +50,7 @@ def population_data_filter(data):
         downloads['csv']['href']] if 'csv' in downloads and 'href' in downloads['csv'] else []
 
 
-def ons_la_pfa_filter(version: str):
+def la_to_pfa_lookup_filter(version: str):
     """
     Filter to locate the lookup file between Local Authority Districts and
     Police Force Areas in England and Wales from the Office for National Statistics (ONS).
@@ -58,8 +58,8 @@ def ons_la_pfa_filter(version: str):
     Published at https://geoportal.statistics.gov.uk/datasets/ons::local-authority-districts-to-police-force-areas-in-england-and-wales-lookup-2022/about
     """
     keys = {
-        'latest': ('ons_la_pfa', 'ons_pfa_params', 'ons_la_pfa'),
-        'earlier': ('ons_la_pfa_earlier_qa', 'ons_pfa_earlier_params', 'ons_la_pfa_earlier_qa')
+        'latest': ('la_to_pfa_lookup', 'ons_pfa_params', 'la_to_pfa_lookup'),
+        'earlier': ('la_to_pfa_lookup_earlier_qa', 'ons_pfa_earlier_params', 'la_to_pfa_lookup_earlier_qa')
     }
     if version not in keys:
         raise ValueError(f"Invalid version '{version}'. Expected one of {list(keys.keys())}.")

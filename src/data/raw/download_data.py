@@ -147,7 +147,7 @@ def get_la_pfa_lookup_data():
     """
     logging.info("Starting download of Local Authority to PFA lookup data.")
     for version in ['latest', 'earlier']:  # Loop through both versions for QA purposes
-        keys = data_filters.ons_la_pfa_filter(version)
+        keys = data_filters.la_to_pfa_lookup_filter(version)
         if not keys:
             logging.warning("No data found for version '%s'. Skipping download.", version)
             continue
