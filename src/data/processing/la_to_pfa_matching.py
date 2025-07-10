@@ -49,20 +49,26 @@ def assign_pfa(la_pfa: pd.DataFrame, df_pop: pd.DataFrame) -> pd.DataFrame:
     """Map Local Authority Districts to Police Force Areas in the population dataset
     using the lookup file and add a new PFA column."""
 
-    # Define column patterns for standardisation
-    column_patterns = {
-        r"LAD.*CD": "ladcode",
-        r"PFA.*NM": "pfa_name"
-    }
+    # Check if we need to standardise the lookup file columns
+    if 'ladcode' not in la_pfa.columns or 'pfa_name' not in la_pfa.columns:
+        # Define column patterns for standardisation of lookup file
+        column_patterns = {
+            r"LAD.*CD": "ladcode",
+            r"PFA.*NM": "pfa_name"
+        }
 
-    # Create lookup dictionary
-    logging.info("Matching Local Authority Districts to Police Force Areas...")
-    la_pfa_dict = utils.create_lookup_dict(
-        df=la_pfa,
-        key_col_pattern="ladcode",
-        value_col_pattern="pfa_name",
-        column_patterns=column_patterns
-    )
+        # Create lookup dictionary with standardisation
+        logging.info("Matching Local Authority Districts to Police Force Areas...")
+        la_pfa_dict = utils.create_lookup_dict(
+            df=la_pfa,
+            key_col_pattern="ladcode",
+            value_col_pattern="pfa_name",
+            column_patterns=column_patterns
+        )
+    else:
+        # Columns already standardised, create dictionary directly
+        logging.info("Matching Local Authority Districts to Police Force Areas...")
+        la_pfa_dict = la_pfa.set_index('ladcode')['pfa_name'].to_dict()
 
     df_pop['pfa'] = df_pop['ladcode'].map(la_pfa_dict)
     return df_pop
