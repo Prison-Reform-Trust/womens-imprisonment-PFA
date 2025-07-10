@@ -49,9 +49,21 @@ def assign_pfa(la_pfa: pd.DataFrame, df_pop: pd.DataFrame) -> pd.DataFrame:
     """Map Local Authority Districts to Police Force Areas in the population dataset
     using the lookup file and add a new PFA column."""
 
-    # Create lookup dictionary and map to population data
+    # Define column patterns for standardisation
+    column_patterns = {
+        r"LAD.*CD": "ladcode",
+        r"PFA.*NM": "pfa_name"
+    }
+
+    # Create lookup dictionary using generic utility function
     logging.info("Matching Local Authority Districts to Police Force Areas...")
-    la_pfa_dict = la_pfa.set_index('LAD24CD')['PFA24NM'].to_dict()  # NOTE: Convert column names to something more generic earlier in the pipeline to make this more robust
+    la_pfa_dict = utils.create_lookup_dict(
+        df=la_pfa,
+        key_col_pattern=r"LAD.*CD",
+        value_col_pattern=r"PFA.*NM",
+        column_patterns=column_patterns
+    )
+
     df_pop['pfa'] = df_pop['ladcode'].map(la_pfa_dict)
     return df_pop
 
@@ -62,7 +74,8 @@ def filter_and_clean_data(df_pop: pd.DataFrame) -> pd.DataFrame:
     logging.info("Filtering and cleaning population data...")
     return (
         df_pop
-        .dropna(subset=['pfa'])  # NOTE: These PFA values probably should be removed earlier in the pipeline. They are E10 (Counties) and E11 codes (Metropolitan Counties) and are at a higher geographic level than is required.
+        .dropna(subset=['pfa'])  # NOTE: These PFA values probably should be removed earlier in the pipeline.
+        # They are E10 (Counties) and E11 codes (Metropolitan Counties) at a higher geographic level.
         .loc[lambda df: df['pfa'] != 'London, City of']
         .assign(pfa=lambda df: df['pfa'].replace({'Devon & Cornwall': 'Devon and Cornwall'}))
     )
@@ -71,6 +84,7 @@ def filter_and_clean_data(df_pop: pd.DataFrame) -> pd.DataFrame:
 def load_and_process_data() -> Tuple[pd.DataFrame, int, int]:
     """Load, process, and return the population DataFrame with PFA mapping."""
     la_pfa, df_pop = load_data()
+
     df_pop = (
         assign_pfa(la_pfa, df_pop)
         .pipe(filter_and_clean_data)

@@ -11,7 +11,6 @@ https://www.ons.gov.uk/peoplepopulationandcommunity/populationandmigration/popul
 """
 
 import logging
-import re
 
 import pandas as pd
 
@@ -25,7 +24,9 @@ config = utils.read_config()
 OUTPUT_FILENAME_TEMPLATE = config['data']['datasetFilenames']['ons_comparator']
 
 
-def load_population_data(filename: str = "MYEB1_detailed_population_estimates_series_UK_(2020_geog21).csv") -> pd.DataFrame:
+def load_population_data(
+    filename: str = "MYEB1_detailed_population_estimates_series_UK_(2020_geog21).csv"
+) -> pd.DataFrame:
     """
     Load the ONS population data from the raw data directory.
     """
@@ -39,23 +40,6 @@ def load_population_data(filename: str = "MYEB1_detailed_population_estimates_se
     except FileNotFoundError:
         logging.warning("File %s not found.", filename)
 
-    return df
-
-
-def rename_columns(df: pd.DataFrame) -> pd.DataFrame:
-    """
-    Rename columns: if a column contains 'ladcode', 'laname', or 'ladname', strip any extra characters after.
-    """
-    logging.info("Renaming columns...")
-
-    def clean_col(col):
-        if re.match(r"ladcode", col):
-            return "ladcode"
-        elif re.match(r"laname|ladname", col):
-            return "laname"
-        return col
-
-    df = df.rename(columns=clean_col)
     return df
 
 
@@ -98,9 +82,15 @@ def process_data(df: pd.DataFrame) -> pd.DataFrame:
     - Clean the year column
     - Combine age groups for aggregation
     """
+    # Define column patterns for standardisation
+    column_patterns = {
+        r"ladcode.*": "ladcode",
+        r"laname|ladname": "laname"
+    }
+
     df = (
         df
-        .pipe(rename_columns)
+        .pipe(utils.standardise_columns, column_patterns)
         .pipe(filter_england_wales)
         .pipe(common.filter_adult_women, sex_value=2)
         .pipe(melt_data)

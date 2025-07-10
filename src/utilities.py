@@ -6,7 +6,7 @@ import glob
 import logging
 import os
 import re
-from typing import List, Optional
+from typing import Any, Dict, List, Optional
 
 import pandas as pd
 import plotly.graph_objs as go
@@ -286,3 +286,76 @@ def fetch_latest_file(pattern: str, path: str) -> str:
     # Sort by modification time, newest last
     files.sort(key=os.path.getmtime)
     return os.path.basename(files[-1])
+
+
+def standardise_columns(df: pd.DataFrame, column_patterns: Dict[str, str]) -> pd.DataFrame:
+    """
+    standardise column names using regex patterns.
+
+    Parameters
+    ----------
+    df : pd.DataFrame
+        The DataFrame with columns to standardise.
+    column_patterns : dict
+        A dictionary where keys are regex patterns and values are the standardised column names.
+        Example: {r"ladcode.*": "ladcode", r"laname|ladname": "laname", r"PFA.*NM": "pfa_name"}
+
+    Returns
+    -------
+    pd.DataFrame
+        DataFrame with standardised column names.
+    """
+    logging.info("standardising column names...")
+
+    def clean_col(col):
+        for pattern, replacement in column_patterns.items():
+            if re.match(pattern, col, re.IGNORECASE):
+                return replacement
+        return col
+
+    return df.rename(columns=clean_col)
+
+
+def create_lookup_dict(df: pd.DataFrame, key_col_pattern: str, value_col_pattern: str,
+                       column_patterns: Optional[Dict[str, str]] = None) -> Dict[Any, Any]:
+    """
+    Create a lookup dictionary from standardised column names.
+
+    Parameters
+    ----------
+    df : pd.DataFrame
+        The DataFrame to create the lookup from.
+    key_col_pattern : str
+        Regex pattern to identify the key column.
+    value_col_pattern : str
+        Regex pattern to identify the value column.
+    column_patterns : dict, optional
+        Column standardisation patterns. If provided, columns will be standardised first.
+
+    Returns
+    -------
+    dict
+        A dictionary mapping key column values to value column values.
+    """
+    logging.info("Creating lookup dictionary...")
+
+    # standardise columns if patterns provided
+    if column_patterns:
+        df = standardise_columns(df, column_patterns)
+
+    # Find the actual column names after standardisation
+    key_col = None
+    value_col = None
+
+    for col in df.columns:
+        if re.match(key_col_pattern, col, re.IGNORECASE):
+            key_col = col
+        elif re.match(value_col_pattern, col, re.IGNORECASE):
+            value_col = col
+
+    if key_col is None:
+        raise ValueError(f"No column found matching pattern: {key_col_pattern}")
+    if value_col is None:
+        raise ValueError(f"No column found matching pattern: {value_col_pattern}")
+
+    return df.set_index(key_col)[value_col].to_dict()
