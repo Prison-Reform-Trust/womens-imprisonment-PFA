@@ -12,6 +12,7 @@ from typing import Tuple
 
 import pandas as pd
 
+import src.data.processing.common_ons_processing as common
 import src.utilities as utils
 
 config = utils.read_config()
@@ -44,6 +45,7 @@ def process_custody_data(custody_data: pd.DataFrame) -> pd.DataFrame:
         .melt(id_vars='pfa', var_name='year', value_name='custody_count')
         .assign(year=lambda df: df['year'].astype(int))
         .sort_values(by=['pfa', 'year'])
+        .reset_index(drop=True)
     )
 
     return custody_data
@@ -55,27 +57,12 @@ def process_population_data(population_data: pd.DataFrame, custody_data: pd.Data
     logging.info("Processing population data...")
     population_data = (
         population_data
-        .loc[lambda df: df['year'] >= min_year]  # Filter years to match population data
-        # .drop(columns=['ladcode', 'pfa'])
-        # .rename(columns={'pfa': 'pfa'})
-        # .melt(id_vars='pfa', var_name='year', value_name='population')
-        # .assign(year=lambda df: df['year'].astype(int))
-        # .sort_values(by=['pfa', 'year'])
+        .loc[lambda df: df['year'] >= min_year]  # Filter years to match custody data
+        .pipe(common.group_and_sum, group_cols=['pfa', 'year'], sum_col='freq')
     )
 
     return population_data
 
-
-def filter_and_clean_data(df_pop: pd.DataFrame) -> pd.DataFrame:
-    """Filter the DataFrame to remove rows with missing PFA and City of London,
-    and standardise Devon & Cornwall name using method chaining."""
-    logging.info("Filtering and cleaning population data...")
-    return (
-        df_pop
-        .dropna(subset=['pfa'])
-        .loc[lambda df: df['pfa'] != 'London, City of']
-        .assign(pfa=lambda df: df['pfa'].replace({'Devon & Cornwall': 'Devon and Cornwall'}))
-    )
 
 
 def load_and_process_data() -> Tuple[pd.DataFrame, int, int]:
