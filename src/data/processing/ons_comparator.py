@@ -95,7 +95,7 @@ def process_data(df: pd.DataFrame) -> pd.DataFrame:
         .pipe(common.filter_adult_women, sex_value=2)
         .pipe(melt_data)
         .pipe(clean_year_column)
-        .pipe(common.combine_ages)
+        .pipe(common.group_and_sum)
     )
 
     return df

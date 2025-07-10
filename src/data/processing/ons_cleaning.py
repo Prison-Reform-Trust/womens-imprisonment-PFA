@@ -100,7 +100,7 @@ def process_data(df: pd.DataFrame) -> pd.DataFrame:
         rename_and_reorder_columns(df)
         .pipe(common.remove_regional_and_national_aggregates)
         .pipe(common.filter_adult_women, sex_value='Female')
-        .pipe(common.combine_ages)
+        .pipe(common.group_and_sum)
     )
     return df
 

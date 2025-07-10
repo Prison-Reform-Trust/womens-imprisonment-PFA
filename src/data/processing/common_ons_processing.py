@@ -36,11 +36,12 @@ def filter_adult_women(df: pd.DataFrame, sex_value: str | int, sex_col: str = 's
     return df
 
 
-def combine_ages(df, group_cols=None, sum_col='freq'):
+def group_and_sum(df, group_cols=None, sum_col='freq'):
     """
-    Combine age groups for aggregation.
+    Aggregate the DataFrame by summing the specified column
+    across the specified group columns.
     """
-    logging.info("Combining age groups for aggregation...")
     if group_cols is None:
         group_cols = ['ladcode', 'laname', 'year']
+    logging.info("Aggregating by: %s", ', '.join(group_cols))
     return df.groupby(group_cols, as_index=False, observed=True).agg({sum_col: 'sum'})

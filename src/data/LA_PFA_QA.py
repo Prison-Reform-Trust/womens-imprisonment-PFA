@@ -77,7 +77,7 @@ def process_data(df: pd.DataFrame) -> pd.DataFrame:
         df
         .pipe(data_processor.melt_data)
         .pipe(data_processor.clean_year_column)
-        .pipe(data_processor.combine_ages)
+        .pipe(data_processor.group_and_sum)
         .assign(year=lambda df: df['year'].astype(int))
     )
     return df
