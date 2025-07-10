@@ -36,7 +36,7 @@ def load_data() -> tuple[pd.DataFrame, pd.DataFrame]:
     """Load the Local Authority to PFA lookup file and population data."""
     la_to_pfa_lookup = config['data']['datasetFilenames']['la_to_pfa_lookup']
     ons_la_data = utils.fetch_latest_file(
-        pattern="*LA_population*.csv",  # NOTE: Would be better to draw this from config
+        pattern="*LA_population_women*.csv",  # NOTE: Would be better to draw this from config
         path=config['data']['intFilePath']
     )
 
@@ -59,8 +59,8 @@ def assign_pfa(la_pfa: pd.DataFrame, df_pop: pd.DataFrame) -> pd.DataFrame:
     logging.info("Matching Local Authority Districts to Police Force Areas...")
     la_pfa_dict = utils.create_lookup_dict(
         df=la_pfa,
-        key_col_pattern=r"LAD.*CD",
-        value_col_pattern=r"PFA.*NM",
+        key_col_pattern="ladcode",  # Use standardized column name
+        value_col_pattern="pfa_name",  # Use standardized column name
         column_patterns=column_patterns
     )
 
