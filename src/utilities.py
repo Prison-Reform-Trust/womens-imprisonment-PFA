@@ -305,7 +305,7 @@ def standardise_columns(df: pd.DataFrame, column_patterns: Dict[str, str]) -> pd
     pd.DataFrame
         DataFrame with standardised column names.
     """
-    logging.info("standardising column names...")
+    logging.info("Standardising column names...")
 
     def clean_col(col):
         for pattern, replacement in column_patterns.items():

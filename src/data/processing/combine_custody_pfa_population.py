@@ -68,7 +68,7 @@ def process_population_data(population_data: pd.DataFrame, custody_data: pd.Data
 
 def filter_and_clean_data(df_pop: pd.DataFrame) -> pd.DataFrame:
     """Filter the DataFrame to remove rows with missing PFA and City of London,
-    and standardize Devon & Cornwall name using method chaining."""
+    and standardise Devon & Cornwall name using method chaining."""
     logging.info("Filtering and cleaning population data...")
     return (
         df_pop
