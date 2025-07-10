@@ -49,7 +49,7 @@ def assign_pfa(la_pfa: pd.DataFrame, df_pop: pd.DataFrame) -> pd.DataFrame:
     """Map Local Authority Districts to Police Force Areas in the population dataset
     using the lookup file and add a new PFA column."""
 
-    # Check if we need to standardise the lookup file columns
+    # Check if the lookup file columns need to be standardised
     if 'ladcode' not in la_pfa.columns or 'pfa_name' not in la_pfa.columns:
         # Define column patterns for standardisation of lookup file
         column_patterns = {
