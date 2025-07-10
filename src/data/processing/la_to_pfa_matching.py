@@ -55,12 +55,12 @@ def assign_pfa(la_pfa: pd.DataFrame, df_pop: pd.DataFrame) -> pd.DataFrame:
         r"PFA.*NM": "pfa_name"
     }
 
-    # Create lookup dictionary using generic utility function
+    # Create lookup dictionary
     logging.info("Matching Local Authority Districts to Police Force Areas...")
     la_pfa_dict = utils.create_lookup_dict(
         df=la_pfa,
-        key_col_pattern="ladcode",  # Use standardized column name
-        value_col_pattern="pfa_name",  # Use standardized column name
+        key_col_pattern="ladcode",
+        value_col_pattern="pfa_name",
         column_patterns=column_patterns
     )
 
