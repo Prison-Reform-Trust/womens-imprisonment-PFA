@@ -62,4 +62,4 @@ nav:
   - Quality assurance:
     - Criminal Justice Statistics: quality-assurance/CJS_PFA.md
     - ONS population estimates: quality-assurance/ONS-population.md
-    - Matching populations to PFAs: quality-assurance/population-to-pfa.md
+    - Matching local authorities to PFAs: quality-assurance/population-to-pfa.md
