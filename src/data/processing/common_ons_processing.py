@@ -1,5 +1,3 @@
-#!/usr/bin/env python3
-# -*- coding: utf-8 -*-
 """Common ONS data processing functions for handling population data."""
 
 import logging

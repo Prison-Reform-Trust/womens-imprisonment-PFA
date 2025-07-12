@@ -1,6 +1,3 @@
-#!/usr/bin/env python3
-# -*- coding: utf-8 -*-
-
 """
 This script allows users to access the Office for National Statistics (ONS) API
 to retrieve metadata about available datasets and download by name, version, and other attributes.
@@ -121,7 +118,3 @@ def main():
     """Main function to set up logging and return the population dataset URL."""
     utils.setup_logging()
     return get_population_url()
-
-
-if __name__ == "__main__":
-    main()

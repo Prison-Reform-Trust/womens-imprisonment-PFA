@@ -1,6 +1,3 @@
-#!/usr/bin/env python3
-# -*- coding: utf-8 -*-
-
 """
 This script provides filter functions to locate specific data files to download
 from API responses, including GOV.UK and the Office for National Statistics (ONS).

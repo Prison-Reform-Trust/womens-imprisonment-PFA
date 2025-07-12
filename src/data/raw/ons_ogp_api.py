@@ -1,6 +1,3 @@
-#!/usr/bin/env python3
-# -*- coding: utf-8 -*-
-
 """
 This script allows users to access the Office for National Statistics (ONS) Open Geography Portal
 to retrieve a lookup file between Local Authority Districts and Police Force Areas in England and Wales.
