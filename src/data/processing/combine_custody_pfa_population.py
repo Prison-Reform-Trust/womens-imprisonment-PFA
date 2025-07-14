@@ -76,6 +76,7 @@ def process_population_data(population_data: pd.DataFrame, custody_data: pd.Data
     return population_data
 
 
+# NOTE: Move projection functions to a separate module as the script is getting large
 def project_linear_trend(
         df: pd.DataFrame,
         pfa_col: str = 'pfa',
