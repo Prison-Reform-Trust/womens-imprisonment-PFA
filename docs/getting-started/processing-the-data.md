@@ -135,3 +135,41 @@ The processed DataFrame is saved to a CSV file in the `intFilePath` directory as
     This produces our interim dataset, showing the total number of adult women in each local authority area in England and Wales, matched to its own Police Force Area.
 
 
+## Combining the datasets
+### Processing steps of the data pipeline
+``` mermaid
+graph TD
+  subgraph Earlier processing steps
+    subgraph CJS Statistics
+    A[make_custody_tables.py] --> B@{ shape: bow-rect, label: "Women sentenced to custody by PFA, by year" }
+    end
+    subgraph ONS population estimates
+    C[la_to_pfa_matching.py] --> D@{ shape: bow-rect, label: "Adult female population by local authority and PFA, by year" }
+    end
+  end
+  B --> E[combine_custody_pfa_population.py]
+  D --> E
+  E --> F@{ shape: bow-rect, label: "Women sentenced to custody, the population, and rate by PFA" }
+  E --> G@{ shape: doc, label: "Rate of imprisonment by PFA, by year" }
+
+```
+
+### Combining custody data with Police Force Area populations
+
+`combine_custody_pfa_population.py` processes the interim datasets produced by `make_custody_tables.py` and `la_to_pfa_matching.py` to combine the number women sentenced to immediate custody in each Police Force Area with the population.
+
+The script reads the interim datasets and performs the following steps:
+
+* Processes the custody and population data to ensure they are in a suitable format for merging.
+* Performs three separate projection methods to predict the population for the latest year in the custody data (population data is only available up to the previous year).
+* Selects the best projection method based on the lowest mean absolute percentage error (MAPE) using backtesting against the previous years' population data.
+* Merges the custody data with the population data on Police Force Area.
+* Calculates the imprisonment rate (per 100,000 women).
+* Pivots the DataFrame to create a publication-ready format, with Police Force Area as the index and years as columns.
+* Saves the datasets.
+
+!!! success "Data produced"
+    This produces two datasets:
+    
+    1. The number of women sentenced to immediate custody in each Police Force Area, the population, and the imprisonment rate (per 100,000 women).
+    2. The final publication ready dataset showing the rate of imprisonment in each Police Force Area for the entire time series.
