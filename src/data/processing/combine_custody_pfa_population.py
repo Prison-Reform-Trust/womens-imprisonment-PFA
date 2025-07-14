@@ -23,6 +23,7 @@ config = utils.read_config()
 utils.setup_logging()
 
 OUTPUT_FILENAME_TEMPLATE = config['data']['datasetFilenames']['combine_custody_pfa_population']
+FINAL_TABLE_FILENAME_TEMPLATE = config['data']['datasetFilenames']['custody_rate_pfa']
 
 
 def load_data() -> tuple[pd.DataFrame, pd.DataFrame]:
@@ -345,15 +346,44 @@ def load_and_process_data() -> Tuple[pd.DataFrame, int, int]:
     return merged_df, min_year, max_year
 
 
+def create_publication_ready_table(df: pd.DataFrame) -> pd.DataFrame:
+    """Create a publication-ready table from the merged data."""
+    logging.info("Creating final publication-ready table...")
+
+    # Get the most recent year for sorting
+    latest_year = df['year'].max()
+
+    publication_table = (df
+                         .pivot_table(index='pfa', columns='year', values='imprisonment_rate')
+                         .sort_values(by=latest_year, ascending=True)
+                         )
+    return publication_table
+
+
 def main():
     """Main function to load, process, and save the data."""
     df, min_year, max_year = load_and_process_data()
-    filename = utils.get_output_filename(year=(min_year, max_year), template=OUTPUT_FILENAME_TEMPLATE)
+    filename = utils.get_output_filename(
+        year=(min_year, max_year),
+        template=OUTPUT_FILENAME_TEMPLATE
+    )
 
     utils.safe_save_data(
         df,
         path=config['data']['clnFilePath'],
         filename=filename
+    )
+
+    publication_table = create_publication_ready_table(df)
+    publication_filename = utils.get_output_filename(
+        year=(min_year, max_year),
+        template=FINAL_TABLE_FILENAME_TEMPLATE
+    )
+    utils.safe_save_data(
+        publication_table,
+        path=config['data']['clnFilePath'],
+        filename=publication_filename,
+        index=True  # Keep PFA as index for publication table
     )
 
 
