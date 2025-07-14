@@ -370,7 +370,7 @@ def main():
 
     utils.safe_save_data(
         df,
-        path=config['data']['clnFilePath'],
+        path=config['data']['intFilePath'],
         filename=filename
     )
 
