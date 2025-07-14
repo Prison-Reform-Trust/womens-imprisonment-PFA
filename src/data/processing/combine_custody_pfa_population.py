@@ -201,7 +201,7 @@ def project_moving_average(
                 year_col: projection_year,
                 pop_col: max(int(round(projected_pop)), 0),
                 'method': 'moving_average',
-                'avg_annual_change': avg_change
+                'avg_annual_change': avg_change.round(2)
             })
 
     return pd.DataFrame(projections)
@@ -306,7 +306,7 @@ def merge_custody_and_population(custody_data: pd.DataFrame,
         logging.warning("PFAs with missing data: %s", ', '.join(missing_pfas))
 
     # Calculate imprisonment rate (per 100,000 women)
-    merged_df['imprisonment_rate'] = (merged_df['custody_count'] / merged_df['freq']) * 100000
+    merged_df['imprisonment_rate'] = ((merged_df['custody_count'] / merged_df['freq']) * 100000).round(1)
 
     logging.info("Final merged dataset: %s rows", len(merged_df))
     logging.info("Data covers: %s to %s", merged_df['year'].min(), merged_df['year'].max())
