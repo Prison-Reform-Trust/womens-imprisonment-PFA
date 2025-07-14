@@ -102,10 +102,10 @@ graph TD
   A[download_data.py] --> B@{ shape: bow-rect, label: "ONS population data" }
   A --> C@{ shape: bow-rect, label: "LA to PFA lookup table" }
   B --> D[ons_cleaning.py]
-  D --> E@{ shape: bow-rect, label: "LA_population_women_{min_year}-{max_year}.csv" }
+  D --> E@{ shape: bow-rect, label: "Adult female population by local authority, by year" }
   C --> F[la_to_pfa_matching.py]
   E --> F
-  F --> G@{ shape: bow-rect, label: "LA_PFA_population_women_{min_year}-{max_year}.csv" }
+  F --> G@{ shape: bow-rect, label: "Adult female population by local authority and PFA, by year" }
 
 ```
 
