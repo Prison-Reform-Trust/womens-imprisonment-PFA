@@ -21,7 +21,7 @@ from typing import Tuple
 import pandas as pd
 
 import src.data.processing.common_ons_processing as common_processing
-import src.data.processing.ons_comparator as data_processor
+import src.data.qa.ons_comparator as data_processor
 import src.utilities as utils
 
 config = utils.read_config()
@@ -29,7 +29,6 @@ utils.setup_logging()
 
 
 # 1. Combining population estimates for England and Wales from 2021 census and MYE reconciliation data
-
 def load_data() -> Tuple[pd.DataFrame, pd.DataFrame]:
     """Load the population estimates and reconciliation data."""
     df_population = utils.load_data('raw', 'MYEB1_detailed_population_estimates_series_UK_(2021_geog21).csv')
@@ -45,11 +44,17 @@ def preprocess_data(df: pd.DataFrame) -> pd.DataFrame:
     - Filter for adult women
     """
     logging.info("Preprocessing population data...")
+    # Define column patterns for standardisation
+    column_patterns = {
+        r"ladcode.*": "ladcode",
+        r"laname|ladname": "laname"
+    }
+
     df = (
         df
-        .pipe(common_processing.rename_columns)
+        .pipe(utils.standardise_columns, column_patterns)
         .pipe(common_processing.filter_england_wales)
-        .pipe(common_processing.filter_adult_women)
+        .pipe(common_processing.filter_adult_women, sex_value=2)
     )
     return df
 
@@ -78,7 +83,7 @@ def process_data(df: pd.DataFrame) -> pd.DataFrame:
         df
         .pipe(data_processor.melt_data)
         .pipe(data_processor.clean_year_column)
-        .pipe(data_processor.group_and_sum)
+        .pipe(common_processing.group_and_sum)
         .assign(year=lambda df: df['year'].astype(int))
     )
     return df
