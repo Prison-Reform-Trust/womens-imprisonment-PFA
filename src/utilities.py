@@ -30,7 +30,7 @@ def read_config():
     return config
 
 
-def load_data(status: str, filename: str, usecols: Optional[List[str]] = None) -> pd.DataFrame:
+def load_data(status: str, filename: str, usecols: Optional[Any] = None) -> pd.DataFrame:
     """Load CSV file into Pandas DataFrame and convert object columns
     to categories when they meet criteria in `set_columns_to_category()`
 
@@ -43,8 +43,9 @@ def load_data(status: str, filename: str, usecols: Optional[List[str]] = None) -
         * If 'processed', file is located in "clnFilePath"
     filename : str
         Name of CSV file to be loaded.
-    usecols : list of str, optional
-        Subset of columns to read from the CSV file.
+    usecols : list of str, range, or None, optional
+        Subset of columns to read from the CSV file. Can be a list of column names,
+        a range object, or None to load all columns.
 
     Returns
     -------
@@ -68,6 +69,10 @@ def load_data(status: str, filename: str, usecols: Optional[List[str]] = None) -
     setup_logging()
 
     try:
+        # Convert range to list if usecols is a range object
+        if isinstance(usecols, range):
+            usecols = list(usecols)
+
         df = pd.read_csv(df_path, encoding='utf-8-sig', low_memory=False, usecols=usecols)
         logging.info("Loaded data from %s", df_path)
         return set_columns_to_category(df)
