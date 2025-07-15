@@ -16,7 +16,7 @@ from typing import Tuple
 import numpy as np
 import pandas as pd
 
-import src.data.processing.common_ons_processing as common
+import src.data.processing.common_ons_processing as common_processing
 import src.utilities as utils
 
 config = utils.read_config()
@@ -70,7 +70,7 @@ def process_population_data(population_data: pd.DataFrame, custody_data: pd.Data
     population_data = (
         population_data
         .loc[lambda df: df['year'] >= min_year]  # Filter years to match custody data
-        .pipe(common.group_and_sum, group_cols=['pfa', 'year'], sum_col='freq')
+        .pipe(common_processing.group_and_sum, group_cols=['pfa', 'year'], sum_col='freq')
     )
 
     return population_data

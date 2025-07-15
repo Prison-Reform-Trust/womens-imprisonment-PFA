@@ -20,6 +20,7 @@ from typing import Tuple
 
 import pandas as pd
 
+import src.data.processing.common_ons_processing as common_processing
 import src.data.processing.ons_comparator as data_processor
 import src.utilities as utils
 
@@ -46,9 +47,9 @@ def preprocess_data(df: pd.DataFrame) -> pd.DataFrame:
     logging.info("Preprocessing population data...")
     df = (
         df
-        .pipe(data_processor.rename_columns)
-        .pipe(data_processor.filter_england_wales)
-        .pipe(data_processor.filter_adult_women)
+        .pipe(common_processing.rename_columns)
+        .pipe(common_processing.filter_england_wales)
+        .pipe(common_processing.filter_adult_women)
     )
     return df
 

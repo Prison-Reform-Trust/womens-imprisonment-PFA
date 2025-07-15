@@ -22,7 +22,7 @@ from typing import Tuple
 
 import pandas as pd
 
-import src.data.processing.common_ons_processing as common
+import src.data.processing.common_ons_processing as common_processing
 import src.utilities as utils
 
 utils.setup_logging()
@@ -98,9 +98,9 @@ def process_data(df: pd.DataFrame) -> pd.DataFrame:
     logging.info("Processing data...")
     df = (
         rename_and_reorder_columns(df)
-        .pipe(common.remove_regional_and_national_aggregates)
-        .pipe(common.filter_adult_women, sex_value='Female')
-        .pipe(common.group_and_sum)
+        .pipe(common_processing.remove_regional_and_national_aggregates)
+        .pipe(common_processing.filter_adult_women, sex_value='Female')
+        .pipe(common_processing.group_and_sum)
     )
     return df
 

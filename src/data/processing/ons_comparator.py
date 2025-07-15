@@ -14,7 +14,7 @@ import logging
 
 import pandas as pd
 
-import src.data.processing.common_ons_processing as common
+import src.data.processing.common_ons_processing as common_processing
 import src.utilities as utils
 
 utils.setup_logging()
@@ -81,11 +81,11 @@ def process_data(df: pd.DataFrame) -> pd.DataFrame:
     df = (
         df
         .pipe(utils.standardise_columns, column_patterns)
-        .pipe(common.filter_england_wales)
-        .pipe(common.filter_adult_women, sex_value=2)
+        .pipe(common_processing.filter_england_wales)
+        .pipe(common_processing.filter_adult_women, sex_value=2)
         .pipe(melt_data)
         .pipe(clean_year_column)
-        .pipe(common.group_and_sum)
+        .pipe(common_processing.group_and_sum)
     )
 
     return df
