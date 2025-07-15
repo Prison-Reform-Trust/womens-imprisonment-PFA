@@ -7,7 +7,7 @@
     downloadPaths:
         cjs_dec_2024: https://www.gov.uk/api/content/government/statistics/criminal-justice-system-statistics-quarterly-december-2024
         la_to_pfa_lookup: https://services1.arcgis.com/ESMARspQHYMw9BZ9/arcgis/rest/services/LAD24_CSP24_PFA24_EW_LU/FeatureServer/0/query
-        la_to_pfa_lookup_earlier_qa: https://services1.arcgis.com/ESMARspQHYMw9BZ9/arcgis/rest/services/LAD22_CSP22_PFA22_EW_LU/FeatureServer/0/query
+        la_to_pfa_lookup_qa: https://services1.arcgis.com/ESMARspQHYMw9BZ9/arcgis/rest/services/LAD22_CSP22_PFA22_EW_LU/FeatureServer/0/query
     datasetFilenames:
         outcomes_by_offence: sentence_outcomes_2017_2024.csv
         outcomes_by_offence_earlier: sentence_outcomes_2010_2016.csv
@@ -17,13 +17,14 @@
         make_custody_tables_template: PFA_custodial_sentences_{category}_FINAL.csv
         filter_custody_offences: PFA_custodial_sentences_by_offence_{year}_FINAL.csv
         ons_cleaning: LA_population_women_{min_year}-{max_year}.csv
-        ons_comparator: LA_population_women_{min_year}-{max_year}.csv
         la_to_pfa_lookup: LA_to_PFA_(December_2024)_Lookup_in_EW.csv
-        la_to_pfa_lookup_earlier_qa: LA_to_PFA_(December_2022)_Lookup_in_EW.csv
         la_to_pfa_matching: LA_PFA_population_women_{min_year}-{max_year}.csv
-        la_pfa_qa: QA_LA_PFA_population_women_{min_year}-{max_year}.csv
         combine_custody_pfa_population: pfa_imprisonment_rates_{min_year}-{max_year}.csv
         custody_rate_pfa: pfa_imprisonment_rates_{min_year}-{max_year}_publication_table.csv
+    qaFilenames:
+        ons_comparator: LA_population_women_{min_year}-{max_year}.csv
+        la_to_pfa_lookup: LA_to_PFA_(December_2022)_Lookup_in_EW.csv
+        la_pfa: QA_LA_PFA_population_women_{min_year}-{max_year}.csv
 
 - outcomes_by_offence_filter:
     include:

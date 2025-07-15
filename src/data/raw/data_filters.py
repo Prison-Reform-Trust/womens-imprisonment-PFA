@@ -56,7 +56,7 @@ def la_to_pfa_lookup_filter(version: str):
     """
     keys = {
         'latest': ('la_to_pfa_lookup', 'ons_pfa_params', 'la_to_pfa_lookup'),
-        'earlier': ('la_to_pfa_lookup_earlier_qa', 'ons_pfa_earlier_params', 'la_to_pfa_lookup_earlier_qa')
+        'earlier': ('la_to_pfa_lookup_qa', 'ons_pfa_earlier_params', 'la_to_pfa_lookup_qa')
     }
     if version not in keys:
         raise ValueError(f"Invalid version '{version}'. Expected one of {list(keys.keys())}.")

@@ -21,7 +21,7 @@ utils.setup_logging()
 
 config = utils.read_config()
 
-OUTPUT_FILENAME_TEMPLATE = config['data']['datasetFilenames']['ons_comparator']
+OUTPUT_FILENAME_TEMPLATE = config['data']['qaFilenames']['ons_comparator']
 
 
 def load_population_data(

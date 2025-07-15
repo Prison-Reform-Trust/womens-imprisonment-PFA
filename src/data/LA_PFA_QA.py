@@ -96,7 +96,7 @@ def load_and_process_data() -> pd.DataFrame:
 def main():
     df = load_and_process_data()
     min_year, max_year = utils.get_year_range(df)
-    filename = utils.get_output_filename(year=(min_year, max_year), template=config['data']['datasetFilenames']['la_pfa_qa'])
+    filename = utils.get_output_filename(year=(min_year, max_year), template=config['data']['qaFilenames']['la_pfa'])
     utils.safe_save_data(
         df=df,
         path=config['data']['intFilePath'],
