@@ -64,8 +64,8 @@ def process_data(df: pd.DataFrame) -> pd.DataFrame:
         .pipe(utils.standardise_columns, column_patterns)
         .pipe(common_processing.filter_england_wales)
         .pipe(common_processing.filter_adult_women, sex_value=2)
-        .pipe(melt_data)
-        .pipe(clean_year_column)
+        .pipe(common_processing.melt_data)
+        .pipe(common_processing.clean_year_column)
         .pipe(common_processing.group_and_sum)
     )
 
