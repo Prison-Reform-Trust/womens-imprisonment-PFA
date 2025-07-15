@@ -21,6 +21,7 @@ from typing import Tuple
 import pandas as pd
 
 import src.data.processing.common_ons_processing as common_processing
+import src.data.processing.la_to_pfa_matching as la_to_pfa_matching
 import src.utilities as utils
 
 config = utils.read_config()
@@ -28,7 +29,7 @@ utils.setup_logging()
 
 
 # 1. Combining population estimates for England and Wales from 2021 census and MYE reconciliation data
-def load_data() -> Tuple[pd.DataFrame, pd.DataFrame]:
+def load_population_data() -> Tuple[pd.DataFrame, pd.DataFrame]:
     """Load the population estimates and reconciliation data."""
     df_population = utils.load_data('raw', 'MYEB1_detailed_population_estimates_series_UK_(2021_geog21).csv')
     df_reconciliation = utils.load_data('raw', 'MYEB2_detailed_components_of_change_for reconciliation_EW_(2021_geog21).csv',
@@ -36,7 +37,13 @@ def load_data() -> Tuple[pd.DataFrame, pd.DataFrame]:
     return df_population, df_reconciliation
 
 
-def preprocess_data(df: pd.DataFrame) -> pd.DataFrame:
+def load_la_to_pfa_lookup(filename: str = config['data']['qaFilenames']['la_to_pfa_lookup']) -> pd.DataFrame:
+    """Load the Local Authority to PFA lookup file."""
+    la_to_pfa_lookup_filename = filename
+    return utils.load_data('raw', la_to_pfa_lookup_filename)
+
+
+def prepare_population_data(df: pd.DataFrame) -> pd.DataFrame:
     """Preprocess DataFrame to:
     - Rename columns
     - Filter for England and Wales
@@ -61,7 +68,7 @@ def preprocess_data(df: pd.DataFrame) -> pd.DataFrame:
 def combine_population_data(df_population: pd.DataFrame, df_reconciliation: pd.DataFrame) -> pd.DataFrame:
     """Combine the population estimates with the reconciliation data."""
     logging.info("Combining 2021 census population figures with reconciliation data...")
-    df_population, df_reconciliation = map(preprocess_data, [df_population, df_reconciliation])
+    df_population, df_reconciliation = map(prepare_population_data, [df_population, df_reconciliation])
 
     df_merged = df_reconciliation.merge(
         df_population[['ladcode', 'sex', 'age', 'population_2021']],
@@ -71,7 +78,7 @@ def combine_population_data(df_population: pd.DataFrame, df_reconciliation: pd.D
     return df_merged
 
 
-def process_data(df: pd.DataFrame) -> pd.DataFrame:
+def process_population_data(df: pd.DataFrame) -> pd.DataFrame:
     """
     Process the DataFrame to:
     - Melt the DataFrame to long format
@@ -88,40 +95,43 @@ def process_data(df: pd.DataFrame) -> pd.DataFrame:
     return df
 
 
+def map_la_to_pfa(df_pop: pd.DataFrame, la_pfa_lookup: pd.DataFrame) -> pd.DataFrame:
+    """Map Local Authority Districts to Police Force Areas in the population dataset."""
+    df = (
+        la_to_pfa_matching.assign_pfa(la_pfa_lookup, df_pop)
+        .pipe(la_to_pfa_matching.filter_and_clean_data)
+    )
+    return df
+
+
 def load_and_process_data() -> pd.DataFrame:
-    """Load, process, and return the combined population DataFrame."""
-    df_population, df_reconciliation = load_data()
+    """Load, process, and return the combined population DataFrame with PFAs."""
+    df_population, df_reconciliation = load_population_data()
+    la_pfa_lookup = load_la_to_pfa_lookup()
+
     df = (
         combine_population_data(df_population, df_reconciliation)
-        .pipe(process_data)
+        .pipe(process_population_data)
+        .pipe(map_la_to_pfa, la_pfa_lookup)
         )
     return df
 
 
 def main():
+    """Main function to load, process, and save the population data with PFA mapping."""
     df = load_and_process_data()
     min_year, max_year = utils.get_year_range(df)
-    filename = utils.get_output_filename(year=(min_year, max_year), template=config['data']['qaFilenames']['la_pfa'])
+    filename = utils.get_output_filename(
+        year=(min_year, max_year),
+        template=config['data']['qaFilenames']['la_pfa']
+        )
+
     utils.safe_save_data(
         df=df,
         path=config['data']['intFilePath'],
         filename=filename
     )
 
-"""
-# 2. Matching local authorities to police force areas for QA querying
 
-df = pd.read_csv('data/interim/LA_population_female_2001_2021_NOT_REBASED.csv')
-ons_pfa = pd.read_csv('data/raw/Local_Authority_District_to_Community_Safety_Partnerships_to_Police_Force_Areas_(December_2022)_Lookup_in_England_and_Wales.csv', usecols=['LAD22CD','LAD22NM', 'PFA22NM'])
-
-lad_to_pfa_dict = ons_pfa.set_index('LAD22CD')['PFA22NM'].to_dict()
-
-for key in lad_to_pfa_dict:
-    df.loc[df['ladcode21'].str.contains(key), 'pfa'] = lad_to_pfa_dict[key]
-
-df2 = df.query('ladname21 != "City of London"').copy()
-df2.replace(to_replace='Devon & Cornwall', value="Devon and Cornwall", inplace=True)
-df2.reset_index(drop=True)
-df2.to_csv('data/interim/LA_population_female_2001_2021_PFAs_NOT_REBASED.csv', index=False)
-
-"""
+if __name__ == "__main__":
+    main()
