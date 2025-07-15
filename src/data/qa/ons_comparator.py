@@ -24,25 +24,6 @@ config = utils.read_config()
 OUTPUT_FILENAME_TEMPLATE = config['data']['qaFilenames']['ons_comparator']
 
 
-def load_population_data(
-    filename: str = "MYEB1_detailed_population_estimates_series_UK_(2020_geog21).csv"
-) -> pd.DataFrame:
-    """
-    Load the ONS population data from the raw data directory.
-    """
-
-    logging.info("Loading comparator ONS population data...")
-    try:
-        df = utils.load_data(
-            status='raw',
-            filename=filename
-        )
-    except FileNotFoundError:
-        logging.warning("File %s not found.", filename)
-
-    return df
-
-
 def process_data(df: pd.DataFrame) -> pd.DataFrame:
     """
     Process the DataFrame to:
@@ -81,7 +62,11 @@ def load_and_process_data():
     DataFrame
         The processed DataFrame ready for further QA work with latest edition.
     """
-    df = load_population_data()
+    logging.info("Loading comparator ONS population data...")
+    df = utils.load_data(
+        status='raw',
+        filename="MYEB1_detailed_population_estimates_series_UK_(2020_geog21).csv"
+    )
     if df.empty:
         logging.error("No data loaded from ONS population file.")
         return pd.DataFrame()
