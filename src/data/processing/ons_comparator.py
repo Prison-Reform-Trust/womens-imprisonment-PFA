@@ -43,16 +43,6 @@ def load_population_data(
     return df
 
 
-def filter_england_wales(df: pd.DataFrame) -> pd.DataFrame:
-    """
-    Filter the DataFrame to only include data for England and Wales.
-    """
-    logging.info("Filtering for England and Wales...")
-    filt = df['country'].str.contains("(?:^E|^W)", regex=True)
-    df_eng_wales = df[filt]
-    return df_eng_wales
-
-
 def melt_data(df: pd.DataFrame) -> pd.DataFrame:
     """
     Melt the DataFrame from wide to long format.
@@ -91,7 +81,7 @@ def process_data(df: pd.DataFrame) -> pd.DataFrame:
     df = (
         df
         .pipe(utils.standardise_columns, column_patterns)
-        .pipe(filter_england_wales)
+        .pipe(common.filter_england_wales)
         .pipe(common.filter_adult_women, sex_value=2)
         .pipe(melt_data)
         .pipe(clean_year_column)

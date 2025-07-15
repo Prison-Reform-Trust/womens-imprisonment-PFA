@@ -9,6 +9,16 @@ from src.utilities import setup_logging
 setup_logging()
 
 
+def filter_england_wales(df: pd.DataFrame) -> pd.DataFrame:
+    """
+    Filter the DataFrame to only include data for England and Wales.
+    """
+    logging.info("Filtering for England and Wales...")
+    filt = df['country'].str.contains("(?:^E|^W)", regex=True)
+    df_eng_wales = df[filt]
+    return df_eng_wales
+
+
 def remove_regional_and_national_aggregates(df, name_col='laname', code_col='ladcode'):
     """
     Drop rows containing aggregated regional or national data,
