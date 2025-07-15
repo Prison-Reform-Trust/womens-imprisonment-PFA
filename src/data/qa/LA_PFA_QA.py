@@ -21,7 +21,6 @@ from typing import Tuple
 import pandas as pd
 
 import src.data.processing.common_ons_processing as common_processing
-import src.data.qa.ons_comparator as data_processor
 import src.utilities as utils
 
 config = utils.read_config()
@@ -81,8 +80,8 @@ def process_data(df: pd.DataFrame) -> pd.DataFrame:
     """
     df = (
         df
-        .pipe(data_processor.melt_data)
-        .pipe(data_processor.clean_year_column)
+        .pipe(common_processing.melt_data)
+        .pipe(common_processing.clean_year_column)
         .pipe(common_processing.group_and_sum)
         .assign(year=lambda df: df['year'].astype(int))
     )

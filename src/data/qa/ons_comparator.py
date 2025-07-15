@@ -43,25 +43,6 @@ def load_population_data(
     return df
 
 
-def melt_data(df: pd.DataFrame) -> pd.DataFrame:
-    """
-    Melt the DataFrame from wide to long format.
-    The 'population_' prefix in the year column is removed.
-    """
-    logging.info("Melting DataFrame from wide to long format...")
-
-    return df.melt(id_vars=["ladcode", "laname", "country", "sex", "age"], var_name="year", value_name="freq")
-
-
-def clean_year_column(df: pd.DataFrame) -> pd.DataFrame:
-    """
-    Clean the 'year' column by removing the 'population_' prefix.
-    """
-    logging.info("Cleaning year column...")
-    df['year'] = df['year'].str.replace("population_", "", regex=True)
-    return df
-
-
 def process_data(df: pd.DataFrame) -> pd.DataFrame:
     """
     Process the DataFrame to:
