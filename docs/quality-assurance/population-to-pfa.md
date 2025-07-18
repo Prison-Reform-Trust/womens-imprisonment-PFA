@@ -52,4 +52,13 @@ Again, this makes it more understandable to see that there is no logical pattern
 
 
 ## Examining the discrepancies
-Further checks will be conducted to examine how widespread the local authority and population discrepancies are, or whether it only affects the four new UAs.
+An examination of the data in `1.8-ah-pfa-population-qa.ipynb` shows that the newly created UAs included in the latest dataset have had a very modest impact on the overall population of the PFAs, and that the differences in population values are very small.
+
+The chart below shows the percentage difference in population by PFA between the new and old datasets. The differences are all within a 2% margin of error, which is acceptable for this type of data.
+<!-- Percentage Differences in Population by PFA (New vs Old Data) -->
+<div style="text-align: center;">
+    <hr class="heavy">
+    <iframe width="100%" height="300" frameborder="0" scrolling="no" src="/assets/pfa_population_comparison.html">
+    </iframe>
+    <hr class="light">
+</div>
