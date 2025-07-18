@@ -18,3 +18,15 @@ h1, h2, h3 {
     --md-hue: 240;
     --md-primary-fg-color:        #563551;
 }
+
+hr.heavy {
+    height: 1.5px;
+    background-color: #563551;
+    border: none;
+}
+
+hr.light {
+    height: 0.5px;
+    background-color: #54565B;
+    border: none;
+}
