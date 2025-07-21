@@ -62,3 +62,30 @@ The chart below shows the percentage difference in population by PFA between the
     </iframe>
     <hr class="light">
 </div>
+
+### Checking all PFAs
+Checks were completed for all PFAs to identify which Police Force Areas had the largest differences in population between the new and old datasets. The following PFAs were identified as having the largest differences:
+
+* Cambridgeshire
+* Bedfordshire
+* Thames Valley
+* Metropolitan Police
+
+The ONS' [Reconciliation of mid-year population estimates with Census 2021 at local authority level](https://www.ons.gov.uk/peoplepopulationandcommunity/populationandmigration/populationestimates/articles/reconciliationofmidyearpopulationestimateswithcensus2021atlocalauthoritylevel/2023-03-02#local-authorities-with-the-largest-differences) highlights those local authorities which saw the largest differences between the 2021 rolled-forward and 2021 Census-based mid-year estimates.
+
+The ONS' analysis was checked against the data in `1.8-ah-pfa-population-qa.ipynb` to see which local authorities were represented in those PFAs with the largest differences. The following local authorities were identified:
+
+| Police Force Area | Local Authority | ONS % difference |
+| ----------------- | --------------- | ---------------- |
+| Cambridgeshire    | Cambridge       | \-15.66          |
+| Cambridgeshire    | Peterborough    | \-6.53           |
+| Bedfordshire      | Luton           | \-5.69           |
+| Thames Valley     | Reading         | \-9.57           |
+| Thames Valley     | Slough          | \-6.53           |
+| Thames Valley     | Oxford          | \-5.56           |
+
+In addition, the ONS analysis highlights that LAs in London saw larger differences.
+
+
+## So what does this mean?
+The analysis shows that the changes to the ONS population data have had a minimal impact on the overall population of the PFAs, and that the differences in population values are very small. The newly created UAs have had a very modest impact on the overall population of the PFAs, and the differences in population values remain within an acceptable margin of error.
