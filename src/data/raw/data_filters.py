@@ -55,15 +55,17 @@ def la_to_pfa_lookup_filter(version: str):
     Published at https://geoportal.statistics.gov.uk/datasets/ons::local-authority-districts-to-police-force-areas-in-england-and-wales-lookup-2022/about
     """
     keys = {
-        'latest': ('la_to_pfa_lookup', 'ons_pfa_params', 'la_to_pfa_lookup'),
-        'earlier': ('la_to_pfa_lookup_qa', 'ons_pfa_earlier_params', 'la_to_pfa_lookup_qa')
+        'latest': ('la_to_pfa_lookup', 'ons_pfa_params', 'datasetFilenames', 'la_to_pfa_lookup'),
+        'earlier': ('la_to_pfa_lookup_qa', 'ons_pfa_earlier_params', 'qaFilenames', 'la_to_pfa_lookup')
     }
     if version not in keys:
         raise ValueError(f"Invalid version '{version}'. Expected one of {list(keys.keys())}.")
-    download_key, params_key, filename_key = keys[version]
+
+    download_key, params_key, filename_section, filename_key = keys[version]
+
     return {
             'endpoint': config['data']['downloadPaths'][download_key],
             'params': config[params_key],
             'path': config['data']['rawFilePath'],
-            'filename': config['data']['datasetFilenames'][filename_key]
+            'filename': config['data'][filename_section][filename_key]
         }
