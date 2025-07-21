@@ -150,7 +150,7 @@ graph TD
   B --> E[combine_custody_pfa_population.py]
   D --> E
   E --> F@{ shape: bow-rect, label: "Women sentenced to custody, the population, and rate by PFA" }
-  E --> G@{ shape: doc, label: "Rate of imprisonment by PFA, by year" }
+  F --> G@{ shape: doc, label: "Rate of imprisonment by PFA, by year" }
 
 ```
 
