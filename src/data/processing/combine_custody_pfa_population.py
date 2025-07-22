@@ -361,20 +361,21 @@ def create_publication_ready_table(df: pd.DataFrame) -> pd.DataFrame:
     return publication_table
 
 
-def main():
-    """Main function to load, process, and save the data."""
-    df, min_year, max_year = load_and_process_data()
+def save_processed_data(df: pd.DataFrame, min_year: int, max_year: int) -> None:
+    """Save the processed data to the intermediate file path."""
     filename = utils.get_output_filename(
         year=(min_year, max_year),
         template=OUTPUT_FILENAME_TEMPLATE
     )
-
     utils.safe_save_data(
         df,
         path=config['data']['intFilePath'],
         filename=filename
     )
 
+
+def save_publication_table(df: pd.DataFrame, min_year: int, max_year: int) -> None:
+    """Save the publication-ready table to the cleaned file path."""
     publication_table = create_publication_ready_table(df)
     publication_filename = utils.get_output_filename(
         year=(min_year, max_year),
@@ -386,6 +387,16 @@ def main():
         filename=publication_filename,
         index=True  # Keep PFA as index for publication table
     )
+
+
+def main():
+    """Main function to load, process, and save the data."""
+    df, min_year, max_year = load_and_process_data()
+
+    # Save processed data and publication table
+    save_functions = [save_processed_data, save_publication_table]
+    for save_func in save_functions:
+        save_func(df, min_year, max_year)
 
 
 if __name__ == "__main__":
