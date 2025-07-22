@@ -3,7 +3,7 @@
 # Last updated 13 June 2025
 """
 This module provides utilities for creating and customizing Plotly visualizations
-with a standardized template and additional helper functions for annotations,
+with a standardised template and additional helper functions for annotations,
 titles, axis range adjustments, and text wrapping.
 
 Features:

@@ -5,12 +5,16 @@ In this section we examine how to download the raw data used in this analysis re
 ## Data sources
 * [Ministry of Justice — Criminal Justice System statistics quarterly: December 2024](https://www.gov.uk/government/collections/criminal-justice-statistics-quarterly)
 * [Office for National Statistics — Population estimates for England and Wales: mid-2023](https://www.ons.gov.uk/peoplepopulationandcommunity/populationandmigration/populationestimates/bulletins/populationestimatesforenglandandwales/mid2023)
+* [Office for National Statistics — LAD to Community Safety Partnership to PFA: December 2024](https://geoportal.statistics.gov.uk/datasets/ons::lad-to-community-safety-partnership-to-pfa-december-2024-lookup-in-ew/about)
 
 ### Criminal Justice System Statistics
 This dataset includes outcomes by offence csv files to enable analysis of sentencing outcomes by sex, offence type and police force area.
 
 ### Population estimates
 This dataset includes national and subnational mid-year population estimates for England and Wales by administrative area, age and sex. This is used to enable the calculation of rates of imprisonment by police force area.
+
+### LAD to Community Safety Partnership to PFA
+This dataset allows users to lookup Local Authority codes and names against Police Force Area codes and names. This is used to match up the PFAs to local authorities for the calculation of rates of imprisonment.
 
 ## Step-by-step
 All of the necessary scripts to download the raw data files are contained within the `src/data/raw` folder of the project.

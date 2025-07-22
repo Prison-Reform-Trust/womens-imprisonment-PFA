@@ -1,6 +1,6 @@
-# Criminal Justice System statistics: Police Force Area data quality assurance
+# Criminal Justice System statistics: data quality assurance
 
-## Intro
+## Introduction
 Through the processing of the outcomes by offence datasets, a large number of discrepancies have been observed between the newly processed data and previously published editions, requiring further investigation.
 
 Some of the discrepancies have been more dramatic than others, and so consultation with the [Criminal Justice System statistics quarterly technical documentation](https://www.gov.uk/government/statistics/criminal-justice-system-statistics-quarterly-december-2022) has been necessary to try and understand the reasons why.
@@ -18,10 +18,10 @@ The transition to more modern data processing methods explicitly affects offence
 ## Examining the discrepancies
 Discrepancies were particularly notable when visualising data on custodial sentence lengths for two of the four Welsh Police Force Areas (PFAs) — Dyfed-Powys and Gwent, which in some cases reported no cases of some sentence lengths for multiple years.
 
-![Custodial sentences for women in Gwent](assets/current_gwent.svg)
+![Custodial sentences for women in Gwent](../assets/current_gwent.svg)
 
 This was in contrast to our own previously published data, which included no such breaks during the time series.
-![Previous edition](assets/previous_gwent.svg)
+![Previous edition](../assets/previous_gwent.svg)
 
 Having checked figures on immediate custody for all four Welsh PFAs ['Dyfed-Powys', 'Gwent', 'North Wales', 'South Wales'], the totals between 2010–2016 are in line with the latest revised figures (±3 sentences).
 

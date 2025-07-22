@@ -6,7 +6,7 @@ import glob
 import logging
 import os
 import re
-from typing import List, Optional
+from typing import Any, Dict, List, Optional
 
 import pandas as pd
 import plotly.graph_objs as go
@@ -30,7 +30,7 @@ def read_config():
     return config
 
 
-def load_data(status: str, filename: str, usecols: Optional[List[str]] = None) -> pd.DataFrame:
+def load_data(status: str, filename: str, usecols: Optional[Any] = None) -> pd.DataFrame:
     """Load CSV file into Pandas DataFrame and convert object columns
     to categories when they meet criteria in `set_columns_to_category()`
 
@@ -43,8 +43,9 @@ def load_data(status: str, filename: str, usecols: Optional[List[str]] = None) -
         * If 'processed', file is located in "clnFilePath"
     filename : str
         Name of CSV file to be loaded.
-    usecols : list of str, optional
-        Subset of columns to read from the CSV file.
+    usecols : list of str, range, or None, optional
+        Subset of columns to read from the CSV file. Can be a list of column names,
+        a range object, or None to load all columns.
 
     Returns
     -------
@@ -68,7 +69,11 @@ def load_data(status: str, filename: str, usecols: Optional[List[str]] = None) -
     setup_logging()
 
     try:
-        df = pd.read_csv(df_path, encoding='latin1', low_memory=False, usecols=usecols)
+        # Convert range to list if usecols is a range object
+        if isinstance(usecols, range):
+            usecols = list(usecols)
+
+        df = pd.read_csv(df_path, encoding='utf-8-sig', low_memory=False, usecols=usecols)
         logging.info("Loaded data from %s", df_path)
         return set_columns_to_category(df)
     except FileNotFoundError:
@@ -99,6 +104,29 @@ def set_columns_to_category(df):
 def ensure_directory(path: str) -> None:
     """Ensure the download directory exists."""
     os.makedirs(path, exist_ok=True)
+
+
+def check_file_exists(path: str, filename: str) -> bool:
+    """Check if a file already exists in the specified path.
+
+    Parameters
+    ----------
+    path : str
+        The directory path where the file is expected to be.
+    filename : str
+        The name of the file to check for existence.
+
+    Returns
+    -------
+    bool
+        True if the file exists, False otherwise.
+    """
+
+    full_path = os.path.join(path, filename)
+    exists = os.path.exists(full_path)
+    if exists:
+        logging.info("Skipping %s. It already exists in %s", filename, path)
+    return exists
 
 
 # TODO: #20 Refactor the save and safe_save functions to be more concise and reduce repetition
@@ -236,3 +264,103 @@ def get_latest_year_from_files(path: str, template: str) -> int:
     if not years:
         raise FileNotFoundError("No files matching pattern found.")
     return max(years)
+
+
+def get_output_filename(year, template: str) -> str:
+    """
+    Add the year parameter(s) to the template filename.
+    Accepts str, int, tuple, or dict for year.
+    """
+    if isinstance(year, dict):
+        return template.format(**year)
+    elif isinstance(year, tuple):
+        # Assume tuple is (min_year, max_year)
+        return template.format(min_year=year[0], max_year=year[1])
+    else:
+        return template.format(year=year)
+
+
+def fetch_latest_file(pattern: str, path: str) -> str:
+    """
+    Find the latest file in the given directory matching the pattern.
+    Returns the filename (not the full path).
+    """
+    files = glob.glob(os.path.join(path, pattern))
+    if not files:
+        raise FileNotFoundError(f"No files matching {pattern} found in {path}.")
+    # Sort by modification time, newest last
+    files.sort(key=os.path.getmtime)
+    return os.path.basename(files[-1])
+
+
+def standardise_columns(df: pd.DataFrame, column_patterns: Dict[str, str]) -> pd.DataFrame:
+    """
+    standardise column names using regex patterns.
+
+    Parameters
+    ----------
+    df : pd.DataFrame
+        The DataFrame with columns to standardise.
+    column_patterns : dict
+        A dictionary where keys are regex patterns and values are the standardised column names.
+        Example: {r"ladcode.*": "ladcode", r"laname|ladname": "laname", r"PFA.*NM": "pfa_name"}
+
+    Returns
+    -------
+    pd.DataFrame
+        DataFrame with standardised column names.
+    """
+    logging.info("Standardising column names...")
+
+    def clean_col(col):
+        for pattern, replacement in column_patterns.items():
+            if re.match(pattern, col, re.IGNORECASE):
+                return replacement
+        return col
+
+    return df.rename(columns=clean_col)
+
+
+def create_lookup_dict(df: pd.DataFrame, key_col_pattern: str, value_col_pattern: str,
+                       column_patterns: Optional[Dict[str, str]] = None) -> Dict[Any, Any]:
+    """
+    Create a lookup dictionary from standardised column names.
+
+    Parameters
+    ----------
+    df : pd.DataFrame
+        The DataFrame to create the lookup from.
+    key_col_pattern : str
+        Regex pattern to identify the key column.
+    value_col_pattern : str
+        Regex pattern to identify the value column.
+    column_patterns : dict, optional
+        Column standardisation patterns. If provided, columns will be standardised first.
+
+    Returns
+    -------
+    dict
+        A dictionary mapping key column values to value column values.
+    """
+    logging.info("Creating lookup dictionary...")
+
+    # standardise columns if patterns provided
+    if column_patterns:
+        df = standardise_columns(df, column_patterns)
+
+    # Find the actual column names after standardisation
+    key_col = None
+    value_col = None
+
+    for col in df.columns:
+        if re.match(key_col_pattern, col, re.IGNORECASE):
+            key_col = col
+        elif re.match(value_col_pattern, col, re.IGNORECASE):
+            value_col = col
+
+    if key_col is None:
+        raise ValueError(f"No column found matching pattern: {key_col_pattern}")
+    if value_col is None:
+        raise ValueError(f"No column found matching pattern: {value_col_pattern}")
+
+    return df.set_index(key_col)[value_col].to_dict()

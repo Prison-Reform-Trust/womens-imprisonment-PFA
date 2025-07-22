@@ -3,9 +3,7 @@
 This project provides an analysis of sentencing outcomes by police force area in England and Wales.
 
 ## Getting started
-* [Clone the repo](https://github.com/Prison-Reform-Trust/womens-imprisonment-PFA)
-* [Create your virtual environment](https://alexhewson.github.io/prt-cookiecutter-data-science/starting-a-new-project/#how-to-build-your-environment) using the environment.yml file (or requirements.txt)
-* [Download the raw datasets](downloading-the-data.md)
+Visit the [getting started](getting-started/index.md) section for details on how to clone the Github repository and create your development environment for this project.
 
 ## Commands
 

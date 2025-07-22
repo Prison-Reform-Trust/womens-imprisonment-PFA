@@ -21,3 +21,4 @@ dependencies:
   - poppler
   - requests
   - mkdocs-material
+  - geopandas
