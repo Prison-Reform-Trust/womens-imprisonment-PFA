@@ -316,16 +316,8 @@ def merge_custody_and_population(custody_data: pd.DataFrame,
     return merged_df
 
 
-def load_and_process_data() -> Tuple[pd.DataFrame, int, int]:
-    """Load, process, and return the merged custody and population data with projections."""
-    # Load data
-    custody_df, population_df = load_data()
-
-    # Process datasets
-    custody_data = process_custody_data(custody_df)
-    population_data = process_population_data(population_df, custody_data)
-
-    # Create population projections if needed
+def check_and_generate_projections(population_data: pd.DataFrame, custody_data: pd.DataFrame) -> pd.DataFrame:
+    """Check if population projections are needed and generate them if required."""
     max_pop_year = population_data['year'].max()
     max_custody_year = custody_data['year'].max()
 
@@ -338,8 +330,28 @@ def load_and_process_data() -> Tuple[pd.DataFrame, int, int]:
     else:
         extended_population_data = population_data
 
+    return extended_population_data
+
+
+def load_and_process_data() -> Tuple[pd.DataFrame, int, int]:
+    """Load, process, and return the merged custody and population data with projections."""
+    # Load data
+    custody_df, population_df = load_data()
+
+    # Process custody data
+    custody_data = process_custody_data(custody_df)
+
+    # Process population data and perform projections if necessary
+    population_data = (
+        process_population_data(population_df, custody_data)
+        .pipe(check_and_generate_projections, custody_data)
+    )
+
     # Merge custody and population data
-    merged_df = merge_custody_and_population(custody_data, extended_population_data)
+    merged_df = (
+        merge_custody_and_population(custody_data, population_data)
+        .assign(pfa=lambda df: df['pfa'].replace({'London': 'Metropolitan Police'}))  # Reverse earlier renaming
+        )
 
     min_year, max_year = utils.get_year_range(merged_df)
 
@@ -354,10 +366,11 @@ def create_publication_ready_table(df: pd.DataFrame) -> pd.DataFrame:
     # Get the most recent year for sorting
     latest_year = df['year'].max()
 
-    publication_table = (df
-                         .pivot_table(index='pfa', columns='year', values='imprisonment_rate')
-                         .sort_values(by=latest_year, ascending=True)
-                         )
+    publication_table = (
+        df
+        .pivot_table(index='pfa', columns='year', values='imprisonment_rate')
+        .sort_values(by=latest_year, ascending=True)
+    )
     return publication_table
 
 
