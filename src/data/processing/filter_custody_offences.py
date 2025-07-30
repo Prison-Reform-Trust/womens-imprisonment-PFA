@@ -40,7 +40,7 @@ def group_by_pfa_and_offence(df: pd.DataFrame) -> pd.DataFrame:
         A DataFrame grouped by PFA, year, and offence with summed frequencies.
     """
     logging.info("Grouping data by PFA, year, and offence...")
-    df_grouped = df.groupby(['pfa', 'year', 'offence'], as_index=False, observed=True)['freq'].sum()
+    df_grouped = df.groupby(['pfa', 'year', 'offence'], observed=True)['freq'].sum().reset_index()
     return df_grouped
 
 
