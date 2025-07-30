@@ -197,6 +197,7 @@ def get_output_filename(year: str | int, template: str) -> str:
 
 
 def main():
+    """Main function to load, process, and save the filtered custody offences data."""
     df, max_year = load_and_process_data()
     filename = get_output_filename(year=max_year, template=OUTPUT_FILENAME_TEMPLATE)
 
