@@ -46,6 +46,7 @@ def load_outcomes_data() -> pd.DataFrame:
         'Sex',
         'Age Group',
         'Offence Group',
+        'Offence',
         'Sentence Outcome',
         'Custodial Sentence Length',
         'Sentenced'
@@ -88,11 +89,12 @@ def rename_and_reorder_columns(df: pd.DataFrame) -> pd.DataFrame:
         'age_group',
         'pfa',
         'offence',
+        'specific_offence',
         'outcome',
         'sentence_len',
         'freq'
     ]
-    column_order = ['year', 'pfa', 'sex', 'age_group', 'offence', 'outcome', 'sentence_len', 'freq']
+    column_order = ['year', 'pfa', 'sex', 'age_group', 'offence', 'specific_offence', 'outcome', 'sentence_len', 'freq']
 
     return df[column_order]
 
@@ -197,6 +199,7 @@ def process_data(df: pd.DataFrame, config_file: dict) -> pd.DataFrame:
         'sex': [(r"\d\d: ", "")],
         'age_group': [(r"\d\d: ", "")],
         'offence': [(r"\d\d: ", "")],
+        'specific_offence': [(r"^[\dA-Za-z.-]+\s", "")],
         'outcome': [(r"\d\d: ", "")],
         'sentence_len': [
             (r"\d\d: ", ""),
