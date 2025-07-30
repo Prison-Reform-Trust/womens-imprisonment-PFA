@@ -26,9 +26,22 @@ INPUT_FILENAME = config['data']['datasetFilenames']['filter_sentence_type']
 OUTPUT_FILENAME_TEMPLATE = config['data']['datasetFilenames']['filter_custody_offences']
 
 
+def load_data() -> pd.DataFrame:
+    """
+    Load the interim dataset and filter it to include only records with an immediate custodial sentence.
+    Returns
+    -------
+    pd.DataFrame
+        The filtered DataFrame containing only immediate custodial sentences.
+    """
+    logging.info("Loading interim data for custody offences...")
+    df = utils.load_data(status='interim', filename=INPUT_FILENAME)
+    return filter_sentence_length.filter_custodial_sentences(df)
+
+
 def group_by_pfa_and_offence(df: pd.DataFrame) -> pd.DataFrame:
     """
-    Group the DataFrame by Police Force Area (PFA), year, and offence,
+    Group the DataFrame by Police Force Area (PFA), year, offence, and specific offence,
     summing the frequency of sentences.
     Parameters
     ----------
@@ -37,16 +50,16 @@ def group_by_pfa_and_offence(df: pd.DataFrame) -> pd.DataFrame:
     Returns
     -------
     pd.DataFrame
-        A DataFrame grouped by PFA, year, and offence with summed frequencies.
+        A DataFrame grouped by PFA, year, offence and specific offence with summed frequencies.
     """
-    logging.info("Grouping data by PFA, year, and offence...")
-    df_grouped = df.groupby(['pfa', 'year', 'offence'], observed=True)['freq'].sum().reset_index()
+    logging.info("Grouping data by PFA, year, offence and specific offence...")
+    df_grouped = df.groupby(['pfa', 'year', 'offence', 'specific_offence'], observed=True)['freq'].sum().reset_index()
     return df_grouped
 
 
 def calculate_offence_proportions(df: pd.DataFrame) -> pd.DataFrame:
     """The function uses crosstab with the normalize argument to
-    calculate offence group proportions by PFA
+    calculate offence group proportions by PFA and specific_offence normalized to offence.
 
     Parameters
     ----------
@@ -58,12 +71,21 @@ def calculate_offence_proportions(df: pd.DataFrame) -> pd.DataFrame:
     pd.DataFrame
         The processed DataFrame.
     """
-    return pd.crosstab(
-        index=df['pfa'],
-        columns=df['offence'],
-        values=df['freq'],
-        aggfunc="sum",
-        normalize='index').round(3)
+    logging.info("Calculating offence group proportions by PFA and specific_offence...")
+
+    specific_offence_proportions = (
+        pd.crosstab(
+            index=[df['pfa'], df['offence']],
+            columns=df['specific_offence'],
+            values=df['freq'],
+            aggfunc="sum",
+            normalize='index'
+        )
+        .round(3)
+        .reset_index()
+    )
+
+    return specific_offence_proportions
 
 
 def melt_dataframe(df: pd.DataFrame) -> pd.DataFrame:
@@ -81,12 +103,18 @@ def melt_dataframe(df: pd.DataFrame) -> pd.DataFrame:
         The melted DataFrame.
     """
     logging.info("Melting DataFrame to long format...")
-    return pd.melt(
-        df,
-        id_vars=['pfa'],
-        value_vars=list(df.columns[1:]),
-        var_name='offence',
-        value_name='proportion')
+    return (
+        pd.melt(
+            df,
+            id_vars=['pfa', 'offence'],
+            value_vars=list(df.columns[1:]),
+            var_name='specific_offence',
+            value_name='proportion'
+        )
+        .query("proportion != 0.0")
+        .sort_values(by=['pfa', 'offence', 'specific_offence'])
+        .reset_index(drop=True)
+    )
 
 
 def filter_offences(df: pd.DataFrame) -> pd.Series:
@@ -167,10 +195,7 @@ def load_and_process_data() -> tuple[pd.DataFrame, int]:
     tuple[pd.DataFrame, int]
         The processed and melted DataFrame ready for plotting, and the latest year used in filtering.
     """
-    df = (
-        utils.load_data(status='interim', filename=INPUT_FILENAME)
-        .pipe(filter_sentence_length.filter_custodial_sentences)
-    )
+    df = load_data()
     max_year = df["year"].max()
 
     df = (
