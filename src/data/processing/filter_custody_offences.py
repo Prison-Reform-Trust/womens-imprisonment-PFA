@@ -191,7 +191,7 @@ def load_and_process_data() -> tuple[pd.DataFrame, int]:
     return df, max_year
 
 
-def get_output_filename(year: str, template: str) -> str:
+def get_output_filename(year: str | int, template: str) -> str:
     """This function adds the year parameter to the template filename"""
     return template.format(year=year)
 
