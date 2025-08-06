@@ -149,8 +149,10 @@ def set_parent_column(df: pd.DataFrame, filter_mask: pd.Series) -> pd.DataFrame:
         The modified DataFrame with the parent column set.
     """
     logging.info("Setting parent column for offence groups...")
+    # Set parent for highlighted offences and others
     df.loc[filter_mask, 'parent'] = "All offences"
     df.loc[~filter_mask, 'parent'] = "All other offences"
+    df.loc[df['offence'] == 'Assault of an emergency worker', 'parent'] = "Violence against the person"
     return df
 
 
