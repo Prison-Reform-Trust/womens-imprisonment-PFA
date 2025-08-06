@@ -1,0 +1,1152 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="An analysis of sentencing outcomes for women by police force area in England and Wales">
+      
+      
+      
+      
+        <link rel="prev" href="../downloading-the-data/">
+      
+      
+        <link rel="next" href="../../quality-assurance/CJS_PFA/">
+      
+      
+      <link rel="icon" href="../../assets/favicon.ico">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.6.16">
+    
+    
+      
+        <title>Processing the data - Imprisonment of women</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.7e37652d.min.css">
+      
+        
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.06af60db.min.css">
+      
+      
+  
+  
+    
+    
+  
+  
+  <style>:root{--md-admonition-icon--tip:url('data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20viewBox%3D%220%200%2024%2024%22%3E%3Cpath%20d%3D%22M20%202H4c-1.1%200-2%20.9-2%202v12a2%202%200%200%200%202%202h4l4%204%204-4h4c1.11%200%202-.89%202-2V4a2%202%200%200%200-2-2m0%2014h-4.83L12%2019.17%208.83%2016H4V4h16zm-9.25-2.29-3.5-3.5%201.41-1.42%202.09%202.09%204.59-4.58%201.41%201.41z%22/%3E%3C/svg%3E');}</style>
+
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../../css/extra.css">
+    
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#processing-the-data" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../.." title="Imprisonment of women" class="md-header__button md-logo" aria-label="Imprisonment of women" data-md-component="logo">
+      
+  <img src="../../assets/logo.svg" alt="logo">
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Imprisonment of women
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Processing the data
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme)" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="Switch to light mode"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="Switch to light mode" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="m14.3 16-.7-2h-3.2l-.7 2H7.8L11 7h2l3.2 9zM20 8.69V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12zm-9.15 3.96h2.3L12 9z"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: light)" data-md-color-scheme="prison-reform-trust" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="Switch to dark mode"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Switch to dark mode" for="__palette_2" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="m17.75 4.09-2.53 1.94.91 3.06-2.63-1.81-2.63 1.81.91-3.06-2.53-1.94L12.44 4l1.06-3 1.06 3zm3.5 6.91-1.64 1.25.59 1.98-1.7-1.17-1.7 1.17.59-1.98L15.75 11l2.06-.05L18.5 9l.69 1.95zm-2.28 4.95c.83-.08 1.72 1.1 1.19 1.85-.32.45-.66.87-1.08 1.27C15.17 23 8.84 23 4.94 19.07c-3.91-3.9-3.91-10.24 0-14.14.4-.4.82-.76 1.27-1.08.75-.53 1.93.36 1.85 1.19-.27 2.86.69 5.83 2.89 8.02a9.96 9.96 0 0 0 8.02 2.89m-1.64 2.02a12.08 12.08 0 0 1-7.8-3.47c-2.17-2.19-3.33-5-3.49-7.82-2.81 3.14-2.7 7.96.31 10.98 3.02 3.01 7.84 3.12 10.98.31"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: dark)" data-md-color-scheme="slate" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="Switch to system preference"  type="radio" name="__palette" id="__palette_2">
+    
+      <label class="md-header__button md-icon" title="Switch to system preference" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 7a5 5 0 0 1 5 5 5 5 0 0 1-5 5 5 5 0 0 1-5-5 5 5 0 0 1 5-5m0 2a3 3 0 0 0-3 3 3 3 0 0 0 3 3 3 3 0 0 0 3-3 3 3 0 0 0-3-3m0-7 2.39 3.42C13.65 5.15 12.84 5 12 5s-1.65.15-2.39.42zM3.34 7l4.16-.35A7.2 7.2 0 0 0 5.94 8.5c-.44.74-.69 1.5-.83 2.29zm.02 10 1.76-3.77a7.131 7.131 0 0 0 2.38 4.14zM20.65 7l-1.77 3.79a7.02 7.02 0 0 0-2.38-4.15zm-.01 10-4.14.36c.59-.51 1.12-1.14 1.54-1.86.42-.73.69-1.5.83-2.29zM12 22l-2.41-3.44c.74.27 1.55.44 2.41.44.82 0 1.63-.17 2.37-.44z"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/Prison-Reform-Trust/womens-imprisonment-PFA" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.0.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path fill="currentColor" d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    GitHub
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../.." title="Imprisonment of women" class="md-nav__button md-logo" aria-label="Imprisonment of women" data-md-component="logo">
+      
+  <img src="../../assets/logo.svg" alt="logo">
+
+    </a>
+    Imprisonment of women
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/Prison-Reform-Trust/womens-imprisonment-PFA" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.0.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path fill="currentColor" d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    GitHub
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../.." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Welcome
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" checked>
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    Getting started
+    
+  </span>
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_2" id="__nav_2_label" tabindex="">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            Getting started
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../downloading-the-data/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Downloading the data
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    Processing the data
+    
+  </span>
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    Processing the data
+    
+  </span>
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#criminal-justice-system-statistics" class="md-nav__link">
+    <span class="md-ellipsis">
+      Criminal Justice System Statistics
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Criminal Justice System Statistics">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#processing-steps-of-the-data-pipeline" class="md-nav__link">
+    <span class="md-ellipsis">
+      Processing steps of the data pipeline
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#cleaning" class="md-nav__link">
+    <span class="md-ellipsis">
+      Cleaning
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#sentence-outcomes" class="md-nav__link">
+    <span class="md-ellipsis">
+      Sentence outcomes
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#sentence-lengths" class="md-nav__link">
+    <span class="md-ellipsis">
+      Sentence lengths
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#offences" class="md-nav__link">
+    <span class="md-ellipsis">
+      Offences
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#custodial-sentence-pfa-tables" class="md-nav__link">
+    <span class="md-ellipsis">
+      Custodial sentence PFA tables
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#ons-mid-year-population-estimates" class="md-nav__link">
+    <span class="md-ellipsis">
+      ONS mid-year population estimates
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="ONS mid-year population estimates">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#processing-steps-of-the-data-pipeline_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      Processing steps of the data pipeline
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#cleaning_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      Cleaning
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#matching-local-authorities-to-police-force-areas" class="md-nav__link">
+    <span class="md-ellipsis">
+      Matching local authorities to Police Force Areas
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#combining-the-datasets" class="md-nav__link">
+    <span class="md-ellipsis">
+      Combining the datasets
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Combining the datasets">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#processing-steps-of-the-data-pipeline_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      Processing steps of the data pipeline
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#combining-custody-data-with-police-force-area-populations" class="md-nav__link">
+    <span class="md-ellipsis">
+      Combining custody data with Police Force Area populations
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    Quality assurance
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            Quality assurance
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../quality-assurance/CJS_PFA/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Criminal Justice Statistics
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../quality-assurance/ONS-population/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    ONS population estimates
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../quality-assurance/population-to-pfa/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Matching local authorities to PFAs
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#criminal-justice-system-statistics" class="md-nav__link">
+    <span class="md-ellipsis">
+      Criminal Justice System Statistics
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Criminal Justice System Statistics">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#processing-steps-of-the-data-pipeline" class="md-nav__link">
+    <span class="md-ellipsis">
+      Processing steps of the data pipeline
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#cleaning" class="md-nav__link">
+    <span class="md-ellipsis">
+      Cleaning
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#sentence-outcomes" class="md-nav__link">
+    <span class="md-ellipsis">
+      Sentence outcomes
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#sentence-lengths" class="md-nav__link">
+    <span class="md-ellipsis">
+      Sentence lengths
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#offences" class="md-nav__link">
+    <span class="md-ellipsis">
+      Offences
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#custodial-sentence-pfa-tables" class="md-nav__link">
+    <span class="md-ellipsis">
+      Custodial sentence PFA tables
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#ons-mid-year-population-estimates" class="md-nav__link">
+    <span class="md-ellipsis">
+      ONS mid-year population estimates
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="ONS mid-year population estimates">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#processing-steps-of-the-data-pipeline_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      Processing steps of the data pipeline
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#cleaning_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      Cleaning
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#matching-local-authorities-to-police-force-areas" class="md-nav__link">
+    <span class="md-ellipsis">
+      Matching local authorities to Police Force Areas
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#combining-the-datasets" class="md-nav__link">
+    <span class="md-ellipsis">
+      Combining the datasets
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Combining the datasets">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#processing-steps-of-the-data-pipeline_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      Processing steps of the data pipeline
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#combining-custody-data-with-police-force-area-populations" class="md-nav__link">
+    <span class="md-ellipsis">
+      Combining custody data with Police Force Area populations
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  
+  
+
+
+<h1 id="processing-the-data">Processing the data</h1>
+<p>In this section we examine how to process the raw data ready for analysis. The full processing part of this pipeline is encapsulated in the <code>process_data.py</code> module.</p>
+<h2 id="criminal-justice-system-statistics">Criminal Justice System Statistics</h2>
+<div class="admonition warning">
+<p class="admonition-title">Data revision</p>
+<p>The Ministry of Justice published <a href="https://www.gov.uk/government/statistics/criminal-justice-system-statistics-quarterly-december-2022">revised outcomes by offence data</a> for 2022 in January 2024. This means that there are discrepancies observed in PRT's previously published Police Force Area factsheets and the data produced in this edition. Our 2022 edition reports fewer women sentenced to a community sentence; suspended sentence; or immediate custody than in this edition. This was not an error in our data analysis, but the result of the limitations with the raw dataset explained in the Ministry of Justice's <a href="https://assets.publishing.service.gov.uk/media/65a7e5feb2f3c60013e5d44b/criminal-justice-statistics-technical-appendix-june-2023.pdf#page=20">technical appendix</a>. Go to <a href="../../quality-assurance/CJS_PFA/">Criminal Justice System statistics: Police Force Area data quality assurance</a> for more information about the revision and internal QA checks that have been made for the datasets produced in this pipeline.</p>
+</div>
+<h3 id="processing-steps-of-the-data-pipeline">Processing steps of the data pipeline</h3>
+<pre class="mermaid"><code>graph TD
+
+  A[filter_sentence_type.py] --&gt; B[group_pfa_sentence_outcome.py];
+  A --&gt; C[filter_sentence_length.py];
+  A --&gt; D[filter_custody_offences.py];
+  B --&gt;  E[\Viz data: Sentence type\];
+  C --&gt;  F[\Viz data: Custodial sentences by length\];
+  F --&gt;  G[make_custody_tables.py];
+  D --&gt;  H[\Viz data: Custodial sentences, by offence\];
+  G --&gt; I@{ shape: docs, label: "Custodial sentence tables (all and by length)" };</code></pre>
+<h3 id="cleaning">Cleaning</h3>
+<p>We start of the processing with some initial cleaning and filtering of the dataset in <code>filter_sentence_type.py</code>.</p>
+<p>The script reads the values stored in <code>outcomes_by_offence_filter</code> within <code>config.yaml</code>. By default this includes sentence types such as 'Immediate custody', 'Community sentence', and 'Suspended sentence', and excludes the 'Not known' police force area, it also excludes children.</p>
+<p>Once the filtering has been applied, the script then renames and reorders the DataFrame columns; applies regex replacements and saves the processed DataFrame to a CSV file in the <code>intFilePath</code> directory as set in <code>config.yaml</code> (<code>data/interim</code> by default).</p>
+<div class="admonition success">
+<p class="admonition-title">Data produced</p>
+<p>This produces our interim dataset, ready for further processing. This interim dataset forms the basis for producing the datasets necessary for all three of our visualisations which we use in our individual Police Force Area fact sheets.</p>
+</div>
+<h3 id="sentence-outcomes">Sentence outcomes</h3>
+<p><code>group_pfa_sentence_outcome.py</code> takes the cleaned and filtered interim dataset and aggregates it to produce summary statistics on sentencing outcomes for women in each Police Force Area (PFA).</p>
+<p>Specifically, it groups the data by PFA and sentence outcome (such as community sentence, suspended sentence, or immediate custody), and calculates the total number of women receiving each type of sentence by year.</p>
+<p>The resulting dataset provides a clear overview of sentencing patterns across different areas and is used as the basis for visualisations and fact sheets in the project.</p>
+<div class="admonition success">
+<p class="admonition-title">Data produced</p>
+<p>The number of women in each Police Force Area who received a:</p>
+<ul>
+<li>Community sentence</li>
+<li>Suspended sentence</li>
+<li>Sentence of immediate custody</li>
+</ul>
+</div>
+<h3 id="sentence-lengths">Sentence lengths</h3>
+<p><code>filter_sentence_length.py</code>processes the interim dataset to analyse the lengths of immediate custodial sentences given to women in each PFA. </p>
+<p>It categorises sentences into groups such as less than six months; six to less than twelve months; and twelve months or more. The script then calculates the number of women in each PFA who received sentences in each category for each year over the whole time series.</p>
+<p>The final dataset this produces is used to create the sentence length categories visualisation.</p>
+<div class="admonition success">
+<p class="admonition-title">Data produced</p>
+<p>The number of women in each Police Force Area who received an immediate custodial sentence of:</p>
+<ul>
+<li>Less than six months</li>
+<li>Six to less than 12 months</li>
+<li>12 months or more</li>
+</ul>
+</div>
+<h3 id="offences">Offences</h3>
+<p><code>filter_custody_offences.py</code> processes the interim dataset to analyse the specific offences for which women received immediate custodial sentences in each PFA.</p>
+<p>The script filters the data to include only immediate custody cases and then groups the results by PFA and offence type. It calculates the number of women sentenced for each offence in the latest available year.</p>
+<p>This output provides a detailed breakdown of the types of offences leading to immediate custody and is used to produce visualisations to be included in the fact sheets in the project.</p>
+<div class="admonition success">
+<p class="admonition-title">Data produced</p>
+<p>The number of women in each Police Force Area who received an immediate custodial sentence in the latest available year, by offence.</p>
+</div>
+<h3 id="custodial-sentence-pfa-tables">Custodial sentence PFA tables</h3>
+<p><code>make_custody_tables.py</code> processes the visualisation dataset produced by <code>filter_sentence_length.py</code> to produce three sets of summary statistics on the number of women in each Police Force Area (PFA) who received custodial sentences by sentence length over the entire time period, and the percentage change between the first and last year.</p>
+<p>The script defines the valid categories to be produced ("all", "less than 6 months", "less than 12 months"). It then groups the data by PFA and year, before cross-tabbing to organise the data in a publication ready format, before calculating the percentage change and appending to the dataset.</p>
+<div class="admonition success">
+<p class="admonition-title">Data produced</p>
+<p>Three datasets showing the number of women sentenced to immediate custody in England and Wales by Police Force Area, timeseries and percentage change, for:</p>
+<ul>
+<li>All custodial sentences</li>
+<li>Custodial sentences of less than six months</li>
+<li>Custodial sentences of less than 12 months</li>
+</ul>
+</div>
+<h2 id="ons-mid-year-population-estimates">ONS mid-year population estimates</h2>
+<h3 id="processing-steps-of-the-data-pipeline_1">Processing steps of the data pipeline</h3>
+<pre class="mermaid"><code>graph TD
+  A[download_data.py] --&gt; B@{ shape: bow-rect, label: "ONS population data" }
+  A --&gt; C@{ shape: bow-rect, label: "LA to PFA lookup table" }
+  B --&gt; D[ons_cleaning.py]
+  D --&gt; E@{ shape: bow-rect, label: "Adult female population by local authority, by year" }
+  C --&gt; F[la_to_pfa_matching.py]
+  E --&gt; F
+  F --&gt; G@{ shape: bow-rect, label: "Adult female population by local authority and PFA, by year" }
+</code></pre>
+<h3 id="cleaning_1">Cleaning</h3>
+<p>The processing begins with some initial cleaning and filtering of the dataset in <code>ons_cleaning.py</code>.</p>
+<p>The script loads the ONS population data from the raw data directory, which was downloaded by <code>download_data.py</code> and performs the following cleaning steps:</p>
+<ul>
+<li>Renames and reorder columns to a standardised format</li>
+<li>Discards any aggregated regional or national data</li>
+<li>Filters for adult women</li>
+<li>Aggregates all age groups into a single annual value by local authority</li>
+<li>Retrieves the minimum year and maximum year values in the DataFrame</li>
+<li>Saves the processed DataFrame to a CSV file in the <code>intFilePath</code> directory as set in <code>config.yaml</code> (data/interim by default).</li>
+</ul>
+<div class="admonition success">
+<p class="admonition-title">Data produced</p>
+<p>This produces our interim dataset, showing the total number of adult women in each local authority area in England and Wales. This is now ready for further processing to match each local authority area to its own Police Force Area.</p>
+</div>
+<h3 id="matching-local-authorities-to-police-force-areas">Matching local authorities to Police Force Areas</h3>
+<p>Once cleaning has been completed the dataset is read into <code>la_to_pfa_matching.py</code> along with the LA to PFA lookup table downloaded by <code>download_data.py</code>.</p>
+<p><code>la_to_pfa_matching.py</code> merges the population data with the PFA lookup file to assign each Local Authority to its corresponding Police Force Area. It then removes any rows where the local authority code is not in the lookup file — these are E10 (Counties) and E11 codes (Metropolitan Counties) at a higher geographic level, as well as City of London which is not relevant for this analysis given its <a href="https://www.cityoflondon.police.uk/police-forces/city-of-london-police/areas/city-of-london/about-us/about-us/structure/">unique role</a>. Finally it renames Devon &amp; Cornwall to Devon and Cornwall for consistency with the existing Criminal Justice System Statistics datasets.</p>
+<p>The processed DataFrame is saved to a CSV file in the <code>intFilePath</code> directory as set in <code>config.yaml</code> (data/interim by default).</p>
+<div class="admonition success">
+<p class="admonition-title">Data produced</p>
+<p>This produces our interim dataset, showing the total number of adult women in each local authority area in England and Wales, matched to its own Police Force Area.</p>
+</div>
+<h2 id="combining-the-datasets">Combining the datasets</h2>
+<h3 id="processing-steps-of-the-data-pipeline_2">Processing steps of the data pipeline</h3>
+<pre class="mermaid"><code>graph TD
+  subgraph Earlier processing steps
+    subgraph CJS Statistics
+    A[make_custody_tables.py] --&gt; B@{ shape: bow-rect, label: "Women sentenced to custody by PFA, by year" }
+    end
+    subgraph ONS population estimates
+    C[la_to_pfa_matching.py] --&gt; D@{ shape: bow-rect, label: "Adult female population by local authority and PFA, by year" }
+    end
+  end
+  B --&gt; E[combine_custody_pfa_population.py]
+  D --&gt; E
+  E --&gt; F@{ shape: bow-rect, label: "Women sentenced to custody, the population, and rate by PFA" }
+  F --&gt; G@{ shape: doc, label: "Rate of imprisonment by PFA, by year" }
+</code></pre>
+<h3 id="combining-custody-data-with-police-force-area-populations">Combining custody data with Police Force Area populations</h3>
+<p><code>combine_custody_pfa_population.py</code> processes the interim datasets produced by <code>make_custody_tables.py</code> and <code>la_to_pfa_matching.py</code> to combine the number women sentenced to immediate custody in each Police Force Area with the population.</p>
+<p>The script reads the interim datasets and performs the following steps:</p>
+<ul>
+<li>Processes the custody and population data to ensure they are in a suitable format for merging.</li>
+<li>Performs three separate projection methods to predict the population for the latest year in the custody data (population data is only available up to the previous year).</li>
+<li>Selects the best projection method based on the lowest mean absolute percentage error (MAPE) using backtesting against the previous years' population data.</li>
+<li>Merges the custody data with the population data on Police Force Area.</li>
+<li>Calculates the imprisonment rate (per 100,000 women).</li>
+<li>Pivots the DataFrame to create a publication-ready format, with Police Force Area as the index and years as columns.</li>
+<li>Saves the datasets.</li>
+</ul>
+<div class="admonition success">
+<p class="admonition-title">Data produced</p>
+<p>This produces two datasets:</p>
+<ol>
+<li>The number of women sentenced to immediate custody in each Police Force Area, the population, and the imprisonment rate (per 100,000 women).</li>
+<li>The final publication ready dataset showing the rate of imprisonment in each Police Force Area for the entire time series.</li>
+</ol>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+    
+      
+      <nav class="md-footer__inner md-grid" aria-label="Footer" >
+        
+          
+          <a href="../downloading-the-data/" class="md-footer__link md-footer__link--prev" aria-label="Previous: Downloading the data">
+            <div class="md-footer__button md-icon">
+              
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+            </div>
+            <div class="md-footer__title">
+              <span class="md-footer__direction">
+                Previous
+              </span>
+              <div class="md-ellipsis">
+                Downloading the data
+              </div>
+            </div>
+          </a>
+        
+        
+          
+          <a href="../../quality-assurance/CJS_PFA/" class="md-footer__link md-footer__link--next" aria-label="Next: Criminal Justice Statistics">
+            <div class="md-footer__title">
+              <span class="md-footer__direction">
+                Next
+              </span>
+              <div class="md-ellipsis">
+                Criminal Justice Statistics
+              </div>
+            </div>
+            <div class="md-footer__button md-icon">
+              
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 11v2h12l-5.5 5.5 1.42 1.42L19.84 12l-7.92-7.92L10.5 5.5 16 11z"/></svg>
+            </div>
+          </a>
+        
+      </nav>
+    
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+    <div class="md-copyright__highlight">
+      Written by Prison Reform Trust
+    </div>
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      <script id="__config" type="application/json">{"base": "../..", "features": ["navigation.sections", "navigation.indexes", "content.code.copy", "navigation.instant", "navigation.footer"], "search": "../../assets/javascripts/workers/search.d50fe291.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../../assets/javascripts/bundle.50899def.min.js"></script>
+      
+    
+  </body>
+</html>
