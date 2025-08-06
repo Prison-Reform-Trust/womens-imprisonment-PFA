@@ -25,68 +25,91 @@ config = utils.read_config()
 INPUT_FILENAME = config['data']['datasetFilenames']['filter_sentence_type']
 OUTPUT_FILENAME_TEMPLATE = config['data']['datasetFilenames']['filter_custody_offences']
 
+HIGHLIGHTED_OFFENCE_GROUPS = ['Theft offences', 'Drug offences', 'Violence against the person']
+ASSAULT_EMERGENCY_WORKER = "Assault of an emergency worker"
 
-def group_by_pfa_and_offence(df: pd.DataFrame) -> pd.DataFrame:
+
+def load_data() -> pd.DataFrame:
     """
-    Group the DataFrame by Police Force Area (PFA), year, and offence,
+    Load the interim dataset and filter it to include only records with an immediate custodial sentence.
+    Returns
+    -------
+    pd.DataFrame
+        The filtered DataFrame containing only immediate custodial sentences.
+    """
+    logging.info("Loading interim data for custody offences...")
+    df = utils.load_data(status='interim', filename=INPUT_FILENAME)
+    return filter_sentence_length.filter_custodial_sentences(df)
+
+
+def group_by_pfa_and_offence(df: pd.DataFrame, specific_offence: bool = True) -> pd.DataFrame:
+    """
+    Group the DataFrame by Police Force Area (PFA), year, offence, and optionally specific offence,
     summing the frequency of sentences.
+
     Parameters
     ----------
     df : pd.DataFrame
         The DataFrame for processing.
+    specific_offence : bool, optional
+        If True, includes 'specific_offence' in the grouping. Defaults to True.
+
     Returns
     -------
     pd.DataFrame
-        A DataFrame grouped by PFA, year, and offence with summed frequencies.
+        A DataFrame grouped by PFA, year, offence, and optionally specific offence, with summed frequencies.
     """
-    logging.info("Grouping data by PFA, year, and offence...")
-    df_grouped = df.groupby(['pfa', 'year', 'offence'], as_index=False, observed=True)['freq'].sum()
+    columns = ['pfa', 'year', 'offence']
+    if specific_offence:
+        columns.append('specific_offence')
+
+    logging.info("Grouping data by %s and summing frequencies...", ', '.join(columns))
+    df_grouped = df.groupby(columns, observed=True)['freq'].sum().reset_index()
+
     return df_grouped
 
 
-def calculate_offence_proportions(df: pd.DataFrame) -> pd.DataFrame:
-    """The function uses crosstab with the normalize argument to
-    calculate offence group proportions by PFA
+def extract_assault_of_emergency_worker(df: pd.DataFrame) -> pd.DataFrame:
+    """
+    Store the 'Assault of an emergency worker' offence in a separate DataFrame
 
     Parameters
     ----------
     df : pd.DataFrame
-        The DataFrame for processing.
+        The DataFrame to modify.
 
     Returns
     -------
     pd.DataFrame
-        The processed DataFrame.
+        The modified DataFrame with the 'Assault of an emergency worker' offence added.
     """
-    return pd.crosstab(
-        index=df['pfa'],
-        columns=df['offence'],
-        values=df['freq'],
-        aggfunc="sum",
-        normalize='index').round(3)
+    logging.info("Extracting 'Assault of an emergency worker' offence...")
+    mask_filter = df['specific_offence'] == ASSAULT_EMERGENCY_WORKER
+    # Create a new DataFrame with the specific offence
+    emergency_worker_df = df.loc[mask_filter].copy()
+    emergency_worker_df['offence'] = ASSAULT_EMERGENCY_WORKER
+    return emergency_worker_df
 
 
-def melt_dataframe(df: pd.DataFrame) -> pd.DataFrame:
+def add_assault_of_emergency_worker(df: pd.DataFrame, emergency_worker_df: pd.DataFrame) -> pd.DataFrame:
     """
-    Melt the DataFrame from wide to long format.
+    Add the 'Assault of an emergency worker' offence to the DataFrame.
 
     Parameters
     ----------
     df : pd.DataFrame
-        The DataFrame to melt.
+        The DataFrame to modify.
+    emergency_worker_df : pd.DataFrame
+        The DataFrame containing the 'Assault of an emergency worker' offence.
 
     Returns
     -------
     pd.DataFrame
-        The melted DataFrame.
+        The modified DataFrame with the 'Assault of an emergency worker' offence added.
     """
-    logging.info("Melting DataFrame to long format...")
-    return pd.melt(
-        df,
-        id_vars=['pfa'],
-        value_vars=list(df.columns[1:]),
-        var_name='offence',
-        value_name='proportion')
+    logging.info("Adding 'Assault of an emergency worker' offence to the main DataFrame...")
+    # Append the assault of an emergency worker DataFrame to the main DataFrame
+    return pd.concat([df, emergency_worker_df], ignore_index=True).sort_values(by=['offence', 'freq'], ascending=True).reset_index(drop=True)
 
 
 def filter_offences(df: pd.DataFrame) -> pd.Series:
@@ -105,9 +128,7 @@ def filter_offences(df: pd.DataFrame) -> pd.Series:
         A boolean mask indicating whether each row's offence is in the specified groups.
     """
     logging.info("Creating filter for highlighted offence groups...")
-    # TODO: #24 Replace hardcoded new line breaks with a more robust solution
-    highlighted_offence_groups = ['Theft offences', 'Drug offences', 'Violence against the person']
-    return df['offence'].isin(highlighted_offence_groups)
+    return df['offence'].isin(HIGHLIGHTED_OFFENCE_GROUPS)
 
 
 def set_parent_column(df: pd.DataFrame, filter_mask: pd.Series) -> pd.DataFrame:
@@ -129,8 +150,11 @@ def set_parent_column(df: pd.DataFrame, filter_mask: pd.Series) -> pd.DataFrame:
         The modified DataFrame with the parent column set.
     """
     logging.info("Setting parent column for offence groups...")
+    # Set parent for highlighted offences and others
     df.loc[filter_mask, 'parent'] = "All offences"
     df.loc[~filter_mask, 'parent'] = "All other offences"
+    # Use the first highlighted offence group that matches as parent for 'Assault of an emergency worker'
+    df.loc[df['offence'] == ASSAULT_EMERGENCY_WORKER, 'parent'] = "Violence against the person"
     return df
 
 
@@ -149,10 +173,60 @@ def set_plot_order(df: pd.DataFrame) -> pd.DataFrame:
     plot_dict = {
         'All other offences': 0,
         'Theft offences': 1,
-        'Drug offences': 2,
-        'Violence against the person': 3
+        'Violence against the person': 2,
+        ASSAULT_EMERGENCY_WORKER: 2,
+        'Drug offences': 3,
     }
     df['plot_order'] = df["offence"].map(plot_dict).fillna(0)
+    return df
+
+
+def process_data(df: pd.DataFrame):
+    """
+    This function processes a DataFrame containing custody offences data by
+    applying a series of transformations and filters. It includes steps to
+    filter data by the most recent year, group data by Police Force Area (PFA)
+    and offence, extract specific offences (e.g., assault of an emergency worker),
+    and prepare the data for visualisation.
+
+    Args:
+        df (pd.DataFrame): Input DataFrame containing custody offences data.
+            Must include at least the following columns:
+            - 'year': The year of the offence.
+            - 'specific_offence': The specific offence type.
+
+    Returns:
+        pd.DataFrame: Processed DataFrame with the following transformations:
+            - Filtered to include only data from the most recent year.
+            - Grouped by PFA and offence type.
+            - Highlights assault of an emergency worker offences.
+            - Orders for plotting purposes.
+            - Includes a parent column for go.Sunburst plot control.
+    """
+    logging.info("Starting data processing...")
+
+    max_year = df["year"].max()
+
+    df = (
+        df
+        .pipe(filter_years.get_year, year_from=max_year)
+        .pipe(group_by_pfa_and_offence)
+    )
+
+    emergency_workers_df = extract_assault_of_emergency_worker(df)
+
+    df = (
+        df
+        .pipe(group_by_pfa_and_offence, specific_offence=False)
+        .pipe(add_assault_of_emergency_worker, emergency_workers_df)
+        .pipe(set_plot_order)
+        .drop(columns=['specific_offence'])
+    )
+
+    filter_mask = filter_offences(df)
+    df = df.pipe(set_parent_column, filter_mask=filter_mask)
+
+    logging.info("Data processing complete.")
     return df
 
 
@@ -168,35 +242,22 @@ def load_and_process_data() -> tuple[pd.DataFrame, int]:
         The processed and melted DataFrame ready for plotting, and the latest year used in filtering.
     """
     df = (
-        utils.load_data(status='interim', filename=INPUT_FILENAME)
-        .pipe(filter_sentence_length.filter_custodial_sentences)
+        load_data()
+        .pipe(process_data)
     )
     max_year = df["year"].max()
 
-    df = (
-        df
-        .pipe(filter_years.get_year, year_from=max_year)
-        .pipe(group_by_pfa_and_offence)
-        .pipe(calculate_offence_proportions)
-        .reset_index()
-        .pipe(melt_dataframe)
-    )
-
-    filter_mask = filter_offences(df)
-    df = (
-        set_parent_column(df, filter_mask)
-        .pipe(set_plot_order)
-        )
     logging.info("Data successfully processed for PFA offences charts")
     return df, max_year
 
 
-def get_output_filename(year: str, template: str) -> str:
+def get_output_filename(year: str | int, template: str) -> str:
     """This function adds the year parameter to the template filename"""
     return template.format(year=year)
 
 
 def main():
+    """Main function to load, process, and save the filtered custody offences data."""
     df, max_year = load_and_process_data()
     filename = get_output_filename(year=max_year, template=OUTPUT_FILENAME_TEMPLATE)
 

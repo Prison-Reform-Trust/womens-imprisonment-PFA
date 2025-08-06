@@ -10,6 +10,7 @@ who received a custodial sentence in 2024, broken down by offence group.
 """
 
 import logging
+from typing import Optional
 
 import pandas as pd
 import plotly.graph_objs as go
@@ -48,6 +49,10 @@ class PfaOffencesChart:
         __init__(pfa: str, df: pd.DataFrame):
             Initializes the chart with a PFA and its corresponding data.
 
+        create_all_offences_group():
+            Creates a group for all offences not highlighted, aggregating their
+            frequencies.
+
         create_traces():
             Creates and adds a sunburst trace to the figure, including aggregation
             of non-highlighted offences.
@@ -84,11 +89,11 @@ class PfaOffencesChart:
             pd.DataFrame.from_records([{
                 'pfa': self.pfa_df['pfa'].iloc[0],
                 'offence': "All other offences",
-                'proportion': self.pfa_df.loc[mask_filter, 'proportion'].sum(),
+                'freq': self.pfa_df.loc[mask_filter, 'freq'].sum(),
                 'parent': "All offences",
                 'plot_order': 0
             }])
-        ], ignore_index=True).sort_values(by=['plot_order', 'proportion'], ascending=True)
+        ], ignore_index=True).sort_values(by=['plot_order', 'freq'], ascending=True)
 
     def create_traces(self, max_chars=16):
         """Creates a sunburst trace for the PFA offences chart, wrapping all labels and parents."""
@@ -99,17 +104,29 @@ class PfaOffencesChart:
         wrapped_labels = wrap_series(self.pfa_df['offence'])
         wrapped_parents = wrap_series(self.pfa_df['parent'])
 
+        # Define colour mapping based on the 'plot_order' column
+        colour_map = {
+            0: self.fig.layout.template.layout.colorway[0],
+            1: self.fig.layout.template.layout.colorway[1],
+            2: self.fig.layout.template.layout.colorway[2],
+            3: self.fig.layout.template.layout.colorway[3],
+            4: self.fig.layout.template.layout.colorway[4],
+        }
+
+        colors = self.pfa_df['plot_order'].map(colour_map)
+
         sunburst_trace = go.Sunburst(
             labels=wrapped_labels,
             parents=wrapped_parents,
-            values=self.pfa_df['proportion'],
+            values=self.pfa_df['freq'],
+            marker_colors=colors,
             sort=False,
             branchvalues='total',
             texttemplate="%{label} <b>%{percentRoot: .0%}</b>",
             hovertemplate="<b>%{label}</b><br>%{percentParent: .0%} of %{parent}<extra></extra>",
             hoverinfo='label+percent parent',
             insidetextorientation='radial',
-            rotation=300,
+            rotation=70,
             domain_column=0,
             domain_row=0
         )
@@ -289,34 +306,30 @@ def make_pfa_offences_charts(
     logging.info("Charts ready")
 
 
-def test_chart(pfa: str = 'Gwent'):
+def test_chart(pfa: str = 'Gwent', df: Optional[pd.DataFrame] = None, output: str = 'show'):
     """
-    Test function to generate and display a sample chart for a specific PFA.
+    Test function to generate and display or save a sample chart for a specific PFA.
 
-    This function creates a sample DataFrame with sentence length data for a specific PFA
-    and generates a chart using the SentenceLengthChart class. It is intended for testing
+    This function creates a sample DataFrame with offence data for a specific PFA
+    and generates a chart using the PfaOffencesChart class. It is intended for testing
     purposes to ensure that the chart generation works as expected.
+
+    Args:
+        pfa (str): The Police Force Area to visualize (default is 'Gwent').
+        df (Optional[pd.DataFrame]): The input DataFrame containing offence data (default is None).
+        output (str): Determines whether to display ('show') or save ('save') the chart (default is 'show').
+
+    Returns:
+        go.Figure: The generated chart figure if output is 'show'.
     """
-    df = utils.load_data("processed", INPUT_FILENAME)
+    df = utils.load_data("processed", INPUT_FILENAME) if df is None else df
     chart = PfaOffencesChart(pfa, df)
-    return chart.output_chart()
-    # chart.save_chart(OUTPUT_PATH, 'pdf')
-
-
-def dummy_chart():
-    """
-    Dummy function to create a chart with no data.
-    This is used for testing purposes to ensure that the chart generation works without actual data.
-    """
-    df = pd.DataFrame({
-        'pfa': ['Dummy PFA'],
-        'offence': ['Dummy Offence'],
-        'proportion': [0.5],
-        'parent': ['All offences'],
-        'plot_order': [0]
-    })
-    chart = PfaOffencesChart('Dummy PFA', df)
-    return chart.output_chart()
+    if output == 'show':
+        return chart.output_chart()
+    elif output == 'save':
+        chart.save_chart(OUTPUT_PATH, 'pdf')
+    else:
+        raise ValueError("output must be 'show' or 'save'.")
 
 
 def main():
