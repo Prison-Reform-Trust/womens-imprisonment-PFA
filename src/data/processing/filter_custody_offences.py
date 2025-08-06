@@ -39,21 +39,30 @@ def load_data() -> pd.DataFrame:
     return filter_sentence_length.filter_custodial_sentences(df)
 
 
-def group_by_pfa_and_offence(df: pd.DataFrame) -> pd.DataFrame:
+def group_by_pfa_and_offence(df: pd.DataFrame, specific_offence: bool = True) -> pd.DataFrame:
     """
-    Group the DataFrame by Police Force Area (PFA), year, offence, and specific offence,
+    Group the DataFrame by Police Force Area (PFA), year, offence, and optionally specific offence,
     summing the frequency of sentences.
+
     Parameters
     ----------
     df : pd.DataFrame
         The DataFrame for processing.
+    specific_offence : bool, optional
+        If True, includes 'specific_offence' in the grouping. Defaults to True.
+
     Returns
     -------
     pd.DataFrame
-        A DataFrame grouped by PFA, year, offence and specific offence with summed frequencies.
+        A DataFrame grouped by PFA, year, offence, and optionally specific offence, with summed frequencies.
     """
-    logging.info("Grouping data by PFA, year, offence and specific offence...")
-    df_grouped = df.groupby(['pfa', 'year', 'offence', 'specific_offence'], observed=True)['freq'].sum().reset_index()
+    columns = ['pfa', 'year', 'offence']
+    if specific_offence:
+        columns.append('specific_offence')
+
+    logging.info("Grouping data by %s and summing frequencies...", ', '.join(columns))
+    df_grouped = df.groupby(columns, observed=True)['freq'].sum().reset_index()
+
     return df_grouped
 
 
