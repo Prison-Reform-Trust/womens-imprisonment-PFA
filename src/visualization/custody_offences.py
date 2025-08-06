@@ -103,17 +103,29 @@ class PfaOffencesChart:
         wrapped_labels = wrap_series(self.pfa_df['offence'])
         wrapped_parents = wrap_series(self.pfa_df['parent'])
 
+        # Define colour mapping based on the 'plot_order' column
+        colour_map = {
+            0: self.fig.layout.template.layout.colorway[0],
+            1: self.fig.layout.template.layout.colorway[1],
+            2: self.fig.layout.template.layout.colorway[2],
+            3: self.fig.layout.template.layout.colorway[3],
+            4: self.fig.layout.template.layout.colorway[4],
+        }
+
+        colors = self.pfa_df['plot_order'].map(colour_map)
+
         sunburst_trace = go.Sunburst(
             labels=wrapped_labels,
             parents=wrapped_parents,
             values=self.pfa_df['freq'],
+            marker_colors=colors,
             sort=False,
             branchvalues='total',
             texttemplate="%{label} <b>%{percentRoot: .0%}</b>",
             hovertemplate="<b>%{label}</b><br>%{percentParent: .0%} of %{parent}<extra></extra>",
             hoverinfo='label+percent parent',
             insidetextorientation='radial',
-            rotation=300,
+            rotation=70,
             domain_column=0,
             domain_row=0
         )
