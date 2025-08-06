@@ -171,8 +171,9 @@ def set_plot_order(df: pd.DataFrame) -> pd.DataFrame:
     plot_dict = {
         'All other offences': 0,
         'Theft offences': 1,
-        'Drug offences': 2,
-        'Violence against the person': 3
+        'Violence against the person': 2,
+        'Assault of an emergency worker': 2,
+        'Drug offences': 3,
     }
     df['plot_order'] = df["offence"].map(plot_dict).fillna(0)
     return df
