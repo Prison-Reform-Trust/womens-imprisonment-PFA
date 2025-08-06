@@ -25,6 +25,9 @@ config = utils.read_config()
 INPUT_FILENAME = config['data']['datasetFilenames']['filter_sentence_type']
 OUTPUT_FILENAME_TEMPLATE = config['data']['datasetFilenames']['filter_custody_offences']
 
+HIGHLIGHTED_OFFENCE_GROUPS = ['Theft offences', 'Drug offences', 'Violence against the person']
+ASSAULT_EMERGENCY_WORKER = "Assault of an emergency worker"
+
 
 def load_data() -> pd.DataFrame:
     """
@@ -81,10 +84,10 @@ def extract_assault_of_emergency_worker(df: pd.DataFrame) -> pd.DataFrame:
         The modified DataFrame with the 'Assault of an emergency worker' offence added.
     """
     logging.info("Extracting 'Assault of an emergency worker' offence...")
-    mask_filter = df['specific_offence'] == "Assault of an emergency worker"
+    mask_filter = df['specific_offence'] == ASSAULT_EMERGENCY_WORKER
     # Create a new DataFrame with the specific offence
     emergency_worker_df = df.loc[mask_filter].copy()
-    emergency_worker_df['offence'] = "Assault of an emergency worker"
+    emergency_worker_df['offence'] = ASSAULT_EMERGENCY_WORKER
     return emergency_worker_df
 
 
@@ -125,9 +128,7 @@ def filter_offences(df: pd.DataFrame) -> pd.Series:
         A boolean mask indicating whether each row's offence is in the specified groups.
     """
     logging.info("Creating filter for highlighted offence groups...")
-    # TODO: #24 Replace hardcoded new line breaks with a more robust solution
-    highlighted_offence_groups = ['Theft offences', 'Drug offences', 'Violence against the person']
-    return df['offence'].isin(highlighted_offence_groups)
+    return df['offence'].isin(HIGHLIGHTED_OFFENCE_GROUPS)
 
 
 def set_parent_column(df: pd.DataFrame, filter_mask: pd.Series) -> pd.DataFrame:
@@ -152,7 +153,8 @@ def set_parent_column(df: pd.DataFrame, filter_mask: pd.Series) -> pd.DataFrame:
     # Set parent for highlighted offences and others
     df.loc[filter_mask, 'parent'] = "All offences"
     df.loc[~filter_mask, 'parent'] = "All other offences"
-    df.loc[df['offence'] == 'Assault of an emergency worker', 'parent'] = "Violence against the person"
+    # Use the first highlighted offence group that matches as parent for 'Assault of an emergency worker'
+    df.loc[df['offence'] == ASSAULT_EMERGENCY_WORKER, 'parent'] = "Violence against the person"
     return df
 
 
@@ -172,7 +174,7 @@ def set_plot_order(df: pd.DataFrame) -> pd.DataFrame:
         'All other offences': 0,
         'Theft offences': 1,
         'Violence against the person': 2,
-        'Assault of an emergency worker': 2,
+        ASSAULT_EMERGENCY_WORKER: 2,
         'Drug offences': 3,
     }
     df['plot_order'] = df["offence"].map(plot_dict).fillna(0)
