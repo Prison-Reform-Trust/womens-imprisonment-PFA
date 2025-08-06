@@ -310,7 +310,7 @@ def test_chart(pfa: str = 'Gwent', df: Optional[pd.DataFrame] = None, output: st
     """
     Test function to generate and display or save a sample chart for a specific PFA.
 
-    This function creates a sample DataFrame with sentence length data for a specific PFA
+    This function creates a sample DataFrame with offence data for a specific PFA
     and generates a chart using the PfaOffencesChart class. It is intended for testing
     purposes to ensure that the chart generation works as expected.
 
