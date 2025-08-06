@@ -48,6 +48,10 @@ class PfaOffencesChart:
         __init__(pfa: str, df: pd.DataFrame):
             Initializes the chart with a PFA and its corresponding data.
 
+        create_all_offences_group():
+            Creates a group for all offences not highlighted, aggregating their
+            frequencies.
+
         create_traces():
             Creates and adds a sunburst trace to the figure, including aggregation
             of non-highlighted offences.
@@ -84,11 +88,11 @@ class PfaOffencesChart:
             pd.DataFrame.from_records([{
                 'pfa': self.pfa_df['pfa'].iloc[0],
                 'offence': "All other offences",
-                'proportion': self.pfa_df.loc[mask_filter, 'proportion'].sum(),
+                'freq': self.pfa_df.loc[mask_filter, 'freq'].sum(),
                 'parent': "All offences",
                 'plot_order': 0
             }])
-        ], ignore_index=True).sort_values(by=['plot_order', 'proportion'], ascending=True)
+        ], ignore_index=True).sort_values(by=['plot_order', 'freq'], ascending=True)
 
     def create_traces(self, max_chars=16):
         """Creates a sunburst trace for the PFA offences chart, wrapping all labels and parents."""
@@ -102,7 +106,7 @@ class PfaOffencesChart:
         sunburst_trace = go.Sunburst(
             labels=wrapped_labels,
             parents=wrapped_parents,
-            values=self.pfa_df['proportion'],
+            values=self.pfa_df['freq'],
             sort=False,
             branchvalues='total',
             texttemplate="%{label} <b>%{percentRoot: .0%}</b>",
