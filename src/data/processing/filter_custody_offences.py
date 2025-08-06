@@ -66,64 +66,47 @@ def group_by_pfa_and_offence(df: pd.DataFrame, specific_offence: bool = True) ->
     return df_grouped
 
 
-def calculate_offence_proportions(df: pd.DataFrame) -> pd.DataFrame:
-    """The function uses crosstab with the normalize argument to
-    calculate offence group proportions by PFA and specific_offence normalized to offence.
+def extract_assault_of_emergency_worker(df: pd.DataFrame) -> pd.DataFrame:
+    """
+    Store the 'Assault of an emergency worker' offence in a separate DataFrame
 
     Parameters
     ----------
     df : pd.DataFrame
-        The DataFrame for processing.
+        The DataFrame to modify.
 
     Returns
     -------
     pd.DataFrame
-        The processed DataFrame.
+        The modified DataFrame with the 'Assault of an emergency worker' offence added.
     """
-    logging.info("Calculating offence group proportions by PFA and specific_offence...")
-
-    specific_offence_proportions = (
-        pd.crosstab(
-            index=[df['pfa'], df['offence']],
-            columns=df['specific_offence'],
-            values=df['freq'],
-            aggfunc="sum",
-            normalize='index'
-        )
-        .round(3)
-        .reset_index()
-    )
-
-    return specific_offence_proportions
+    logging.info("Extracting 'Assault of an emergency worker' offence...")
+    mask_filter = df['specific_offence'] == "Assault of an emergency worker"
+    # Create a new DataFrame with the specific offence
+    emergency_worker_df = df.loc[mask_filter].copy()
+    emergency_worker_df['offence'] = "Assault of an emergency worker"
+    return emergency_worker_df
 
 
-def melt_dataframe(df: pd.DataFrame) -> pd.DataFrame:
+def add_assault_of_emergency_worker(df: pd.DataFrame, emergency_worker_df: pd.DataFrame) -> pd.DataFrame:
     """
-    Melt the DataFrame from wide to long format.
+    Add the 'Assault of an emergency worker' offence to the DataFrame.
 
     Parameters
     ----------
     df : pd.DataFrame
-        The DataFrame to melt.
+        The DataFrame to modify.
+    emergency_worker_df : pd.DataFrame
+        The DataFrame containing the 'Assault of an emergency worker' offence.
 
     Returns
     -------
     pd.DataFrame
-        The melted DataFrame.
+        The modified DataFrame with the 'Assault of an emergency worker' offence added.
     """
-    logging.info("Melting DataFrame to long format...")
-    return (
-        pd.melt(
-            df,
-            id_vars=['pfa', 'offence'],
-            value_vars=list(df.columns[1:]),
-            var_name='specific_offence',
-            value_name='proportion'
-        )
-        .query("proportion != 0.0")
-        .sort_values(by=['pfa', 'offence', 'specific_offence'])
-        .reset_index(drop=True)
-    )
+    logging.info("Adding 'Assault of an emergency worker' offence to the main DataFrame...")
+    # Append the assault of an emergency worker DataFrame to the main DataFrame
+    return pd.concat([df, emergency_worker_df], ignore_index=True).sort_values(by=['offence', 'freq'], ascending=True).reset_index(drop=True)
 
 
 def filter_offences(df: pd.DataFrame) -> pd.Series:
