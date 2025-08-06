@@ -10,6 +10,7 @@ who received a custodial sentence in 2024, broken down by offence group.
 """
 
 import logging
+from typing import Optional
 
 import pandas as pd
 import plotly.graph_objs as go
@@ -305,34 +306,30 @@ def make_pfa_offences_charts(
     logging.info("Charts ready")
 
 
-def test_chart(pfa: str = 'Gwent'):
+def test_chart(pfa: str = 'Gwent', df: Optional[pd.DataFrame] = None, output: str = 'show'):
     """
-    Test function to generate and display a sample chart for a specific PFA.
+    Test function to generate and display or save a sample chart for a specific PFA.
 
     This function creates a sample DataFrame with sentence length data for a specific PFA
-    and generates a chart using the SentenceLengthChart class. It is intended for testing
+    and generates a chart using the PfaOffencesChart class. It is intended for testing
     purposes to ensure that the chart generation works as expected.
+
+    Args:
+        pfa (str): The Police Force Area to visualize (default is 'Gwent').
+        df (Optional[pd.DataFrame]): The input DataFrame containing offence data (default is None).
+        output (str): Determines whether to display ('show') or save ('save') the chart (default is 'show').
+
+    Returns:
+        go.Figure: The generated chart figure if output is 'show'.
     """
-    df = utils.load_data("processed", INPUT_FILENAME)
+    df = utils.load_data("processed", INPUT_FILENAME) if df is None else df
     chart = PfaOffencesChart(pfa, df)
-    return chart.output_chart()
-    # chart.save_chart(OUTPUT_PATH, 'pdf')
-
-
-def dummy_chart():
-    """
-    Dummy function to create a chart with no data.
-    This is used for testing purposes to ensure that the chart generation works without actual data.
-    """
-    df = pd.DataFrame({
-        'pfa': ['Dummy PFA'],
-        'offence': ['Dummy Offence'],
-        'proportion': [0.5],
-        'parent': ['All offences'],
-        'plot_order': [0]
-    })
-    chart = PfaOffencesChart('Dummy PFA', df)
-    return chart.output_chart()
+    if output == 'show':
+        return chart.output_chart()
+    elif output == 'save':
+        chart.save_chart(OUTPUT_PATH, 'pdf')
+    else:
+        raise ValueError("output must be 'show' or 'save'.")
 
 
 def main():
