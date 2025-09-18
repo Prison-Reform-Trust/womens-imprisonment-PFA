@@ -19,7 +19,7 @@ utils.setup_logging()
 config = utils.read_config()
 
 
-def calculate_sample_size(N, z=1.96, p=0.5, e=0.2):
+def calculate_sample_size(N, z=1.96, p=0.5, e=0.2) -> int:
     """
     Calculate the recommended sample size for a given population size (N)
     using the formula for sample size calculation.
@@ -37,36 +37,6 @@ def calculate_sample_size(N, z=1.96, p=0.5, e=0.2):
     return math.ceil(n)
 
 
-def select_random_pfas(data, sample_size):
-    """
-    Select a random sample of Police Force Areas (PFAs) from the dataset.
-
-    Parameters:
-    data (pd.DataFrame): DataFrame containing the custody data with a 'pfa' column
-    sample_size (int): Number of PFAs to sample
-
-    Returns:
-    list: List of randomly selected PFAs
-    """
-    pfa_sample = random.sample(list(data['pfa'].unique()), sample_size)
-    return pfa_sample
-
-
-def filter_pfas(data, pfa_sample):
-    """
-    Filter the DataFrame to include only the selected PFAs.
-
-    Parameters:
-    data (pd.DataFrame): DataFrame containing the custody data
-    pfa_sample (list): List of PFAs to include
-
-    Returns:
-    pd.DataFrame: Filtered DataFrame with only the selected PFAs
-    """
-    filt = data['pfa'].isin(pfa_sample)
-    cols = list(data.columns[:2]) + list(data.columns[-3:])
-    return data.loc[filt, cols]
-
 '''
 Working through the factsheet data tables to check a random sample of PFAs.
 Currently using all custodial sentences data. Produce tables showing:
@@ -78,16 +48,80 @@ Currently using all custodial sentences data. Produce tables showing:
 '''
 
 
+def create_pfa_sample(data: pd.DataFrame) -> list[str]:
+    """Select a random sample of Police Force Areas (PFAs) from the dataset.
+    
+    Parameters
+    ----------
+    data : pd.DataFrame
+        DataFrame containing the custody data with a 'pfa' column.
+
+    Returns
+    -------
+    list[str]
+        A list of randomly selected PFAs.
+    """
+    N = len(data['pfa'].unique())
+    sample_size = calculate_sample_size(N)
+    sample_pfas = random.sample(list(data['pfa'].unique()), sample_size)
+    return sample_pfas
+
+
+def create_total_custodial_sentences_table(data: pd.DataFrame, sample_pfas: list[str]) -> pd.DataFrame:
+    """Create a table showing the total number of custodial sentences in each PFA.
+
+    Parameters
+    ----------
+    data : pd.DataFrame
+        DataFrame containing the custody data
+    sample_pfas : list[str]
+        List of PFAs to include in the table
+
+    Returns
+    -------
+    pd.DataFrame
+        A DataFrame containing the total number of custodial sentences by PFA for the selected sample PFAs.
+    """
+    filt = data['pfa'].isin(sample_pfas)
+    cols = list(data.columns[:2]) + list(data.columns[-3:])
+    return data.loc[filt, cols]
+
+
+def load_less_than_six_months_data() -> pd.DataFrame:
+    """Load the six months and under custodial sentences data.
+
+    Returns
+    -------
+    pd.DataFrame
+        A DataFrame containing the six months and under custodial sentences data.
+    """
+    custody_data_template = config['data']['datasetFilenames']['make_custody_tables_template']
+    custody_data_filename = custody_data_template.format(category='6_months')
+
+    under_six_months_custody = utils.load_data('processed', custody_data_filename)
+    return under_six_months_custody
+
+
+def create_under_six_months_table(sample_pfas: list[str]) -> pd.DataFrame:
+    """Create a table showing the number of custodial sentences of under six months
+    and the proportion of all custodial sentences that this represents for the sampled PFAs.
+
+    Returns
+    -------
+    pd.DataFrame
+        A DataFrame containing the number of custodial sentences of under six months
+        by PFA for a recommended sample size of PFAs.
+    """
+    under_six_months_data = load_less_than_six_months_data()
+    
 
 
 def main():
-    custody_data, _ = load_data()
-    N = len(custody_data['pfa'].unique())
-    sample_size = calculate_sample_size(N)
-    random_pfas = select_random_pfas(custody_data, sample_size)
-    print(f"Recommended sample size: {sample_size}")
-    print("Randomly selected PFAs for review:")
-    print(random_pfas)
+    all_custody_data, _ = load_data()
+    sample_pfas = create_pfa_sample(all_custody_data)
+    create_total_custodial_sentences_table(all_custody_data, sample_pfas)
+    under_six_months_data = load_less_than_six_months_data()
+    create_under_six_months_table(under_six_months_data, sample_pfas)
 
 
 if __name__ == "__main__":
