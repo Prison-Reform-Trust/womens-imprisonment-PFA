@@ -3,6 +3,7 @@
     rawFilePath: data/raw/
     clnFilePath: data/processed/
     intFilePath: data/interim/
+    testsFilePath: data/tests/
     outPath: reports/figures/
     downloadPaths:
         cjs_dec_2024: https://www.gov.uk/api/content/government/statistics/criminal-justice-system-statistics-quarterly-december-2024
@@ -25,6 +26,9 @@
         ons_comparator: LA_population_women_{min_year}-{max_year}.csv
         la_to_pfa_lookup: LA_to_PFA_(December_2022)_Lookup_in_EW.csv
         la_pfa: QA_LA_PFA_population_women_{min_year}-{max_year}.csv
+    factsheetTests:
+        custodial_sentences: factsheet_custodial_sentences_{category}.csv
+
 
 - outcomes_by_offence_filter:
     include:
