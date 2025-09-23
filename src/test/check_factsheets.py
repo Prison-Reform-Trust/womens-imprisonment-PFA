@@ -12,7 +12,6 @@ import random
 import pandas as pd
 
 import src.utilities as utils
-from src.data.processing.combine_custody_pfa_population import load_data
 
 utils.setup_logging()
 
@@ -85,7 +84,7 @@ Currently using all custodial sentences data. Produce tables showing:
 
 def create_pfa_sample(data: pd.DataFrame) -> list[str]:
     """Select a random sample of Police Force Areas (PFAs) from the dataset.
-    
+
     Parameters
     ----------
     data : pd.DataFrame
@@ -119,26 +118,14 @@ def create_total_custodial_sentences_table(data: pd.DataFrame, sample_pfas: list
     """
     filt = data['pfa'].isin(sample_pfas)
     cols = list(data.columns[:2]) + list(data.columns[-3:])
-    return data.loc[filt, cols]
+    df = data.loc[filt, cols]
+    save_data(df, category='all')
+
+    return df
 
 
-def load_less_than_six_months_data() -> pd.DataFrame:
-    """Load the six months and under custodial sentences data.
-
-    Returns
-    -------
-    pd.DataFrame
-        A DataFrame containing the six months and under custodial sentences data.
-    """
-    custody_data_template = config['data']['datasetFilenames']['make_custody_tables_template']
-    custody_data_filename = custody_data_template.format(category='6_months')
-
-    under_six_months_custody = utils.load_data('processed', custody_data_filename)
-    return under_six_months_custody
-
-
-def create_under_six_months_table(sample_pfas: list[str]) -> pd.DataFrame:
-    """Create a table showing the number of custodial sentences of under six months
+def create_under_six_months_table(sample_pfas: list[str], all_custody_data: pd.DataFrame) -> pd.DataFrame:
+    """Create a table showing the number of custodial sentences of under six months in the latest year.
     and the proportion of all custodial sentences that this represents for the sampled PFAs.
 
     Returns
@@ -147,16 +134,32 @@ def create_under_six_months_table(sample_pfas: list[str]) -> pd.DataFrame:
         A DataFrame containing the number of custodial sentences of under six months
         by PFA for a recommended sample size of PFAs.
     """
-    under_six_months_data = load_less_than_six_months_data()
-    
+    data = load_data(category='6_months')
+    filt = data['pfa'].isin(sample_pfas)
+    cols = data.columns[[0, -2]]
+    df = data.loc[filt, cols]
+
+    all_custody_data = all_custody_data[['pfa', all_custody_data.columns[-2]]]  # pfa and latest year
+    df = df.merge(all_custody_data, on='pfa', how='left', suffixes=('_under_6_months', '_all_sentences'))
+    df['proportion_under_6_months'] = df.iloc[:, 1] / df.iloc[:, 2]
+    save_data(df, category='6_months')
+    return df
 
 
 def main():
-    all_custody_data, _ = load_data()
+    """Main function to produce the factsheet data review process.
+
+    Returns
+    -------
+    None
+    """
+
+    all_custody_data = load_data(category='all')
     sample_pfas = create_pfa_sample(all_custody_data)
-    create_total_custodial_sentences_table(all_custody_data, sample_pfas)
-    under_six_months_data = load_less_than_six_months_data()
-    create_under_six_months_table(under_six_months_data, sample_pfas)
+
+    df_all = create_total_custodial_sentences_table(all_custody_data, sample_pfas)
+    create_under_six_months_table(sample_pfas, df_all)
+    return None
 
 
 if __name__ == "__main__":
