@@ -18,6 +18,41 @@ utils.setup_logging()
 
 config = utils.read_config()
 
+OUTPUT_FILENAME_TEMPLATE = config['data']['factsheetTests']['custodial_sentences']
+
+
+def load_data(category: str) -> pd.DataFrame:
+    """Load the PFA population data and CJS custody data."""
+    custody_data_template = config['data']['datasetFilenames']['make_custody_tables_template']
+    custody_data_filename = custody_data_template.format(category=category)
+
+    custody_data = utils.load_data('processed', custody_data_filename)
+    return custody_data
+
+
+def save_data(df: pd.DataFrame, category: str) -> None:
+    """Save the DataFrame to a CSV file in the tests directory.
+
+    Parameters
+    ----------
+    df : pd.DataFrame
+        The DataFrame to save.
+    category : str
+        The category for the filename e.g. 'all' or '6_months'.
+
+    Returns
+    -------
+    None
+    """
+    filename = OUTPUT_FILENAME_TEMPLATE.format(category=category)
+
+    utils.safe_save_data(
+        df=df,
+        path=config['data']['testsFilePath'],
+        filename=filename,
+    )
+    return None
+
 
 def calculate_sample_size(N, z=1.96, p=0.5, e=0.2) -> int:
     """
