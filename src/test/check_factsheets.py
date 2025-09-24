@@ -6,8 +6,10 @@ a review of a random sample of Police Force Areas (PFAs) to ensure accuracy in t
 creation process.
 '''
 
+import logging
 import math
 import random
+from typing import Optional
 
 import pandas as pd
 
@@ -20,13 +22,49 @@ config = utils.read_config()
 OUTPUT_FILENAME_TEMPLATE = config['data']['factsheetTests']['custodial_sentences']
 
 
-def load_data(category: str) -> pd.DataFrame:
-    """Load the PFA population data and CJS custody data."""
-    custody_data_template = config['data']['datasetFilenames']['make_custody_tables_template']
-    custody_data_filename = custody_data_template.format(category=category)
+def load_data(
+        data_type: str,
+        sentence_length: Optional[str] = None,
+        year: Optional[str] = None
+        ) -> pd.DataFrame:
+    """Load the custody data by sentence length or offence.
+    Parameters
+    ----------
+    data_type : str
+        The type of data to load: 'sentence_length' or 'offence'.
+    sentence_length : str, optional
+        The sentence length category to load (e.g., 'all', '6_months'). Required if data_type is 'sentence_length'.
+    year : str, optional
+        The year of offence data to load (e.g., '2024'). Only used if data_type is 'offence'.
+        Defaults to the latest year available if no argument is provided.
+    Returns
+    -------
+    pd.DataFrame
+        The loaded DataFrame."""
 
-    custody_data = utils.load_data('processed', custody_data_filename)
-    return custody_data
+    if data_type == 'sentence_length':
+        if sentence_length is None:
+            raise ValueError("sentence_length must be provided when data_type is 'sentence_length'")
+        if sentence_length not in ['all', '6_months', '12_months']:
+            raise ValueError("sentence_length must be either 'all', '6_months' or '12_months'")
+        logging.info("Loading sentence length data...")
+        data_template = config['data']['datasetFilenames']['make_custody_tables_template']
+        data_filename = data_template.format(category=sentence_length)
+
+    elif data_type == 'offence':
+        logging.info("Loading offences data...")
+        year = '*' if year is None else year
+        data_template = config['data']['datasetFilenames']['filter_custody_offences']
+        data_pattern = data_template.format(year=year)
+        data_filename = utils.fetch_latest_file(
+            pattern=data_pattern,
+            path=config['data']['clnFilePath']
+        )
+    else:
+        raise ValueError("data_type must be either 'sentence_length' or 'offence'")
+
+    data = utils.load_data('processed', data_filename)
+    return data
 
 
 def save_data(df: pd.DataFrame, category: str) -> None:
@@ -134,7 +172,7 @@ def create_under_six_months_table(sample_pfas: list[str], all_custody_data: pd.D
         A DataFrame containing the number of custodial sentences of under six months
         by PFA for a recommended sample size of PFAs.
     """
-    data = load_data(category='6_months')
+    data = load_data(data_type='sentence_length', sentence_length='6_months')
     filt = data['pfa'].isin(sample_pfas)
     cols = data.columns[[0, -2]]
     df = data.loc[filt, cols]
@@ -154,7 +192,7 @@ def main():
     None
     """
 
-    all_custody_data = load_data(category='all')
+    all_custody_data = load_data(data_type='sentence_length', sentence_length='all')
     sample_pfas = create_pfa_sample(all_custody_data)
 
     df_all = create_total_custodial_sentences_table(all_custody_data, sample_pfas)
