@@ -54,6 +54,7 @@ def load_data(
     elif data_type == 'offence':
         logging.info("Loading offences data...")
         year = '*' if year is None else year
+        # NOTE: Use this in other implementations where fetch_latest_file is currently used
         data_template = config['data']['datasetFilenames']['filter_custody_offences']
         data_pattern = data_template.format(year=year)
         data_filename = utils.fetch_latest_file(
@@ -182,6 +183,38 @@ def create_under_six_months_table(sample_pfas: list[str], all_custody_data: pd.D
     df['proportion_under_6_months'] = df.iloc[:, 1] / df.iloc[:, 2]
     save_data(df, category='6_months')
     return df
+
+
+def create_theft_offences_table(sample_pfas: list[str], all_custody_data: pd.DataFrame) -> pd.DataFrame:
+    """Create a table showing the proportion of custodial sentences for theft offences in the latest year.
+
+    Returns
+    -------
+    pd.DataFrame
+        A DataFrame containing the proportion of custodial sentences for theft offences by PFA.
+    """
+    data = load_data(data_type='offence')
+    filt = data['pfa'].isin(sample_pfas) & (data['offence'] == 'Theft offences')
+    cols = ['pfa', 'offence', 'freq']
+    df = data.loc[filt, cols]
+
+    all_custody_data = all_custody_data[['pfa', all_custody_data.columns[-2]]]  # pfa and latest year
+    df = df.merge(all_custody_data, on='pfa', how='left')
+    # Use explicit column names for division
+    theft_freq_col = 'freq'
+    total_sentences_col = all_custody_data.columns[-1]
+    df['proportion_theft_offences'] = df[theft_freq_col] / df[total_sentences_col]
+    drop_cols = [theft_freq_col, total_sentences_col] # dropping columns used in calculation
+    df.drop(columns=drop_cols, inplace=True)
+
+    return df
+
+
+def build_sample_pfa_list() -> list[str]:
+    """FOR TESTING PURPOSES: Build a list of sample PFAs from the full custody data."""
+    all_custody_data = load_data(data_type='sentence_length', sentence_length='all')
+    sample_pfas = create_pfa_sample(all_custody_data)
+    return sample_pfas
 
 
 def main():
