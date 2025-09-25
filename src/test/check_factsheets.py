@@ -118,17 +118,6 @@ def calculate_sample_size(N, z=1.96, p=0.5, e=0.2) -> int:
     return math.ceil(n)
 
 
-'''
-Working through the factsheet data tables to check a random sample of PFAs.
-Currently using all custodial sentences data. Produce tables showing:
-- Number of sentences of six months and under for latest year and % of total.
-- Proportion of custodial sentences for theft offences for latest year.
-- Number of community sentences for 2014, latest year and % change.
-
-* Check Sheet5 which shows cautions — don't think these are taken from my analysis.
-'''
-
-
 def create_pfa_sample(data: pd.DataFrame) -> list[str]:
     """Select a random sample of Police Force Areas (PFAs) from the dataset.
 
@@ -175,6 +164,12 @@ def create_total_custodial_sentences_table(data: pd.DataFrame, sample_pfas: list
 def create_under_six_months_table(sample_pfas: list[str], all_custody_data: pd.DataFrame) -> pd.DataFrame:
     """Create a table showing the number of custodial sentences of under six months in the latest year.
     and the proportion of all custodial sentences that this represents for the sampled PFAs.
+    Parameters
+    ----------
+    sample_pfas : list[str]
+        List of PFAs to include in the table
+    all_custody_data : pd.DataFrame
+        DataFrame containing the total custodial sentences data for all sentence lengths.
 
     Returns
     -------
@@ -196,6 +191,12 @@ def create_under_six_months_table(sample_pfas: list[str], all_custody_data: pd.D
 
 def create_theft_offences_table(sample_pfas: list[str], all_custody_data: pd.DataFrame) -> pd.DataFrame:
     """Create a table showing the proportion of custodial sentences for theft offences in the latest year.
+    Parameters
+    ----------
+    sample_pfas : list[str]
+        List of PFAs to include in the table
+    all_custody_data : pd.DataFrame
+        DataFrame containing the total custodial sentences data for all sentence lengths.
 
     Returns
     -------
