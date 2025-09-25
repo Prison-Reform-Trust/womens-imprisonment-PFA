@@ -19,8 +19,6 @@ utils.setup_logging()
 
 config = utils.read_config()
 
-OUTPUT_FILENAME_TEMPLATE = config['data']['factsheetTests']['custodial_sentences']
-
 
 def load_data(
         data_type: str,
@@ -71,21 +69,28 @@ def load_data(
     return data
 
 
-def save_data(df: pd.DataFrame, category: str) -> None:
+def save_data(df: pd.DataFrame, filename: str, category: Optional[str] = None) -> None:
     """Save the DataFrame to a CSV file in the tests directory.
 
     Parameters
     ----------
     df : pd.DataFrame
         The DataFrame to save.
-    category : str
-        The category for the filename e.g. 'all' or '6_months'.
+    filename : str
+        The base filename to use. If 'custodial_sentences', the category will be included in the filename.
+    category : str, optional
+        The category to include in the filename if filename is 'custodial_sentences'.
 
     Returns
     -------
     None
     """
-    filename = OUTPUT_FILENAME_TEMPLATE.format(category=category)
+    if filename == 'custodial_sentences':
+        filename_template = config['data']['factsheetTests']['custodial_sentences']
+        filename = filename_template.format(category=category)
+
+    elif filename == 'community_sentences':
+        filename = config['data']['factsheetTests']['community_sentences']
 
     utils.safe_save_data(
         df=df,
@@ -161,7 +166,7 @@ def create_total_custodial_sentences_table(data: pd.DataFrame, sample_pfas: list
     filt = data['pfa'].isin(sample_pfas)
     cols = list(data.columns[:2]) + list(data.columns[-3:])
     df = data.loc[filt, cols]
-    save_data(df, category='all')
+    save_data(df, filename='custodial_sentences', category='all')
 
     return df
 
@@ -184,7 +189,7 @@ def create_under_six_months_table(sample_pfas: list[str], all_custody_data: pd.D
     all_custody_data = all_custody_data[['pfa', all_custody_data.columns[-2]]]  # pfa and latest year
     df = df.merge(all_custody_data, on='pfa', how='left', suffixes=('_under_6_months', '_all_sentences'))
     df['proportion_under_6_months'] = df.iloc[:, 1] / df.iloc[:, 2]
-    save_data(df, category='6_months')
+    save_data(df, filename='custodial_sentences', category='6_months')
     return df
 
 
@@ -211,7 +216,7 @@ def create_theft_offences_table(sample_pfas: list[str], all_custody_data: pd.Dat
     drop_cols = [theft_freq_col, total_sentences_col]  # dropping columns used in calculation
     df.drop(columns=drop_cols, inplace=True)
 
-    save_data(df, category='theft_offences')
+    save_data(df, filename='custodial_sentences', category='theft_offences')
     return df
 
 
