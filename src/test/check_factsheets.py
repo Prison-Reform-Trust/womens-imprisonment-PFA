@@ -166,6 +166,7 @@ def create_total_custodial_sentences_table(data: pd.DataFrame, sample_pfas: list
     filt = data['pfa'].isin(sample_pfas)
     cols = list(data.columns[:2]) + list(data.columns[-3:])
     df = data.loc[filt, cols]
+    df.iloc[:, -1] = df.iloc[:, -1] * 100  # convert to percentage
     save_data(df, filename='custodial_sentences', category='all')
 
     return df
@@ -188,7 +189,7 @@ def create_under_six_months_table(sample_pfas: list[str], all_custody_data: pd.D
 
     all_custody_data = all_custody_data[['pfa', all_custody_data.columns[-2]]]  # pfa and latest year
     df = df.merge(all_custody_data, on='pfa', how='left', suffixes=('_under_6_months', '_all_sentences'))
-    df['proportion_under_6_months'] = df.iloc[:, 1] / df.iloc[:, 2]
+    df['proportion_under_6_months'] = (df.iloc[:, 1] / df.iloc[:, 2]) * 100
     save_data(df, filename='custodial_sentences', category='6_months')
     return df
 
@@ -212,7 +213,7 @@ def create_theft_offences_table(sample_pfas: list[str], all_custody_data: pd.Dat
     # Use explicit column names for division
     theft_freq_col = 'freq'
     total_sentences_col = all_custody_data.columns[-1]
-    df['proportion_theft_offences'] = df[theft_freq_col] / df[total_sentences_col]
+    df['proportion_theft_offences'] = (df[theft_freq_col] / df[total_sentences_col]) * 100
     drop_cols = [theft_freq_col, total_sentences_col]  # dropping columns used in calculation
     df.drop(columns=drop_cols, inplace=True)
 
