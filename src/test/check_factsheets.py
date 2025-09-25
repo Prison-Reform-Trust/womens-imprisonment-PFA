@@ -221,6 +221,54 @@ def create_theft_offences_table(sample_pfas: list[str], all_custody_data: pd.Dat
     return df
 
 
+def create_community_sentences_table(sample_pfas: list[str], time_period: Optional[int] = None) -> pd.DataFrame:
+    """Create a table showing the number of community sentences in 2014 and the latest year,
+    and the percentage change between these years for the sampled PFAs.
+
+    Parameters
+    ----------
+    sample_pfas : list[str]
+        List of PFAs to include in the table
+    time_period : int, optional
+        The number of years to look back from the latest year. If None, uses the full range of available data.
+        Defaults to None.
+
+    Returns
+    -------
+    pd.DataFrame
+        A DataFrame containing the number of community sentences by PFA for 2014 and the latest year,
+        along with the percentage change.
+    """
+    data = load_data(data_type='sentence_type')
+    min_year, max_year = utils.get_year_range(data, 'year')
+    time_period = max_year - min_year if time_period is None else time_period
+    start_year = max_year - time_period
+    if start_year < min_year:
+        logging.warning("Requested time_period of %s years exceeds available data range."
+                        "Using full range from %s to %s.", time_period, min_year, max_year)
+        start_year = min_year
+
+    filt = (
+        data['pfa'].isin(sample_pfas) &
+        (data['outcome'] == 'Community Sentence') &
+        (data['year'].isin([start_year, max_year]))
+    )
+    df = data.loc[filt]
+
+    pivot_df = df.pivot(index='pfa', columns='year', values='freq')
+
+    pivot_df['pct_change'] = ((pivot_df[max_year] - pivot_df[start_year]) / pivot_df[start_year]) * 100
+
+    # Merge outcome back (all values will be 'Community Sentence' for these rows)
+    pivot_df = pivot_df.reset_index()
+    pivot_df['outcome'] = 'Community Sentence'
+
+    # Reorder columns
+    result = pivot_df[['pfa', 'outcome', start_year, max_year, 'pct_change']]
+    save_data(result, filename='community_sentences')
+    return result
+
+
 def build_sample_pfa_list() -> list[str]:
     """FOR TESTING PURPOSES: Build a list of sample PFAs from the full custody data."""
     all_custody_data = load_data(data_type='sentence_length', sentence_length='all')
@@ -242,6 +290,7 @@ def main():
     df_all = create_total_custodial_sentences_table(all_custody_data, sample_pfas)
     create_under_six_months_table(sample_pfas, df_all)
     create_theft_offences_table(sample_pfas, all_custody_data)
+    create_community_sentences_table(sample_pfas, time_period=10)
     return None
 
 
