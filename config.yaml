@@ -28,6 +28,7 @@
         la_pfa: QA_LA_PFA_population_women_{min_year}-{max_year}.csv
     factsheetTests:
         custodial_sentences: factsheet_custodial_sentences_{category}.csv
+        community_sentences: factsheet_community_sentences.csv
 
 
 - outcomes_by_offence_filter:
