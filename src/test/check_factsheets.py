@@ -31,7 +31,7 @@ def load_data(
     Parameters
     ----------
     data_type : str
-        The type of data to load: 'sentence_length' or 'offence'.
+        The type of data to load: 'sentence_length', 'offence' or 'sentence_type'.
     sentence_length : str, optional
         The sentence length category to load (e.g., 'all', '6_months'). Required if data_type is 'sentence_length'.
     year : str, optional
@@ -61,8 +61,11 @@ def load_data(
             pattern=data_pattern,
             path=config['data']['clnFilePath']
         )
+    elif data_type == 'sentence_type':
+        logging.info("Loading sentence type data...")
+        data_filename = config['data']['datasetFilenames']['group_pfa_sentence_outcome']
     else:
-        raise ValueError("data_type must be either 'sentence_length' or 'offence'")
+        raise ValueError("data_type must be either 'sentence_length', 'offence' or 'sentence_type'")
 
     data = utils.load_data('processed', data_filename)
     return data
