@@ -25,11 +25,6 @@ import src.utilities as utils
 
 utils.setup_logging()
 
-config = utils.load_config()
-
-INPUT_FILENAME = config['data']['datasetFilenames']['filter_sentence_type']
-OUTPUT_FILENAME = config['data']['datasetFilenames']['group_pfa_sentence_outcome']
-
 
 def group_by_pfa_sentence_outcome(df: pd.DataFrame) -> pd.DataFrame:
     """
@@ -51,20 +46,23 @@ def group_by_pfa_sentence_outcome(df: pd.DataFrame) -> pd.DataFrame:
     return grouped_df
 
 
-def main():
+def main(config: dict):
     """
     Main function to process the PFA sentence outcome data.
     """
+    input_filename = config['data']['datasetFilenames']['filter_sentence_type']
+    output_filename = config['data']['datasetFilenames']['group_pfa_sentence_outcome']
+
     (
-        utils.load_data(status='interim', filename=INPUT_FILENAME)
+        utils.load_data(
+            config=config,
+            status='interim',
+            filename=input_filename
+        )
         .pipe(group_by_pfa_sentence_outcome)
         .pipe(
             utils.safe_save_data,
             path=config['data']['clnFilePath'],
-            filename=OUTPUT_FILENAME
+            filename=output_filename
             )
     )
-
-
-if __name__ == "__main__":
-    main()

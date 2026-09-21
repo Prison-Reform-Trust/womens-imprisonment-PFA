@@ -20,24 +20,19 @@ from src.data.processing import (filter_custody_offences,
 
 utils.setup_logging()
 
-config = utils.load_config()
 
+def process_data(config: dict) -> None:
+    """Run the processing pipeline for the selected analysis configuration."""
 
-def process_data():
-    """
-    Main function to process the Criminal Justice System statistics quarterly: December 2024
-    Outcomes by Offence datasets.
-    """
-    logging.info("Starting data processing pipeline...")
+    logging.info(
+        "Starting processing for analysis %s",
+        config["analysis"]["id"],
+    )
 
-    filter_sentence_type.main()
-    group_pfa_sentence_outcome.main()
-    filter_sentence_length.main()
-    make_custody_tables.main()
-    filter_custody_offences.main()
+    filter_sentence_type.main(config)
+    group_pfa_sentence_outcome.main(config)
+    filter_sentence_length.main(config)
+    make_custody_tables.main(config)
+    filter_custody_offences.main(config)
 
     logging.info("Data processing pipeline completed successfully.")
-
-
-if __name__ == "__main__":
-    process_data()

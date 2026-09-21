@@ -21,11 +21,6 @@ import src.utilities as utils
 
 utils.setup_logging()
 
-config = utils.load_config()
-
-INPUT_FILENAME = config['data']['datasetFilenames']['filter_sentence_type']
-OUTPUT_FILENAME = config['data']['datasetFilenames']['filter_sentence_length']
-
 
 def filter_custodial_sentences(df: pd.DataFrame) -> pd.DataFrame:
     """
@@ -113,7 +108,7 @@ def group_by_pfa_and_sentence_length(df: pd.DataFrame) -> pd.DataFrame:
     return df_grouped
 
 
-def load_and_process_data() -> pd.DataFrame:
+def load_and_process_data(config: dict) -> pd.DataFrame:
     """
     Load the interim dataset and process it to filter custodial sentences
     and group by sentence length.
@@ -123,8 +118,14 @@ def load_and_process_data() -> pd.DataFrame:
     pd.DataFrame
         The processed DataFrame with grouped sentence lengths.
     """
+    input_filename = config['data']['datasetFilenames']['filter_sentence_type']
+
     df = (
-        utils.load_data(status='interim', filename=INPUT_FILENAME)
+        utils.load_data(
+            config=config,
+            status='interim',
+            filename=input_filename
+        )
         .pipe(filter_custodial_sentences)
         .pipe(group_sentence_lengths)
         .pipe(group_by_pfa_and_sentence_length)
@@ -133,18 +134,15 @@ def load_and_process_data() -> pd.DataFrame:
     return df
 
 
-def main():
+def main(config: dict):
     """
     Main function to process the PFA sentence outcome data.
     """
+    output_filename = config['data']['datasetFilenames']['filter_sentence_length']
     (
-        load_and_process_data()
+        load_and_process_data(config=config)
         .pipe(utils.safe_save_data,
               path=config['data']['clnFilePath'],
-              filename=OUTPUT_FILENAME
+              filename=output_filename
               )
     )
-
-
-if __name__ == "__main__":
-    main()

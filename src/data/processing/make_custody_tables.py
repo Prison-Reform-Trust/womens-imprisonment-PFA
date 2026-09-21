@@ -19,9 +19,6 @@ from src.data.processing import filter_years
 
 utils.setup_logging()
 
-config = utils.load_config()
-
-INPUT_FILENAME = config['data']['datasetFilenames']['filter_sentence_length']
 VALID_CATEGORIES = {
     "all": {
         "filter": None,
@@ -36,7 +33,6 @@ VALID_CATEGORIES = {
         "slug": "12_months"
     }
 }
-OUTPUT_FILENAME_TEMPLATE = config['data']['datasetFilenames']['make_custody_tables_template']
 
 
 def get_sentence_length(df: pd.DataFrame, category: str) -> pd.DataFrame:
@@ -123,7 +119,7 @@ def get_output_filename(category: str, template: str) -> str:
     return template.format(category=slug)
 
 
-def make_sentence_length_tables(df: pd.DataFrame):
+def make_sentence_length_tables(df: pd.DataFrame, config: dict):
     """This function takes the interim dataframe and performs filtering and
     processing steps to produce the final tables for ["all custodial sentences",
     "custodial sentences of less than 6 months", "custodial sentences of less than 12 months"]
@@ -144,7 +140,8 @@ def make_sentence_length_tables(df: pd.DataFrame):
             .pipe(calculate_percentage_change)
             )
 
-        filename = get_output_filename(category, OUTPUT_FILENAME_TEMPLATE)
+        output_filename_template = config['data']['datasetFilenames']['make_custody_tables_template']
+        filename = get_output_filename(category, output_filename_template)
 
         utils.safe_save_data(
             df=df_sentence,
@@ -156,17 +153,18 @@ def make_sentence_length_tables(df: pd.DataFrame):
     return None
 
 
-def main():
+def main(config: dict):
     """
     Load the dataset and process it to output the final dataframes
     """
+    input_filename = config['data']['datasetFilenames']['filter_sentence_length']
     (
-        utils.load_data(status='processed', filename=INPUT_FILENAME)
-        .pipe(make_sentence_length_tables)
+        utils.load_data(
+            config=config,
+            status='processed',
+            filename=input_filename
+        )
+        .pipe(make_sentence_length_tables, config=config)
     )
 
     return None
-
-
-if __name__ == "__main__":
-    main()

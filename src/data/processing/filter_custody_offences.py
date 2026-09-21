@@ -20,16 +20,11 @@ from src.data.processing import filter_sentence_length, filter_years
 
 utils.setup_logging()
 
-config = utils.load_config()
-
-INPUT_FILENAME = config['data']['datasetFilenames']['filter_sentence_type']
-OUTPUT_FILENAME_TEMPLATE = config['data']['datasetFilenames']['filter_custody_offences']
-
 HIGHLIGHTED_OFFENCE_GROUPS = ['Theft offences', 'Drug offences', 'Violence against the person']
 ASSAULT_EMERGENCY_WORKER = "Assault of an emergency worker"
 
 
-def load_data() -> pd.DataFrame:
+def load_data(config: dict) -> pd.DataFrame:
     """
     Load the interim dataset and filter it to include only records with an immediate custodial sentence.
     Returns
@@ -37,8 +32,14 @@ def load_data() -> pd.DataFrame:
     pd.DataFrame
         The filtered DataFrame containing only immediate custodial sentences.
     """
+    filename = config["data"]["filenames"]["filter_sentence_type"]
+
     logging.info("Loading interim data for custody offences...")
-    df = utils.load_data(status='interim', filename=INPUT_FILENAME)
+    df = utils.load_data(
+        config=config,
+        status='interim',
+        filename=filename
+    )
     return filter_sentence_length.filter_custodial_sentences(df)
 
 
@@ -109,7 +110,11 @@ def add_assault_of_emergency_worker(df: pd.DataFrame, emergency_worker_df: pd.Da
     """
     logging.info("Adding 'Assault of an emergency worker' offence to the main DataFrame...")
     # Append the assault of an emergency worker DataFrame to the main DataFrame
-    return pd.concat([df, emergency_worker_df], ignore_index=True).sort_values(by=['offence', 'freq'], ascending=True).reset_index(drop=True)
+    return (
+        pd.concat([df, emergency_worker_df], ignore_index=True)
+        .sort_values(by=['offence', 'freq'], ascending=True)
+        .reset_index(drop=True)
+    )
 
 
 def filter_offences(df: pd.DataFrame) -> pd.Series:
@@ -230,7 +235,7 @@ def process_data(df: pd.DataFrame):
     return df
 
 
-def load_and_process_data() -> tuple[pd.DataFrame, int]:
+def load_and_process_data(config: dict) -> tuple[pd.DataFrame, int]:
     """
     Load the interim dataset and process it to filter custodial sentences,
     select the latest year, group by PFA and offence, calculate proportions,
@@ -242,7 +247,7 @@ def load_and_process_data() -> tuple[pd.DataFrame, int]:
         The processed and melted DataFrame ready for plotting, and the latest year used in filtering.
     """
     df = (
-        load_data()
+        load_data(config)
         .pipe(process_data)
     )
     max_year = df["year"].max()
@@ -256,17 +261,14 @@ def get_output_filename(year: str | int, template: str) -> str:
     return template.format(year=year)
 
 
-def main():
+def main(config: dict):
     """Main function to load, process, and save the filtered custody offences data."""
-    df, max_year = load_and_process_data()
-    filename = get_output_filename(year=max_year, template=OUTPUT_FILENAME_TEMPLATE)
+    df, max_year = load_and_process_data(config)
+    filename_template = config['data']['datasetFilenames']['filter_custody_offences']
+    filename = get_output_filename(year=max_year, template=filename_template)
 
     utils.safe_save_data(
-        df,
-        path=config['data']['clnFilePath'],
+        df=df,
+        path=config["paths"]["processed"],
         filename=filename
     )
-
-
-if __name__ == "__main__":
-    main()

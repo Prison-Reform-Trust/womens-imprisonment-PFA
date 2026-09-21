@@ -30,13 +30,8 @@ import src.utilities as utils
 
 utils.setup_logging()
 
-config = utils.load_config()
 
-OUTCOMES_BY_OFFENCE = config['data']['datasetFilenames']['outcomes_by_offence']
-OUTCOMES_BY_OFFENCE_EARLIER = config['data']['datasetFilenames']['outcomes_by_offence_earlier']
-
-
-def load_outcomes_data() -> pd.DataFrame:
+def load_outcomes_data(config: dict) -> pd.DataFrame:
     """
     Load the outcomes by offence data from the raw data directory.
     """
@@ -54,9 +49,14 @@ def load_outcomes_data() -> pd.DataFrame:
     dataframes = []
 
     logging.info("Loading outcomes by offence data...")
-    for filename in [OUTCOMES_BY_OFFENCE, OUTCOMES_BY_OFFENCE_EARLIER]:
+
+    outcomes_by_offence = config['data']['datasetFilenames']['outcomes_by_offence']
+    outcomes_by_offence_earlier = config['data']['datasetFilenames']['outcomes_by_offence_earlier']
+
+    for filename in [outcomes_by_offence, outcomes_by_offence_earlier]:
         try:
             df = utils.load_data(
+                config=config,
                 status='raw',
                 filename=filename,
                 usecols=columns
@@ -175,7 +175,7 @@ def filter_dataframe(df: pd.DataFrame, filters: dict) -> pd.DataFrame:
     return df
 
 
-def process_data(df: pd.DataFrame, config_file: dict) -> pd.DataFrame:
+def process_data(df: pd.DataFrame, config: dict) -> pd.DataFrame:
     """
     Apply filters to the DataFrame to include only relevant records.
 
@@ -183,7 +183,7 @@ def process_data(df: pd.DataFrame, config_file: dict) -> pd.DataFrame:
     ----------
     df : DataFrame
         The DataFrame to be filtered.
-    config_file : dict
+    config : dict
         Configuration dictionary containing filter criteria.
 
     Returns
@@ -209,7 +209,7 @@ def process_data(df: pd.DataFrame, config_file: dict) -> pd.DataFrame:
         ]
     }
     # Filtering configuration
-    filters = config_file.get('outcomes_by_offence_filter', {})
+    filters = config.get('outcomes_by_offence_filter', {})
 
     df = (
         rename_and_reorder_columns(df)
@@ -226,7 +226,7 @@ def process_data(df: pd.DataFrame, config_file: dict) -> pd.DataFrame:
     return df
 
 
-def load_and_process_data() -> pd.DataFrame:
+def load_and_process_data(config: dict) -> pd.DataFrame:
     """
     Load and filter the outcomes by offence data.
 
@@ -236,27 +236,23 @@ def load_and_process_data() -> pd.DataFrame:
         The filtered DataFrame with relevant records.
     """
     df = (
-        load_outcomes_data()
-        .pipe(process_data, config_file=config)
+        load_outcomes_data(config=config)
+        .pipe(process_data, config=config)
     )
     logging.info("Data loaded and processed successfully.")
     return df
 
 
-def main():
+def main(config: dict):
     """
     Main function to process the sentencing data.
     It loads the data, applies filters, and returns a cleaned DataFrame.
     """
 
     (
-        load_and_process_data()
+        load_and_process_data(config=config)
         .pipe(utils.safe_save_data,
               path=config['data']['intFilePath'],
               filename=config['data']['datasetFilenames']['filter_sentence_type']
               )
     )
-
-
-if __name__ == "__main__":
-    main()
