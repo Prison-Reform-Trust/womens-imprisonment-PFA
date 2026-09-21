@@ -6,7 +6,7 @@ import glob
 import logging
 import os
 import re
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, Optional
 
 import pandas as pd
 import plotly.graph_objs as go
@@ -289,8 +289,8 @@ def fetch_latest_file(pattern: str, path: str) -> str:
     if not files:
         raise FileNotFoundError(f"No files matching {pattern} found in {path}.")
     # Sort by modification time, newest last
-    files.sort(key=os.path.getmtime)
-    return os.path.basename(files[-1])
+    latest_file = max(files, key=os.path.getmtime)
+    return os.path.basename(latest_file)
 
 
 def standardise_columns(df: pd.DataFrame, column_patterns: Dict[str, str]) -> pd.DataFrame:
