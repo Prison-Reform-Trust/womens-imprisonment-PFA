@@ -6,11 +6,13 @@ import glob
 import logging
 import os
 import re
+from pathlib import Path
 from typing import Any, Dict, Optional
 
 import pandas as pd
 import plotly.graph_objs as go
-import yaml
+
+from src.configuration import load_config
 
 
 def setup_logging():
@@ -22,33 +24,19 @@ def setup_logging():
         )
 
 
-def load_config(path: Optional[str] = None) -> Dict[str, Any]:
-    """Load config file
-
-    Parameters
-    ----------
-    path : str, optional
-        Path to config file, by default 'config/defaults.yaml'
-
-    Returns
-    -------
-    Dict[str, Any]
-        _description_
-    """
-    path = 'config/defaults.yaml' if path is None else path
-
-    config = {k: v for d in yaml.load(
-        open(path, encoding='utf-8'),
-        Loader=yaml.SafeLoader) for k, v in d.items()}
-    return config
-
-
-def load_data(status: str, filename: str, usecols: Optional[Any] = None) -> pd.DataFrame:
+def load_data(
+    config: dict[str, Any],
+    status: str,
+    filename: str,
+    usecols: Optional[Any] = None,
+) -> pd.DataFrame:
     """Load CSV file into Pandas DataFrame and convert object columns
     to categories when they meet criteria in `set_columns_to_category()`
 
     Parameters
     ----------
+    config : dict[str, Any]
+        Configuration dictionary to be use.
     status : {'raw', 'interim', 'processed'}
         Status of the data processing.
         * If 'raw' file is located in "rawFilePath" within config file
@@ -72,12 +60,16 @@ def load_data(status: str, filename: str, usecols: Optional[Any] = None) -> pd.D
         If the specified file does not exist.
     """
     paths = {
-        "raw": 'rawFilePath',
-        "interim": 'intFilePath',
-        "processed": 'clnFilePath'
-    }
-    config = read_config()
-    df_path = os.path.join(config['data'][paths[status]], filename)
+            "raw": "raw",
+            "interim": "interim",
+            "processed": "processed",
+        }
+
+    if status not in paths:
+        raise ValueError(f"Unknown data status: {status}")
+
+    directory = Path(config["paths"][paths[status]])
+    df_path = directory / filename
 
     setup_logging()
 
@@ -86,31 +78,46 @@ def load_data(status: str, filename: str, usecols: Optional[Any] = None) -> pd.D
         if isinstance(usecols, range):
             usecols = list(usecols)
 
-        df = pd.read_csv(df_path, encoding='utf-8-sig', low_memory=False, usecols=usecols)
+        df = pd.read_csv(
+            df_path,
+            encoding='utf-8-sig',
+            low_memory=False,
+            usecols=usecols
+        )
         logging.info("Loaded data from %s", df_path)
-        return set_columns_to_category(df)
+        return set_columns_to_category(df, config)
+
     except FileNotFoundError:
         logging.error("File not found: %s", df_path)
         raise  # Still raise it so the calling code can choose how to handle
 
 
-def set_columns_to_category(df):
-    """Convert columns to category data type if they meet ratio
+def set_columns_to_category(
+    df: pd.DataFrame,
+    config: dict[str, Any],
+) -> pd.DataFrame:
+    """Convert columns to category data type if they meet ratio criteria defined in config file.
 
     Parameters
     ----------
-    df : DataFrame
+    df : pd.DataFrame
+        DataFrame to be processed.
+    config : dict[str, Any]
+        Configuration dictionary containing the threshold for converting object columns to category.
 
     Returns
     -------
-    DataFrame
-        Processed DataFrame with object columns which meet criteria replaced with categories
+    pd.DataFrame
+        Returns the DataFrame with eligible object columns converted to category data type.
     """
-    cols = df.select_dtypes(include='object').columns
-    for col in cols:
-        ratio = len(df[col].value_counts()) / len(df)
-        if ratio < 0.05:
-            df[col] = df[col].astype('category')
+    threshold = config["cleaning"]["categories"]["object_to_category_ratio"]
+
+    for column in df.select_dtypes(include="object").columns:
+        ratio = len(df[column].value_counts()) / len(df)
+
+        if ratio < threshold:
+            df[column] = df[column].astype("category")
+
     return df
 
 
