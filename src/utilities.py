@@ -12,8 +12,6 @@ from typing import Any, Dict, Optional
 import pandas as pd
 import plotly.graph_objs as go
 
-from src.configuration import load_config
-
 
 def setup_logging():
     """Set up logging configuration"""
@@ -36,12 +34,9 @@ def load_data(
     Parameters
     ----------
     config : dict[str, Any]
-        Configuration dictionary to be use.
+        Configuration dictionary to be used.
     status : {'raw', 'interim', 'processed'}
         Status of the data processing.
-        * If 'raw' file is located in "rawFilePath" within config file
-        * If 'interim', file is located in "intFilePath"
-        * If 'processed', file is located in "clnFilePath"
     filename : str
         Name of CSV file to be loaded.
     usecols : list of str, range, or None, optional
