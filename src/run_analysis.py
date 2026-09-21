@@ -4,6 +4,7 @@
 import argparse
 
 from src.configuration import load_config
+from src.data.processing import process_data
 
 
 def main() -> None:
@@ -23,7 +24,7 @@ def main() -> None:
 
     # Pass config to the pipeline:
     # run_downloads(config)
-    # run_processing(config)
+    process_data.main(config)
     # run_visualisations(config)
 
 

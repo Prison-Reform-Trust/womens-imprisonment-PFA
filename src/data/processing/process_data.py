@@ -36,3 +36,8 @@ def process_data(config: dict) -> None:
     filter_custody_offences.main(config)
 
     logging.info("Data processing pipeline completed successfully.")
+
+
+def main(config: dict) -> None:
+    """Run the processing pipeline"""
+    process_data(config)
