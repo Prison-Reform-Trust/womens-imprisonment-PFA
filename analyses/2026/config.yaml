@@ -1,0 +1,79 @@
+analysis:
+  id: "2026"
+  title: "Women's imprisonment rates by Police Force Area"
+  data_release: "Criminal Justice Statistics, September 2026"
+  publication_date: "2026-09-21"
+  min_year: 2010
+  max_year: 2025
+  methodology_version: "2026.1"
+
+paths:
+  raw: "data/raw/2026"
+  interim: "data/interim/2026"
+  processed: "data/processed/2026"
+  figures: "reports/2026/figures"
+
+sources:
+  criminal_justice_statistics:
+    url: "REPLACE_WITH_2026_RELEASE_URL"
+    identifier: "cjs_2026"
+  la_to_pfa_lookup:
+    url: "REPLACE_WITH_2026_LOOKUP_URL"
+    query:
+      where: "1=1"
+      outFields: "LAD25CD,LAD25NM,PFA25CD,PFA25NM"
+      outSR: 4326
+      f: "json"
+
+data:
+  filenames:
+    outcomes_by_offence: "sentence_outcomes_2017_2025.csv"
+    outcomes_by_offence_earlier: "sentence_outcomes_2010_2016.csv"
+    population: "LA_population_women_{min_year}-{max_year}.csv"
+    la_to_pfa_lookup: "LA_to_PFA_2025_Lookup_in_EW.csv"
+    imprisonment_rates: "pfa_imprisonment_rates_{min_year}-{max_year}.csv"
+
+filters:
+  outcomes_by_offence:
+    include:
+      sex:
+        - "Female"
+      outcome:
+        - "Immediate Custody"
+        - "Community Sentence"
+        - "Suspended Sentence"
+      age_group:
+        - "Adults"
+        - "Young adults"
+    exclude:
+      pfa:
+        - "Not known"
+    sort_by:
+      - "year"
+      - "pfa"
+
+cleaning:
+  population:
+    discard_geographies:
+      - "regional"
+      - "national"
+    sex: "Females"
+    minimum_age: 18
+  categories:
+    object_to_category_ratio: 0.05
+  geography:
+    excluded_la_codes:
+      - "E10"
+      - "E11"
+    excluded_pfa_names:
+      - "City of London"
+    rename_pfa:
+      "Devon & Cornwall": "Devon and Cornwall"
+
+visualisation:
+  output_formats:
+    - "pdf"
+  directories:
+    custody_sentence_lengths: "custody_sentence_lengths"
+    sentence_types: "sentence_types"
+    custody_offences: "custody_offences"
