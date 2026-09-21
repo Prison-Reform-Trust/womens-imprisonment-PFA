@@ -22,7 +22,7 @@ from src.visualization import prt_theme
 
 utils.setup_logging()
 
-config = utils.read_config()
+config = utils.load_config()
 pio.templates.default = "prt_template"
 
 data_path = config['data']['clnFilePath']

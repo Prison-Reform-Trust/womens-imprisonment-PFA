@@ -19,7 +19,7 @@ from src.data.processing import filter_years
 
 utils.setup_logging()
 
-config = utils.read_config()
+config = utils.load_config()
 
 INPUT_FILENAME = config['data']['datasetFilenames']['filter_sentence_length']
 VALID_CATEGORIES = {

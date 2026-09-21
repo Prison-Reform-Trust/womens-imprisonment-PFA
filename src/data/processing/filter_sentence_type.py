@@ -30,7 +30,7 @@ import src.utilities as utils
 
 utils.setup_logging()
 
-config = utils.read_config()
+config = utils.load_config()
 
 OUTCOMES_BY_OFFENCE = config['data']['datasetFilenames']['outcomes_by_offence']
 OUTCOMES_BY_OFFENCE_EARLIER = config['data']['datasetFilenames']['outcomes_by_offence_earlier']

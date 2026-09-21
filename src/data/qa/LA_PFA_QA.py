@@ -24,7 +24,7 @@ import src.data.processing.common_ons_processing as common_processing
 import src.data.processing.la_to_pfa_matching as la_to_pfa_matching
 import src.utilities as utils
 
-config = utils.read_config()
+config = utils.load_config()
 utils.setup_logging()
 
 

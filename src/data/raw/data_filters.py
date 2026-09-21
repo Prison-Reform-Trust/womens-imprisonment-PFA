@@ -3,9 +3,9 @@ This script provides filter functions to locate specific data files to download
 from API responses, including GOV.UK and the Office for National Statistics (ONS).
 """
 
-from src.utilities import read_config
+from src.utilities import load_config
 
-config = read_config()
+config = load_config()
 
 
 def outcomes_by_offence_data_filter(data):

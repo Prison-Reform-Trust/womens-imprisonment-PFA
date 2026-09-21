@@ -10,7 +10,7 @@ import src.utilities as utils
 
 utils.setup_logging()
 
-config = utils.read_config()
+config = utils.load_config()
 
 
 def get_year(df: pd.DataFrame, year_from: int = 2014, year_to: int = None, column: str = "year") -> pd.DataFrame:

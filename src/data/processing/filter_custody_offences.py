@@ -20,7 +20,7 @@ from src.data.processing import filter_sentence_length, filter_years
 
 utils.setup_logging()
 
-config = utils.read_config()
+config = utils.load_config()
 
 INPUT_FILENAME = config['data']['datasetFilenames']['filter_sentence_type']
 OUTPUT_FILENAME_TEMPLATE = config['data']['datasetFilenames']['filter_custody_offences']

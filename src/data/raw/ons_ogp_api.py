@@ -13,7 +13,7 @@ import requests
 
 import src.utilities as utils
 
-config = utils.read_config()
+config = utils.load_config()
 utils.setup_logging()
 
 

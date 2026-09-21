@@ -22,7 +22,7 @@ import src.data.raw.ons_api as ons_api
 import src.data.raw.ons_ogp_api as ons_ogp_api
 import src.utilities as utils
 
-config = utils.read_config()
+config = utils.load_config()
 
 
 def fetch_json(url: str, timeout: int = 10) -> Dict:

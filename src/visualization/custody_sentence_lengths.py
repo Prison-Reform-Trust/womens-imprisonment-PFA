@@ -24,7 +24,7 @@ from src.visualization import prt_theme
 
 utils.setup_logging()
 
-config = utils.read_config()
+config = utils.load_config()
 pio.templates.default = "prt_template"
 
 INPUT_FILENAME = config['data']['datasetFilenames']['filter_sentence_length']

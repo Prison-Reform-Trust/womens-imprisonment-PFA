@@ -25,7 +25,7 @@ import src.utilities as utils
 
 utils.setup_logging()
 
-config = utils.read_config()
+config = utils.load_config()
 
 INPUT_FILENAME = config['data']['datasetFilenames']['filter_sentence_type']
 OUTPUT_FILENAME = config['data']['datasetFilenames']['group_pfa_sentence_outcome']

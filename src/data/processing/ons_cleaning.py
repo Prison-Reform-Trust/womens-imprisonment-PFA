@@ -27,7 +27,7 @@ import src.utilities as utils
 
 utils.setup_logging()
 
-config = utils.read_config()
+config = utils.load_config()
 
 OUTPUT_FILENAME_TEMPLATE = config['data']['datasetFilenames']['ons_cleaning']
 

@@ -20,7 +20,7 @@ from src.data.processing import (filter_custody_offences,
 
 utils.setup_logging()
 
-config = utils.read_config()
+config = utils.load_config()
 
 
 def process_data():

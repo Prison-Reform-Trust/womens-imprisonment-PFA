@@ -19,7 +19,7 @@ import pandas as pd
 import src.data.processing.common_ons_processing as common_processing
 import src.utilities as utils
 
-config = utils.read_config()
+config = utils.load_config()
 utils.setup_logging()
 
 OUTPUT_FILENAME_TEMPLATE = config['data']['datasetFilenames']['combine_custody_pfa_population']
