@@ -22,10 +22,23 @@ def setup_logging():
         )
 
 
-def read_config():
-    """Read in config file"""
+def load_config(path: Optional[str] = None) -> Dict[str, Any]:
+    """Load config file
+
+    Parameters
+    ----------
+    path : str, optional
+        Path to config file, by default 'config/defaults.yaml'
+
+    Returns
+    -------
+    Dict[str, Any]
+        _description_
+    """
+    path = 'config/defaults.yaml' if path is None else path
+
     config = {k: v for d in yaml.load(
-        open('config.yaml', encoding='utf-8'),
+        open(path, encoding='utf-8'),
         Loader=yaml.SafeLoader) for k, v in d.items()}
     return config
 
