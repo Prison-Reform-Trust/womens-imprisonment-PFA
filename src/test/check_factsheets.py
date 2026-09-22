@@ -57,7 +57,7 @@ def load_data(
         data_pattern = data_template.format(year=year)
         data_filename = utils.fetch_latest_file(
             pattern=data_pattern,
-            path=config['data']['clnFilePath']
+            path=config['paths']['processed']
         )
     elif data_type == 'sentence_type':
         logging.info("Loading sentence type data...")
@@ -94,7 +94,7 @@ def save_data(df: pd.DataFrame, filename: str, category: Optional[str] = None) -
 
     utils.safe_save_data(
         df=df,
-        path=config['data']['testsFilePath'],
+        path=config['paths']['tests'],
         filename=filename,
     )
     return None

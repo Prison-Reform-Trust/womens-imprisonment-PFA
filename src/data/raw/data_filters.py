@@ -66,6 +66,6 @@ def la_to_pfa_lookup_filter(version: str):
     return {
             'endpoint': config['data']['downloadPaths'][download_key],
             'params': config[params_key],
-            'path': config['data']['rawFilePath'],
+            'path': config['paths']['raw'],
             'filename': config['data'][filename_section][filename_key]
         }

@@ -22,7 +22,7 @@ import src.utilities as utils
 config = utils.load_config()
 utils.setup_logging()
 
-OUTPUT_FILENAME_TEMPLATE = config['data']['datasetFilenames']['combine_custody_pfa_population']
+OUTPUT_FILENAME_TEMPLATE = config['data']['filenames']['imprisonment_rates']
 FINAL_TABLE_FILENAME_TEMPLATE = config['data']['datasetFilenames']['custody_rate_pfa']
 
 
@@ -33,7 +33,7 @@ def load_data() -> tuple[pd.DataFrame, pd.DataFrame]:
 
     population_data_filename = utils.fetch_latest_file(
         pattern="*LA_PFA_population*.csv",  # NOTE: Would be better to draw this from config
-        path=config['data']['intFilePath']
+        path=config['paths']['interim']
     )
 
     custody_data = utils.load_data('processed', custody_data_filename)
@@ -382,7 +382,7 @@ def save_processed_data(df: pd.DataFrame, min_year: int, max_year: int) -> None:
     )
     utils.safe_save_data(
         df,
-        path=config['data']['intFilePath'],
+        path=config['paths']['interim'],
         filename=filename
     )
 
@@ -396,7 +396,7 @@ def save_publication_table(df: pd.DataFrame, min_year: int, max_year: int) -> No
     )
     utils.safe_save_data(
         publication_table,
-        path=config['data']['clnFilePath'],
+        path=config['paths']['processed'],
         filename=publication_filename,
         index=True  # Keep PFA as index for publication table
     )

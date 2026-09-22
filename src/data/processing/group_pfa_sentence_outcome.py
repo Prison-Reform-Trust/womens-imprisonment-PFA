@@ -62,7 +62,7 @@ def main(config: dict):
         .pipe(group_by_pfa_sentence_outcome)
         .pipe(
             utils.safe_save_data,
-            path=config['data']['clnFilePath'],
+            path=config['paths']['processed'],
             filename=output_filename
             )
     )

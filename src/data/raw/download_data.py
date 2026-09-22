@@ -117,8 +117,8 @@ def get_outcomes_by_offence_data(config: dict):
     """
     logging.info("Starting download of outcomes by offence data.")
     download_files(
-        url=config['data']['downloadPaths'].get('cjs'),
-        path=config['data']['rawFilePath'],
+        url=config['sources']['criminal_justice_statistics'].get('url'),
+        path=config['paths']['raw'],
         file_filter=data_filters.outcomes_by_offence_data_filter,
         zip_filter=data_filters.zip_filter_csv_outcomes,
     )
@@ -132,7 +132,7 @@ def get_population_data(config: dict):
     logging.info("Starting download of population data.")
     download_files(
         url=ons_api.get_population_url(),
-        path=config['data']['rawFilePath'],
+        path=config['paths']['raw'],
         file_filter=data_filters.population_data_filter,
         filename_fn=ons_filename_fn
     )

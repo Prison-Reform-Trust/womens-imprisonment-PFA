@@ -34,10 +34,10 @@ OUTPUT_FILENAME_TEMPLATE = config['data']['datasetFilenames']['la_to_pfa_matchin
 
 def load_data() -> tuple[pd.DataFrame, pd.DataFrame]:
     """Load the Local Authority to PFA lookup file and population data."""
-    la_to_pfa_lookup = config['data']['datasetFilenames']['la_to_pfa_lookup']
+    la_to_pfa_lookup = config['data']['filenames']['la_to_pfa_lookup']
     ons_la_data = utils.fetch_latest_file(
         pattern="*LA_population_women*.csv",  # NOTE: Would be better to draw this from config
-        path=config['data']['intFilePath']
+        path=config['paths']['interim']
     )
 
     la_pfa = utils.load_data('raw', la_to_pfa_lookup)
@@ -109,7 +109,7 @@ def main():
 
     utils.safe_save_data(
         df,
-        path=config['data']['intFilePath'],
+        path=config['paths']['interim'],
         filename=filename
     )
 

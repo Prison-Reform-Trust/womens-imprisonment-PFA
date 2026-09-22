@@ -93,7 +93,7 @@ def main():
 
     utils.safe_save_data(
         df=df,
-        path=config['data']['intFilePath'],
+        path=config['paths']['interim'],
         filename=filename
     )
 

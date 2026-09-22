@@ -50,8 +50,8 @@ def load_outcomes_data(config: dict) -> pd.DataFrame:
 
     logging.info("Loading outcomes by offence data...")
 
-    outcomes_by_offence = config['data']['datasetFilenames']['outcomes_by_offence']
-    outcomes_by_offence_earlier = config['data']['datasetFilenames']['outcomes_by_offence_earlier']
+    outcomes_by_offence = config['data']['filenames']['outcomes_by_offence']
+    outcomes_by_offence_earlier = config['data']['filenames']['outcomes_by_offence_earlier']
 
     for filename in [outcomes_by_offence, outcomes_by_offence_earlier]:
         try:
@@ -252,7 +252,7 @@ def main(config: dict):
     (
         load_and_process_data(config=config)
         .pipe(utils.safe_save_data,
-              path=config['data']['intFilePath'],
+              path=config['paths']['interim'],
               filename=config['data']['datasetFilenames']['filter_sentence_type']
               )
     )

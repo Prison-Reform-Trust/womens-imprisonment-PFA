@@ -25,7 +25,7 @@ utils.setup_logging()
 config = utils.load_config()
 pio.templates.default = "prt_template"
 
-data_path = config['data']['clnFilePath']
+data_path = config['paths']['processed']
 filename_template = config['data']['datasetFilenames']['filter_custody_offences']
 max_year = utils.get_latest_year_from_files(data_path, filename_template)
 
@@ -250,7 +250,7 @@ class PfaOffencesChart:
         self._prepare_chart()
 
         filename = f"{self.pfa_df['pfa'].iloc[0]}.{filetype}"
-        path = config['data']['outPath'] + path
+        path = config['paths']['figures'] + path
 
         utils.safe_save_chart(
             fig=self.fig,

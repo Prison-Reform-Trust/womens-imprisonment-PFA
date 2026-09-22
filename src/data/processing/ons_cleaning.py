@@ -29,7 +29,7 @@ utils.setup_logging()
 
 config = utils.load_config()
 
-OUTPUT_FILENAME_TEMPLATE = config['data']['datasetFilenames']['ons_cleaning']
+OUTPUT_FILENAME_TEMPLATE = config['data']['filenames']['population']
 
 
 def load_population_data() -> pd.DataFrame:
@@ -48,7 +48,7 @@ def load_population_data() -> pd.DataFrame:
     logging.info("Loading ONS population data...")
     input_filename = utils.fetch_latest_file(
         pattern="*ONS*_v*.csv",
-        path=config['data']['rawFilePath']
+        path=config['paths']['raw']
     )
     try:
         df = utils.load_data(
@@ -137,7 +137,7 @@ def main():
 
     utils.safe_save_data(
         df,
-        path=config['data']['intFilePath'],
+        path=config['paths']['interim'],
         filename=filename
     )
 

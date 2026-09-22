@@ -145,7 +145,7 @@ def make_sentence_length_tables(df: pd.DataFrame, config: dict):
 
         utils.safe_save_data(
             df=df_sentence,
-            path=config['data']['clnFilePath'],
+            path=config['paths']['processed'],
             filename=filename,
             index=True
         )

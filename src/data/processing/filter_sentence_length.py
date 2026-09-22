@@ -142,7 +142,7 @@ def main(config: dict):
     (
         load_and_process_data(config=config)
         .pipe(utils.safe_save_data,
-              path=config['data']['clnFilePath'],
+              path=config['paths']['processed'],
               filename=output_filename
               )
     )
