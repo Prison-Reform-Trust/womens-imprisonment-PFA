@@ -18,8 +18,6 @@ from src.data.processing import (filter_custody_offences,
                                  group_pfa_sentence_outcome,
                                  make_custody_tables)
 
-utils.setup_logging()
-
 
 def process_data(config: dict) -> None:
     """Run the processing pipeline for the selected analysis configuration."""
@@ -40,4 +38,5 @@ def process_data(config: dict) -> None:
 
 def main(config: dict) -> None:
     """Run the processing pipeline"""
+    utils.setup_logging()
     process_data(config)
