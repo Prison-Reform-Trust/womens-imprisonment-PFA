@@ -22,8 +22,6 @@ import src.data.raw.ons_api as ons_api
 import src.data.raw.ons_ogp_api as ons_ogp_api
 import src.utilities as utils
 
-config = utils.load_config()
-
 
 def fetch_json(url: str, timeout: int = 10) -> Dict:
     """Fetch and return JSON data from a given URL."""
@@ -113,13 +111,13 @@ def ons_filename_fn(file_url: str, metadata: Dict) -> str:
     return f"ONS_{edition}_v{base}"
 
 
-def get_outcomes_by_offence_data():
+def get_outcomes_by_offence_data(config: dict):
     """
     Function to download outcomes by offence data.
     """
     logging.info("Starting download of outcomes by offence data.")
     download_files(
-        url=config['data']['downloadPaths'].get('cjs_dec_2024'),
+        url=config['data']['downloadPaths'].get('cjs'),
         path=config['data']['rawFilePath'],
         file_filter=data_filters.outcomes_by_offence_data_filter,
         zip_filter=data_filters.zip_filter_csv_outcomes,
@@ -127,7 +125,7 @@ def get_outcomes_by_offence_data():
     logging.info("Outcomes by offence data download completed.")
 
 
-def get_population_data():
+def get_population_data(config: dict):
     """
     Function to download population data.
     """
@@ -160,24 +158,20 @@ def get_la_pfa_lookup_data():
         )
 
 
-def raw_data_pipeline():
+def raw_data_pipeline(config: dict):
     """
     Function to run the raw data pipeline.
     """
     logging.info("Starting raw data pipeline.")
-    get_outcomes_by_offence_data()
-    get_population_data()
+    get_outcomes_by_offence_data(config=config)
+    get_population_data(config=config)
     get_la_pfa_lookup_data()
 
     # Add more data download functions here as needed
     logging.info("Raw data pipeline completed.")
 
 
-def main():
+def main(config: dict):
     """Main function to download files."""
     utils.setup_logging()
-    raw_data_pipeline()
-
-
-if __name__ == "__main__":
-    main()
+    raw_data_pipeline(config=config)
