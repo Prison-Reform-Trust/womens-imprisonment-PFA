@@ -6,7 +6,7 @@
     testsFilePath: data/tests/
     outPath: reports/figures/
     downloadPaths:
-        cjs_dec_2024: https://www.gov.uk/api/content/government/statistics/criminal-justice-system-statistics-quarterly-december-2024
+        cjs: https://www.gov.uk/api/content/government/statistics/criminal-justice-system-statistics-quarterly-december-2024
         la_to_pfa_lookup: https://services1.arcgis.com/ESMARspQHYMw9BZ9/arcgis/rest/services/LAD24_CSP24_PFA24_EW_LU/FeatureServer/0/query
         la_to_pfa_lookup_qa: https://services1.arcgis.com/ESMARspQHYMw9BZ9/arcgis/rest/services/LAD22_CSP22_PFA22_EW_LU/FeatureServer/0/query
     datasetFilenames:
