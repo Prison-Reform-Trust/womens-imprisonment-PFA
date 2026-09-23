@@ -139,13 +139,13 @@ def get_population_data(config: dict):
     logging.info("Population data download completed.")
 
 
-def get_la_pfa_lookup_data():
+def get_la_pfa_lookup_data(config: dict):
     """
     Function to download Local Authority to Police Force Area lookup data.
     """
     logging.info("Starting download of Local Authority to PFA lookup data.")
-    for version in ['latest', 'earlier']:  # Loop through both versions for QA purposes
-        keys = data_filters.la_to_pfa_lookup_filter(version)
+    for version in ['latest', 'qa']:  # Loop through both versions for QA purposes
+        keys = data_filters.la_to_pfa_lookup_filter(config=config, version=version)
         if not keys:
             logging.warning("No data found for version '%s'. Skipping download.", version)
             continue
@@ -165,7 +165,7 @@ def raw_data_pipeline(config: dict):
     logging.info("Starting raw data pipeline.")
     get_outcomes_by_offence_data(config=config)
     get_population_data(config=config)
-    get_la_pfa_lookup_data()
+    get_la_pfa_lookup_data(config=config)
 
     # Add more data download functions here as needed
     logging.info("Raw data pipeline completed.")
