@@ -13,9 +13,6 @@ import requests
 
 import src.utilities as utils
 
-config = utils.load_config()
-utils.setup_logging()
-
 
 def request_to_df(url: str, query_params: dict) -> tuple[requests.Response, pd.DataFrame]:
     """Send a get request to ArcGIS API & store the response as a DataFrame.
