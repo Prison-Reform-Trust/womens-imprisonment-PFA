@@ -7,12 +7,6 @@ analysis:
   max_year: 2025
   methodology_version: "2026.1"
 
-paths:
-  raw: "data/raw/2026"
-  interim: "data/interim/2026"
-  processed: "data/processed/2026"
-  figures: "reports/2026/figures"
-
 sources:
   criminal_justice_statistics:
     url: "REPLACE_WITH_2026_RELEASE_URL"

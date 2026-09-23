@@ -1,3 +1,6 @@
-# File paths
-data:
-    rawFilePath: data/raw/
+paths:
+  raw: "data/raw/${analysis.id}"
+  interim: "data/interim/${analysis.id}"
+  processed: "data/processed/${analysis.id}"
+  figures: "reports/${analysis.id}/figures"
+  tests: "data/tests/${analysis.id}"
