@@ -35,7 +35,6 @@ data:
     la_to_pfa_lookup: "LA_to_PFA_(December_2024)_Lookup_in_EW.csv"
     la_to_pfa_lookup_qa: LA_to_PFA_(December_2022)_Lookup_in_EW.csv
     imprisonment_rates: "pfa_imprisonment_rates_{min_year}-{max_year}.csv"
-  datasetFilenames:
     filter_sentence_type: women_cust_comm_sus.csv
     group_pfa_sentence_outcome: women_cust_comm_sus_FINAL.csv
     filter_sentence_length: women_cust_sentence_len_FINAL.csv

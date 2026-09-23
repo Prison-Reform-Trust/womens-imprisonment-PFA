@@ -50,8 +50,8 @@ def main(config: dict):
     """
     Main function to process the PFA sentence outcome data.
     """
-    input_filename = config['data']['datasetFilenames']['filter_sentence_type']
-    output_filename = config['data']['datasetFilenames']['group_pfa_sentence_outcome']
+    input_filename = config['data']['filenames']['filter_sentence_type']
+    output_filename = config['data']['filenames']['group_pfa_sentence_outcome']
 
     (
         utils.load_data(

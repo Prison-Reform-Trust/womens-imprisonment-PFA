@@ -27,7 +27,7 @@ utils.setup_logging()
 config = utils.load_config()
 pio.templates.default = "prt_template"
 
-INPUT_FILENAME = config['data']['datasetFilenames']['filter_sentence_length']
+INPUT_FILENAME = config['data']['filenames']['filter_sentence_length']
 OUTPUT_PATH = config['visualisation']['paths']['custody_sentence_lengths']
 
 

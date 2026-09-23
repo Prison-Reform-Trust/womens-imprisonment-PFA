@@ -46,14 +46,14 @@ def load_data(
         if sentence_length not in ['all', '6_months', '12_months']:
             raise ValueError("sentence_length must be either 'all', '6_months' or '12_months'")
         logging.info("Loading sentence length data...")
-        data_template = config['data']['datasetFilenames']['make_custody_tables_template']
+        data_template = config['data']['filenames']['make_custody_tables_template']
         data_filename = data_template.format(category=sentence_length)
 
     elif data_type == 'offence':
         logging.info("Loading offences data...")
         year = '*' if year is None else year
         # NOTE: Use this in other implementations where fetch_latest_file is currently used
-        data_template = config['data']['datasetFilenames']['filter_custody_offences']
+        data_template = config['data']['filenames']['filter_custody_offences']
         data_pattern = data_template.format(year=year)
         data_filename = utils.fetch_latest_file(
             pattern=data_pattern,
@@ -61,7 +61,7 @@ def load_data(
         )
     elif data_type == 'sentence_type':
         logging.info("Loading sentence type data...")
-        data_filename = config['data']['datasetFilenames']['group_pfa_sentence_outcome']
+        data_filename = config['data']['filenames']['group_pfa_sentence_outcome']
     else:
         raise ValueError("data_type must be either 'sentence_length', 'offence' or 'sentence_type'")
 

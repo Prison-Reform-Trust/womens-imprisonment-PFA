@@ -29,7 +29,7 @@ import src.utilities as utils
 config = utils.load_config()
 utils.setup_logging()
 
-OUTPUT_FILENAME_TEMPLATE = config['data']['datasetFilenames']['la_to_pfa_matching']
+OUTPUT_FILENAME_TEMPLATE = config['data']['filenames']['la_to_pfa_matching']
 
 
 def load_data() -> tuple[pd.DataFrame, pd.DataFrame]:

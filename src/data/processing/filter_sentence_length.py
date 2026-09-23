@@ -118,7 +118,7 @@ def load_and_process_data(config: dict) -> pd.DataFrame:
     pd.DataFrame
         The processed DataFrame with grouped sentence lengths.
     """
-    input_filename = config['data']['datasetFilenames']['filter_sentence_type']
+    input_filename = config['data']['filenames']['filter_sentence_type']
 
     df = (
         utils.load_data(
@@ -138,7 +138,7 @@ def main(config: dict):
     """
     Main function to process the PFA sentence outcome data.
     """
-    output_filename = config['data']['datasetFilenames']['filter_sentence_length']
+    output_filename = config['data']['filenames']['filter_sentence_length']
     (
         load_and_process_data(config=config)
         .pipe(utils.safe_save_data,

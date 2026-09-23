@@ -264,7 +264,7 @@ def get_output_filename(year: str | int, template: str) -> str:
 def main(config: dict):
     """Main function to load, process, and save the filtered custody offences data."""
     df, max_year = load_and_process_data(config)
-    filename_template = config['data']['datasetFilenames']['filter_custody_offences']
+    filename_template = config['data']['filenames']['filter_custody_offences']
     filename = get_output_filename(year=max_year, template=filename_template)
 
     utils.safe_save_data(

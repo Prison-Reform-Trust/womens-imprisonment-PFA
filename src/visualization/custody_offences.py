@@ -26,7 +26,7 @@ config = utils.load_config()
 pio.templates.default = "prt_template"
 
 data_path = config['paths']['processed']
-filename_template = config['data']['datasetFilenames']['filter_custody_offences']
+filename_template = config['data']['filenames']['filter_custody_offences']
 max_year = utils.get_latest_year_from_files(data_path, filename_template)
 
 INPUT_FILENAME = filename_template.format(year=max_year)

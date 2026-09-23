@@ -194,6 +194,7 @@ def process_data(df: pd.DataFrame, config: dict) -> pd.DataFrame:
     logging.info("Processing data...")
 
     # Defining regex replacements for specific columns
+    #TODO: #36 Consider moving regex_replacements to config for easier adjustments in the future.
     regex_replacements = {
         'pfa': [(r"Metropolitan", "London")],
         'sex': [(r"\d\d: ", "")],
@@ -253,6 +254,6 @@ def main(config: dict):
         load_and_process_data(config=config)
         .pipe(utils.safe_save_data,
               path=config['paths']['interim'],
-              filename=config['data']['datasetFilenames']['filter_sentence_type']
+              filename=config['data']['filenames']['filter_sentence_type']
               )
     )

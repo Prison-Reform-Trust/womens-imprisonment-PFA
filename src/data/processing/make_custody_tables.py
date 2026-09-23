@@ -140,7 +140,7 @@ def make_sentence_length_tables(df: pd.DataFrame, config: dict):
             .pipe(calculate_percentage_change)
             )
 
-        output_filename_template = config['data']['datasetFilenames']['make_custody_tables_template']
+        output_filename_template = config['data']['filenames']['make_custody_tables_template']
         filename = get_output_filename(category, output_filename_template)
 
         utils.safe_save_data(
@@ -157,7 +157,7 @@ def main(config: dict):
     """
     Load the dataset and process it to output the final dataframes
     """
-    input_filename = config['data']['datasetFilenames']['filter_sentence_length']
+    input_filename = config['data']['filenames']['filter_sentence_length']
     (
         utils.load_data(
             config=config,

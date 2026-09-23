@@ -23,12 +23,12 @@ config = utils.load_config()
 utils.setup_logging()
 
 OUTPUT_FILENAME_TEMPLATE = config['data']['filenames']['imprisonment_rates']
-FINAL_TABLE_FILENAME_TEMPLATE = config['data']['datasetFilenames']['custody_rate_pfa']
+FINAL_TABLE_FILENAME_TEMPLATE = config['data']['filenames']['custody_rate_pfa']
 
 
 def load_data() -> tuple[pd.DataFrame, pd.DataFrame]:
     """Load the PFA population data and CJS custody data."""
-    custody_data_template = config['data']['datasetFilenames']['make_custody_tables_template']
+    custody_data_template = config['data']['filenames']['make_custody_tables_template']
     custody_data_filename = custody_data_template.format(category='all')
 
     population_data_filename = utils.fetch_latest_file(
