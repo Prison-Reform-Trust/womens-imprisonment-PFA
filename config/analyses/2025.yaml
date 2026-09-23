@@ -7,11 +7,11 @@ analysis:
   methodology_version: "2025.1"
 
 paths:
-  raw: "data/raw/2026"
-  interim: "data/interim/2026"
-  processed: "data/processed/2026"
-  figures: "reports/2026/figures"
-  tests: "data/tests/2026"
+  raw: "data/raw/2025"
+  interim: "data/interim/2025"
+  processed: "data/processed/2025"
+  figures: "reports/2025/figures"
+  tests: "data/tests/2025"
 
 sources:
   criminal_justice_statistics:
