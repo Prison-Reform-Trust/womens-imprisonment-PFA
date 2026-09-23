@@ -28,13 +28,12 @@ from pandas.api.types import CategoricalDtype
 
 import src.utilities as utils
 
-utils.setup_logging()
-
 
 def load_outcomes_data(config: dict) -> pd.DataFrame:
     """
     Load the outcomes by offence data from the raw data directory.
     """
+    # TODO: #37 Consider moving columns to config for easier adjustments in the future.
     columns = [
         'Police Force Area',
         'Year',
@@ -249,7 +248,7 @@ def main(config: dict):
     Main function to process the sentencing data.
     It loads the data, applies filters, and returns a cleaned DataFrame.
     """
-
+    utils.setup_logging()
     (
         load_and_process_data(config=config)
         .pipe(utils.safe_save_data,
