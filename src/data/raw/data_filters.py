@@ -3,10 +3,6 @@ This script provides filter functions to locate specific data files to download
 from API responses, including GOV.UK and the Office for National Statistics (ONS).
 """
 
-from src.utilities import load_config
-
-config = load_config()
-
 
 def outcomes_by_offence_data_filter(data):
     """
@@ -47,7 +43,7 @@ def population_data_filter(data):
         downloads['csv']['href']] if 'csv' in downloads and 'href' in downloads['csv'] else []
 
 
-def la_to_pfa_lookup_filter(version: str):
+def la_to_pfa_lookup_filter(config: dict, version: str):
     """
     Filter to locate the lookup file between Local Authority Districts and
     Police Force Areas in England and Wales from the Office for National Statistics (ONS).
@@ -55,17 +51,17 @@ def la_to_pfa_lookup_filter(version: str):
     Published at https://geoportal.statistics.gov.uk/datasets/ons::local-authority-districts-to-police-force-areas-in-england-and-wales-lookup-2022/about
     """
     keys = {
-        'latest': ('la_to_pfa_lookup', 'ons_pfa_params', 'datasetFilenames', 'la_to_pfa_lookup'),
-        'earlier': ('la_to_pfa_lookup_qa', 'ons_pfa_earlier_params', 'qaFilenames', 'la_to_pfa_lookup')
+        'latest': 'la_to_pfa_lookup',
+        'qa': 'la_to_pfa_lookup_qa'
     }
     if version not in keys:
         raise ValueError(f"Invalid version '{version}'. Expected one of {list(keys.keys())}.")
 
-    download_key, params_key, filename_section, filename_key = keys[version]
+    key = keys[version]
 
     return {
-            'endpoint': config['data']['downloadPaths'][download_key],
-            'params': config[params_key],
+            'endpoint': config['sources'][key]['url'],
+            'params': config['sources'][key]['query'],
             'path': config['paths']['raw'],
-            'filename': config['data'][filename_section][filename_key]
+            'filename': config['data']['filenames'][key]
         }
