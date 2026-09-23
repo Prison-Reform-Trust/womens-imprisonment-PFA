@@ -1,44 +1,12 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
-from copy import deepcopy
 from pathlib import Path
-from typing import Any
+from typing import Any, cast
 
-import yaml
+from omegaconf import OmegaConf
 
 PROJECT_ROOT = Path(__file__).resolve().parents[1]
-
-
-def read_yaml(path: Path) -> dict[str, Any]:
-    """Read a YAML file and return its contents as a dictionary."""
-    with path.open(encoding="utf-8") as file:
-        config = yaml.safe_load(file) or {}
-
-    if not isinstance(config, dict):
-        raise ValueError(f"Expected a mapping in {path}")
-
-    return config
-
-
-def deep_merge(
-    base: dict[str, Any],
-    overrides: dict[str, Any],
-) -> dict[str, Any]:
-    """Recursively merge overrides into base without mutating either input."""
-
-    result = deepcopy(base)
-
-    for key, value in overrides.items():
-        if (
-            isinstance(result.get(key), dict)
-            and isinstance(value, dict)
-        ):
-            result[key] = deep_merge(result[key], value)
-        else:
-            result[key] = deepcopy(value)
-
-    return result
 
 
 def load_config(year: str | int) -> dict[str, Any]:
@@ -57,12 +25,23 @@ def load_config(year: str | int) -> dict[str, Any]:
             f"No configuration exists for analysis {year}: {analysis_path}"
         )
 
-    config = deep_merge(
-        read_yaml(defaults_path),
-        read_yaml(analysis_path),
+    merged_config = OmegaConf.merge(
+        OmegaConf.load(defaults_path),
+        OmegaConf.load(analysis_path),
     )
 
+    resolved_config = OmegaConf.to_container(
+        merged_config,
+        resolve=True,
+    )
+
+    if not isinstance(resolved_config, dict):
+        raise ValueError("Expected the merged configuration to be a mapping")
+
+    config = cast(dict[str, Any], resolved_config)
+
     analysis = config.get("analysis", {})
+
     if analysis.get("id") != year:
         raise ValueError(
             f"Analysis configuration ID {analysis.get('id')!r} "
