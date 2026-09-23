@@ -52,21 +52,21 @@ data:
 
 outcomes_by_offence_filter:
     include:
-        sex:
-            - Female
-        outcome:
-            - Immediate Custody
-            - Community Sentence
-            - Suspended Sentence
-        age_group:
-            - Adults
-            - Young adults
+      sex:
+        - Female
+      outcome:
+        - Immediate Custody
+        - Community Sentence
+        - Suspended Sentence
+      age_group:
+        - Adults
+        - Young adults
     exclude:
-        pfa:
-            - Not known
+      pfa:
+        - Not known
     sort_by:
-        - year
-        - pfa
+      - year
+      - pfa
 
 visualisation:
   output_formats:
