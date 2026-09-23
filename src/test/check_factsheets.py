@@ -17,10 +17,9 @@ import src.utilities as utils
 
 utils.setup_logging()
 
-config = utils.load_config()
-
 
 def load_data(
+        config: dict,
         data_type: str,
         sentence_length: Optional[str] = None,
         year: Optional[str] = None
@@ -65,11 +64,15 @@ def load_data(
     else:
         raise ValueError("data_type must be either 'sentence_length', 'offence' or 'sentence_type'")
 
-    data = utils.load_data('processed', data_filename)
+    data = utils.load_data(
+        config=config,
+        status='processed',
+        filename=data_filename
+        )
     return data
 
 
-def save_data(df: pd.DataFrame, filename: str, category: Optional[str] = None) -> None:
+def save_data(df: pd.DataFrame, filename: str, config: dict, category: Optional[str] = None) -> None:
     """Save the DataFrame to a CSV file in the tests directory.
 
     Parameters
@@ -78,6 +81,8 @@ def save_data(df: pd.DataFrame, filename: str, category: Optional[str] = None) -
         The DataFrame to save.
     filename : str
         The base filename to use. If 'custodial_sentences', the category will be included in the filename.
+    config : dict
+        configuration dictionary containing paths and filenames.
     category : str, optional
         The category to include in the filename if filename is 'custodial_sentences'.
 
@@ -137,7 +142,7 @@ def create_pfa_sample(data: pd.DataFrame) -> list[str]:
     return sample_pfas
 
 
-def create_total_custodial_sentences_table(data: pd.DataFrame, sample_pfas: list[str]) -> pd.DataFrame:
+def create_total_custodial_sentences_table(data: pd.DataFrame, sample_pfas: list[str], config:dict) -> pd.DataFrame:
     """Create a table showing the total number of custodial sentences in each PFA.
 
     Parameters
@@ -146,6 +151,8 @@ def create_total_custodial_sentences_table(data: pd.DataFrame, sample_pfas: list
         DataFrame containing the custody data
     sample_pfas : list[str]
         List of PFAs to include in the table
+    config : dict
+        configuration dictionary containing paths and filenames.
 
     Returns
     -------
@@ -156,12 +163,17 @@ def create_total_custodial_sentences_table(data: pd.DataFrame, sample_pfas: list
     cols = list(data.columns[:2]) + list(data.columns[-3:])
     df = data.loc[filt, cols]
     df.iloc[:, -1] = df.iloc[:, -1] * 100  # convert to percentage
-    save_data(df, filename='custodial_sentences', category='all')
+    save_data(
+        df=df,
+        filename='custodial_sentences',
+        category='all',
+        config=config
+    )
 
     return df
 
 
-def create_under_six_months_table(sample_pfas: list[str], all_custody_data: pd.DataFrame) -> pd.DataFrame:
+def create_under_six_months_table(sample_pfas: list[str], all_custody_data: pd.DataFrame, config: dict) -> pd.DataFrame:
     """Create a table showing the number of custodial sentences of under six months in the latest year.
     and the proportion of all custodial sentences that this represents for the sampled PFAs.
     Parameters
@@ -170,6 +182,8 @@ def create_under_six_months_table(sample_pfas: list[str], all_custody_data: pd.D
         List of PFAs to include in the table
     all_custody_data : pd.DataFrame
         DataFrame containing the total custodial sentences data for all sentence lengths.
+    config : dict
+        configuration dictionary containing paths and filenames.
 
     Returns
     -------
@@ -177,7 +191,11 @@ def create_under_six_months_table(sample_pfas: list[str], all_custody_data: pd.D
         A DataFrame containing the number of custodial sentences of under six months
         by PFA for a recommended sample size of PFAs.
     """
-    data = load_data(data_type='sentence_length', sentence_length='6_months')
+    data = load_data(
+        config=config,
+        data_type='sentence_length',
+        sentence_length='6_months'
+    )
     filt = data['pfa'].isin(sample_pfas)
     cols = data.columns[[0, -2]]
     df = data.loc[filt, cols]
@@ -185,11 +203,16 @@ def create_under_six_months_table(sample_pfas: list[str], all_custody_data: pd.D
     all_custody_data = all_custody_data[['pfa', all_custody_data.columns[-2]]]  # pfa and latest year
     df = df.merge(all_custody_data, on='pfa', how='left', suffixes=('_under_6_months', '_all_sentences'))
     df['proportion_under_6_months'] = (df.iloc[:, 1] / df.iloc[:, 2]) * 100
-    save_data(df, filename='custodial_sentences', category='6_months')
+    save_data(
+        df=df,
+        filename='custodial_sentences',
+        category='6_months',
+        config=config
+    )
     return df
 
 
-def create_theft_offences_table(sample_pfas: list[str], all_custody_data: pd.DataFrame) -> pd.DataFrame:
+def create_theft_offences_table(sample_pfas: list[str], all_custody_data: pd.DataFrame, config: dict) -> pd.DataFrame:
     """Create a table showing the proportion of custodial sentences for theft offences in the latest year.
     Parameters
     ----------
@@ -197,13 +220,15 @@ def create_theft_offences_table(sample_pfas: list[str], all_custody_data: pd.Dat
         List of PFAs to include in the table
     all_custody_data : pd.DataFrame
         DataFrame containing the total custodial sentences data for all sentence lengths.
+    config : dict
+        configuration dictionary containing paths and filenames.
 
     Returns
     -------
     pd.DataFrame
         A DataFrame containing the proportion of custodial sentences for theft offences by PFA.
     """
-    data = load_data(data_type='offence')
+    data = load_data(data_type='offence', config=config)
     filt = data['pfa'].isin(sample_pfas) & (data['offence'] == 'Theft offences')
     cols = ['pfa', 'offence', 'freq']
     df = data.loc[filt, cols]
@@ -218,11 +243,16 @@ def create_theft_offences_table(sample_pfas: list[str], all_custody_data: pd.Dat
     drop_cols = [theft_freq_col, total_sentences_col]  # dropping columns used in calculation
     df.drop(columns=drop_cols, inplace=True)
 
-    save_data(df, filename='custodial_sentences', category='theft_offences')
+    save_data(
+        df=df,
+        filename='custodial_sentences',
+        category='theft_offences',
+        config=config
+    )
     return df
 
 
-def create_community_sentences_table(sample_pfas: list[str], time_period: Optional[int] = None) -> pd.DataFrame:
+def create_community_sentences_table(sample_pfas: list[str], config: dict, time_period: Optional[int] = None) -> pd.DataFrame:
     """Create a table showing the number of community sentences in 2014 and the latest year,
     and the percentage change between these years for the sampled PFAs.
 
@@ -230,6 +260,8 @@ def create_community_sentences_table(sample_pfas: list[str], time_period: Option
     ----------
     sample_pfas : list[str]
         List of PFAs to include in the table
+    config : dict
+        configuration dictionary containing paths and filenames.
     time_period : int, optional
         The number of years to look back from the latest year. If None, uses the full range of available data.
         Defaults to None.
@@ -240,7 +272,10 @@ def create_community_sentences_table(sample_pfas: list[str], time_period: Option
         A DataFrame containing the number of community sentences by PFA for 2014 and the latest year,
         along with the percentage change.
     """
-    data = load_data(data_type='sentence_type')
+    data = load_data(
+        data_type='sentence_type',
+        config=config
+    )
     min_year, max_year = utils.get_year_range(data, 'year')
     time_period = max_year - min_year if time_period is None else time_period
     start_year = max_year - time_period
@@ -266,34 +301,54 @@ def create_community_sentences_table(sample_pfas: list[str], time_period: Option
 
     # Reorder columns
     result = pivot_df[['pfa', 'outcome', start_year, max_year, 'pct_change']]
-    save_data(result, filename='community_sentences')
+    save_data(
+        df=result,
+        filename='community_sentences',
+        config=config
+    )
     return result
 
 
-def build_sample_pfa_list() -> list[str]:
+def build_sample_pfa_list(config: dict) -> list[str]:
     """FOR TESTING PURPOSES: Build a list of sample PFAs from the full custody data."""
-    all_custody_data = load_data(data_type='sentence_length', sentence_length='all')
+    all_custody_data = load_data(data_type='sentence_length', sentence_length='all', config=config)
     sample_pfas = create_pfa_sample(all_custody_data)
     return sample_pfas
 
 
-def main():
+def main(config: dict) -> None:
     """Main function to produce the factsheet data review process.
-
+    config : dict
+        configuration dictionary containing paths and filenames.
     Returns
     -------
     None
     """
 
-    all_custody_data = load_data(data_type='sentence_length', sentence_length='all')
+    all_custody_data = load_data(data_type='sentence_length', sentence_length='all', config=config)
     sample_pfas = create_pfa_sample(all_custody_data)
 
-    df_all = create_total_custodial_sentences_table(all_custody_data, sample_pfas)
-    create_under_six_months_table(sample_pfas, df_all)
-    create_theft_offences_table(sample_pfas, all_custody_data)
-    create_community_sentences_table(sample_pfas, time_period=10)
+    df_all = create_total_custodial_sentences_table(
+        data=all_custody_data,
+        sample_pfas=sample_pfas,
+        config=config
+    )
+
+    create_under_six_months_table(
+        sample_pfas=sample_pfas,
+        all_custody_data=df_all,
+        config=config
+    )
+
+    create_theft_offences_table(
+        sample_pfas=sample_pfas,
+        all_custody_data=all_custody_data,
+        config=config
+    )
+
+    create_community_sentences_table(
+        sample_pfas=sample_pfas,
+        time_period=10,
+        config=config
+    )
     return None
-
-
-if __name__ == "__main__":
-    main()
