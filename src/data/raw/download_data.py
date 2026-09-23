@@ -17,10 +17,8 @@ from typing import Callable, Dict, List, Optional
 
 import requests
 
-import src.data.raw.data_filters as data_filters
-import src.data.raw.ons_api as ons_api
-import src.data.raw.ons_ogp_api as ons_ogp_api
 import src.utilities as utils
+from src.data.raw import data_filters, ons_api, ons_ogp_api
 
 
 def fetch_json(url: str, timeout: int = 10) -> Dict:
