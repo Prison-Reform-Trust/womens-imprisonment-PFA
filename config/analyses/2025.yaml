@@ -68,9 +68,10 @@ outcomes_by_offence_filter:
         - year
         - pfa
 
-viz:
-    filePaths:
-        custody_sentence_lengths: custody_sentence_lengths
-        sentence_types: sentence_types
-        custody_offences: custody_offences
-    
+visualisation:
+  output_formats:
+    - "pdf"
+  paths:
+    custody_sentence_lengths: "custody_sentence_lengths"
+    sentence_types: "sentence_types"
+    custody_offences: "custody_offences"

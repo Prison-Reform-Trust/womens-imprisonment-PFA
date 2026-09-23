@@ -30,7 +30,7 @@ filename_template = config['data']['datasetFilenames']['filter_custody_offences'
 max_year = utils.get_latest_year_from_files(data_path, filename_template)
 
 INPUT_FILENAME = filename_template.format(year=max_year)
-OUTPUT_PATH = config['viz']['filePaths']['custody_offences']
+OUTPUT_PATH = config['visualisation']['paths']['custody_offences']
 
 
 class PfaOffencesChart:

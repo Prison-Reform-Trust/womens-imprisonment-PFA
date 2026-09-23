@@ -28,7 +28,7 @@ config = utils.load_config()
 pio.templates.default = "prt_template"
 
 INPUT_FILENAME = config['data']['datasetFilenames']['group_pfa_sentence_outcome']
-OUTPUT_PATH = config['viz']['filePaths']['sentence_types']
+OUTPUT_PATH = config['visualisation']['paths']['sentence_types']
 
 
 class SentenceTypeChart:

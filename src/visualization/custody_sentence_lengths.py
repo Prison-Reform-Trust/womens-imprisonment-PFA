@@ -28,7 +28,7 @@ config = utils.load_config()
 pio.templates.default = "prt_template"
 
 INPUT_FILENAME = config['data']['datasetFilenames']['filter_sentence_length']
-OUTPUT_PATH = config['viz']['filePaths']['custody_sentence_lengths']
+OUTPUT_PATH = config['visualisation']['paths']['custody_sentence_lengths']
 
 
 class SentenceLengthChart:
