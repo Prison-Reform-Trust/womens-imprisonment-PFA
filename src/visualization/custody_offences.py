@@ -20,17 +20,42 @@ from src import utilities as utils
 from src.data.processing.filter_custody_offences import filter_offences
 from src.visualization import prt_theme
 
-utils.setup_logging()
-
-config = utils.load_config()
 pio.templates.default = "prt_template"
 
-data_path = config['paths']['processed']
-filename_template = config['data']['filenames']['filter_custody_offences']
-max_year = utils.get_latest_year_from_files(data_path, filename_template)
+#NOTE: Currently here trying to use a dataclass to store settings for use in the data visualisation pipeline.
+@dataclass(frozen=True)
+class CustodyOffencesSettings:
+    """
+    Settings for the custody offences visualisation.
+    """
 
-INPUT_FILENAME = filename_template.format(year=max_year)
-OUTPUT_PATH = config['visualisation']['paths']['custody_offences']
+    filename_template: str
+    max_year: int
+    input_filename: str
+    output_path: str
+
+
+def retrieve_from_config(config: dict) -> CustodyOffencesSettings:
+    """
+    Retrieve settings for the custody offences visualisation from the configuration dictionary.
+
+    Parameters
+    ----------
+    config : dict
+        Configuration dictionary containing paths and settings.
+    """
+    filename_template = config["data"]["filenames"]["filter_custody_offences"]
+    max_year = utils.get_latest_year_from_files(
+        path=config["paths"]["processed"],
+        template=filename_template,
+    )
+
+    return CustodyOffencesSettings(
+        filename_template=filename_template,
+        max_year=max_year,
+        input_filename=filename_template.format(year=max_year),
+        output_path=config["visualisation"]["paths"]["custody_offences"],
+    )
 
 
 class PfaOffencesChart:
@@ -273,16 +298,21 @@ class PfaOffencesChart:
 
 
 def make_pfa_offences_charts(
-        filename: str,
-        path: str,
-        status='processed',
-        output: str = 'save',
-        filetype: str = 'emf'):
+    filename: str,
+    path: str,
+    max_year: int,
+    config: dict,
+    status="processed",
+    output="save",
+    filetype="emf",
+):
     """
     Generates and outputs offences charts for each unique PFA in the dataset.
     Parameters:
         filename (str): Name of the data file to load.
         path (str): Directory path where charts will be saved if output is 'save'.
+        max_year (int): The maximum year to consider for the data.
+        config (dict): Configuration dictionary containing paths and settings.
         status (str, optional): Status of the data to load (default is 'processed').
         output (str, optional): Determines whether to save ('save') or display ('show')
         the charts (default is 'save').
@@ -293,20 +323,21 @@ def make_pfa_offences_charts(
         Saves or displays charts for each unique PFA in the dataset.
         Logs a message when charts are ready.
     """
+    df = utils.load_data(status=status, filename=filename, config=config)
 
-    df = utils.load_data(status, filename)
-    for pfa in df['pfa'].unique():
-        chart = PfaOffencesChart(pfa, df)
-        if output == 'save':
+    for pfa in df["pfa"].unique():
+        chart = PfaOffencesChart(pfa, df, max_year)
+
+        if output == "save":
             chart.save_chart(path, filetype)
-        elif output == 'show':
+        elif output == "show":
             chart.output_chart()
         else:
             raise ValueError("output must be 'save' or 'show'.")
     logging.info("Charts ready")
 
 
-def test_chart(pfa: str = 'Gwent', df: Optional[pd.DataFrame] = None, output: str = 'show'):
+def test_chart(config: dict, pfa: str = 'Gwent', df: Optional[pd.DataFrame] = None, output: str = 'show'):
     """
     Test function to generate and display or save a sample chart for a specific PFA.
 
@@ -314,7 +345,8 @@ def test_chart(pfa: str = 'Gwent', df: Optional[pd.DataFrame] = None, output: st
     and generates a chart using the PfaOffencesChart class. It is intended for testing
     purposes to ensure that the chart generation works as expected.
 
-    Args:
+    Parameters:
+        config (dict): Configuration dictionary containing paths and settings.
         pfa (str): The Police Force Area to visualize (default is 'Gwent').
         df (Optional[pd.DataFrame]): The input DataFrame containing offence data (default is None).
         output (str): Determines whether to display ('show') or save ('save') the chart (default is 'show').
@@ -322,26 +354,32 @@ def test_chart(pfa: str = 'Gwent', df: Optional[pd.DataFrame] = None, output: st
     Returns:
         go.Figure: The generated chart figure if output is 'show'.
     """
-    df = utils.load_data("processed", INPUT_FILENAME) if df is None else df
+    df = utils.load_data(
+        status="processed",
+        filename=INPUT_FILENAME,
+        config=config
+        ) if df is None else df
     chart = PfaOffencesChart(pfa, df)
+
     if output == 'show':
         return chart.output_chart()
-    elif output == 'save':
+    if output == 'save':
         chart.save_chart(OUTPUT_PATH, 'pdf')
     else:
         raise ValueError("output must be 'show' or 'save'.")
 
 
-def main():
+def main(config: dict):
     """
     Main function to produce all visualisations for the fact sheets.
     """
+
+    settings = retrieve_from_config(config)
+
     make_pfa_offences_charts(
-        filename=INPUT_FILENAME,
-        path=OUTPUT_PATH,
-        filetype='pdf'
+        filename=settings.input_filename,
+        path=settings.output_path,
+        max_year=settings.max_year,
+        filetype="pdf",
+        config=config,
     )
-
-
-if __name__ == "__main__":
-    main()
