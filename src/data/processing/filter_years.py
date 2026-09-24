@@ -6,15 +6,14 @@ import logging
 
 import pandas as pd
 
-import src.utilities as utils
 
-utils.setup_logging()
-
-config = utils.load_config()
-
-
-def get_year(df: pd.DataFrame, year_from: int = 2014, year_to: int = None, column: str = "year") -> pd.DataFrame:
-    """_summary_
+def get_year(
+    df: pd.DataFrame,
+    year_from: int = 2014,
+    year_to: int | None = None,
+    column: str = "year"
+) -> pd.DataFrame:
+    """This function filters a dataframe based on a specified year range.
 
     Parameters
     ----------

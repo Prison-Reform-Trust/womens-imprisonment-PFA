@@ -22,13 +22,7 @@ import plotly.io as pio
 from src import utilities as utils
 from src.visualization import prt_theme
 
-utils.setup_logging()
-
-config = utils.load_config()
 pio.templates.default = "prt_template"
-
-INPUT_FILENAME = config['data']['filenames']['group_pfa_sentence_outcome']
-OUTPUT_PATH = config['visualisation']['paths']['sentence_types']
 
 
 class SentenceTypeChart:
@@ -265,7 +259,7 @@ class SentenceTypeChart:
             self.chart_annotations()
             self.set_axes()
 
-    def save_chart(self, path: str, filetype: str):
+    def save_chart(self, path: str, filetype: str, config: dict):
         """
         Saves the current chart to a specified path and file type.
 
@@ -274,9 +268,10 @@ class SentenceTypeChart:
         a configured output path, the specified folder, and file type. The filename is derived
         from the first value in the 'pfa' column of the 'pfa_df_sentence' DataFrame.
 
-        Args:
+        Parameters:
             path (str): The name of the folder where the chart will be saved.
             filetype (str): The file type/extension for the saved chart (e.g., 'png', 'jpg', 'svg').
+            config (dict): Configuration dictionary containing paths and settings.
 
         Raises:
             Any exceptions raised by Path operations or self.fig.write_image will propagate.
@@ -309,6 +304,7 @@ class SentenceTypeChart:
 def make_pfa_sentence_type_charts(
         filename: str,
         path: str,
+        config: dict,
         status='processed',
         output: str = 'save',
         filetype: str = 'emf'):
@@ -317,6 +313,7 @@ def make_pfa_sentence_type_charts(
     Parameters:
         filename (str): Name of the data file to load.
         path (str): Directory path where charts will be saved if output is 'save'.
+        config (dict): Configuration dictionary containing paths and settings.
         status (str, optional): Status of the data to load (default is 'processed').
         output (str, optional): Determines whether to save ('save') or display ('show') the charts (default is 'save').
         filetype (str, optional): File type for saving charts (default is 'emf').
@@ -327,11 +324,19 @@ def make_pfa_sentence_type_charts(
         Logs a message when charts are ready.
     """
 
-    df = utils.load_data(status, filename)
+    df = utils.load_data(
+        status=status,
+        filename=filename,
+        config=config
+    )
     for pfa in df['pfa'].unique():
         chart = SentenceTypeChart(pfa, df)
         if output == 'save':
-            chart.save_chart(path, filetype)
+            chart.save_chart(
+                path=path,
+                filetype=filetype,
+                config=config
+            )
         elif output == 'show':
             chart.output_chart()
         else:
@@ -339,33 +344,58 @@ def make_pfa_sentence_type_charts(
     logging.info("Charts ready")
 
 
-def test_chart(pfa: str = 'Gwent'):
+def test_chart(config: dict, pfa: str = 'Gwent'):
     """
     Test function to generate and display a sample chart for a specific PFA.
 
     This function creates a sample DataFrame with sentence length data for a specific PFA
     and generates a chart using the SentenceLengthChart class. It is intended for testing
     purposes to ensure that the chart generation works as expected.
+    Parameters:
+        config (dict): Configuration dictionary containing paths and settings.
+        pfa (str): The Police Force Area to visualize (default is 'Gwent').
     """
-    df = utils.load_data("processed", INPUT_FILENAME)
+    input_filename, _ = retrieve_from_config(config)
+
+    df = utils.load_data(
+        status="processed",
+        filename=input_filename,
+        config=config
+    )
     chart = SentenceTypeChart(pfa, df)
     return chart.output_chart()
-    # chart.save_chart(OUTPUT_PATH, 'pdf')
 
 
-def main():
+def retrieve_from_config(config: dict):
+    """
+    Retrieves configuration values for input filename and output path from the provided config dictionary.
+
+    Args:
+        config (dict): Configuration dictionary containing paths and settings.
+
+    Returns:
+        tuple: A tuple containing the input filename and output path.
+    """
+    input_filename = config['data']['filenames']['group_pfa_sentence_outcome']
+    output_path = config['visualisation']['paths']['sentence_types']
+
+    return input_filename, output_path
+
+
+def main(config: dict):
     """
     Main function to execute the chart generation process.
 
     This function calls the make_pfa_sentence_type_charts function with predefined parameters
     to generate and save sentence type charts for each PFA in the dataset.
+    Parameters:
+        config (dict): Configuration dictionary containing paths and settings.
     """
+    input_filename, output_path = retrieve_from_config(config)
+
     make_pfa_sentence_type_charts(
-        filename=INPUT_FILENAME,
-        path=OUTPUT_PATH,
-        filetype='pdf'
+        filename=input_filename,
+        path=output_path,
+        filetype='pdf',
+        config=config
     )
-
-
-if __name__ == "__main__":
-    main()

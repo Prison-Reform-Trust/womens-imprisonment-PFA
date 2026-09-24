@@ -25,16 +25,19 @@ import pandas as pd
 import src.data.processing.common_ons_processing as common_processing
 import src.utilities as utils
 
-utils.setup_logging()
 
-config = utils.load_config()
-
-OUTPUT_FILENAME_TEMPLATE = config['data']['filenames']['population']
-
-
-def load_population_data() -> pd.DataFrame:
+def load_population_data(config: dict) -> pd.DataFrame:
     """
     Load the ONS population data from the raw data directory.
+    Parameters
+    ----------
+    config : dict
+        Configuration dictionary containing paths and other settings.
+    
+    Returns
+    -------
+    DataFrame
+        The loaded DataFrame containing ONS population data.
     """
     columns = [
         'administrative-geography',
@@ -54,7 +57,8 @@ def load_population_data() -> pd.DataFrame:
         df = utils.load_data(
             status='raw',
             filename=input_filename,
-            usecols=columns
+            usecols=columns,
+            config=config
         )
     except FileNotFoundError:
         logging.warning("File %s not found. Have you run download_data.py first?", input_filename)
@@ -105,16 +109,21 @@ def process_data(df: pd.DataFrame) -> pd.DataFrame:
     return df
 
 
-def load_and_process_data() -> Tuple[pd.DataFrame, int, int]:
+def load_and_process_data(config: dict) -> Tuple[pd.DataFrame, int, int]:
     """
     Load the ONS population data, rename and reorder columns, and apply filters.
+
+    Parameters
+    ----------
+    config : dict
+        Configuration dictionary containing paths and other settings.
 
     Returns
     -------
     Tuple[DataFrame, int, int]
         The processed DataFrame, minimum year, and maximum year.
     """
-    df = load_population_data()
+    df = load_population_data(config=config)
     if df.empty:
         logging.error("No data loaded from ONS population file.")
         return pd.DataFrame(), 0, 0
@@ -126,21 +135,24 @@ def load_and_process_data() -> Tuple[pd.DataFrame, int, int]:
     return df, min_year, max_year
 
 
-def main():
+def main(config: dict):
     """
     Main function to process the sentencing data.
     It loads the data, applies filters, and returns a cleaned DataFrame.
+
+    Parameters
+    ----------
+    config : dict
+        Configuration dictionary containing paths and other settings.
     """
 
-    df, min_year, max_year = load_and_process_data()
-    filename = utils.get_output_filename(year=(min_year, max_year), template=OUTPUT_FILENAME_TEMPLATE)
+    df, min_year, max_year = load_and_process_data(config=config)
+
+    output_filename_template = config['data']['filenames']['population']
+    filename = utils.get_output_filename(year=(min_year, max_year), template=output_filename_template)
 
     utils.safe_save_data(
         df,
         path=config['paths']['interim'],
         filename=filename
     )
-
-
-if __name__ == "__main__":
-    main()

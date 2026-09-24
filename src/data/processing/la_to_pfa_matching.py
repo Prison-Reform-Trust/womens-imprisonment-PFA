@@ -26,22 +26,33 @@ import pandas as pd
 
 import src.utilities as utils
 
-config = utils.load_config()
-utils.setup_logging()
 
-OUTPUT_FILENAME_TEMPLATE = config['data']['filenames']['la_to_pfa_matching']
-
-
-def load_data() -> tuple[pd.DataFrame, pd.DataFrame]:
-    """Load the Local Authority to PFA lookup file and population data."""
+def load_data(config: dict) -> tuple[pd.DataFrame, pd.DataFrame]:
+    """Load the Local Authority to PFA lookup file and population data.
+    Parameters:
+        config (dict): Configuration dictionary containing file paths and names.
+    Returns:
+        tuple[pd.DataFrame, pd.DataFrame]: A tuple containing the Local Authority to PFA lookup DataFrame
+        and the population DataFrame.
+    """
     la_to_pfa_lookup = config['data']['filenames']['la_to_pfa_lookup']
     ons_la_data = utils.fetch_latest_file(
         pattern="*LA_population_women*.csv",  # NOTE: Would be better to draw this from config
         path=config['paths']['interim']
     )
 
-    la_pfa = utils.load_data('raw', la_to_pfa_lookup)
-    df_pop = utils.load_data('interim', ons_la_data)
+    la_pfa = utils.load_data(
+        status='raw',
+        filename=la_to_pfa_lookup,
+        config=config
+    )
+
+    df_pop = utils.load_data(
+        status='interim',
+        filename=ons_la_data,
+        config=config
+    )
+
     return la_pfa, df_pop
 
 
@@ -87,9 +98,15 @@ def filter_and_clean_data(df_pop: pd.DataFrame) -> pd.DataFrame:
     )
 
 
-def load_and_process_data() -> Tuple[pd.DataFrame, int, int]:
-    """Load, process, and return the population DataFrame with PFA mapping."""
-    la_pfa, df_pop = load_data()
+def load_and_process_data(config: dict) -> Tuple[pd.DataFrame, int, int]:
+    """Load, process, and return the population DataFrame with PFA mapping.
+    Parameters:
+        config (dict): Configuration dictionary containing file paths and names.
+    Returns:
+        Tuple[pd.DataFrame, int, int]: A tuple containing the processed population DataFrame
+        with PFA mapping, the minimum year, and the maximum year in the dataset.
+    """
+    la_pfa, df_pop = load_data(config=config)
 
     df_pop = (
         assign_pfa(la_pfa, df_pop)
@@ -101,18 +118,18 @@ def load_and_process_data() -> Tuple[pd.DataFrame, int, int]:
     return df_pop, min_year, max_year
 
 
-def main():
-    """Main function to load, process, and save the data."""
+def main(config: dict) -> None:
+    """Main function to load, process, and save the data.
+    Parameters:
+        config (dict): Configuration dictionary containing file paths and names.
+    """
 
-    df, min_year, max_year = load_and_process_data()
-    filename = utils.get_output_filename(year=(min_year, max_year), template=OUTPUT_FILENAME_TEMPLATE)
+    df, min_year, max_year = load_and_process_data(config=config)
+    output_filename_template = config['data']['filenames']['la_to_pfa_matching']
+    filename = utils.get_output_filename(year=(min_year, max_year), template=output_filename_template)
 
     utils.safe_save_data(
         df,
         path=config['paths']['interim'],
         filename=filename
     )
-
-
-if __name__ == "__main__":
-    main()

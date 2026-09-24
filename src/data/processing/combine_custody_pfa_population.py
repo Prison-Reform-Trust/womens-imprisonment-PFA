@@ -19,15 +19,14 @@ import pandas as pd
 import src.data.processing.common_ons_processing as common_processing
 import src.utilities as utils
 
-config = utils.load_config()
-utils.setup_logging()
 
-OUTPUT_FILENAME_TEMPLATE = config['data']['filenames']['imprisonment_rates']
-FINAL_TABLE_FILENAME_TEMPLATE = config['data']['filenames']['custody_rate_pfa']
-
-
-def load_data() -> tuple[pd.DataFrame, pd.DataFrame]:
-    """Load the PFA population data and CJS custody data."""
+def load_data(config: dict) -> tuple[pd.DataFrame, pd.DataFrame]:
+    """Load the PFA population data and CJS custody data.
+    Parameters:
+        config (dict): Configuration dictionary containing file paths and names.
+    Returns:
+        tuple: A tuple containing the custody data and population data DataFrames.
+    """
     custody_data_template = config['data']['filenames']['make_custody_tables_template']
     custody_data_filename = custody_data_template.format(category='all')
 
@@ -36,8 +35,18 @@ def load_data() -> tuple[pd.DataFrame, pd.DataFrame]:
         path=config['paths']['interim']
     )
 
-    custody_data = utils.load_data('processed', custody_data_filename)
-    population_data = utils.load_data('interim', population_data_filename)
+    custody_data = utils.load_data(
+        status='processed',
+        filename=custody_data_filename,
+        config=config
+    )
+
+    population_data = utils.load_data(
+        status='interim',
+        filename=population_data_filename,
+        config=config
+    )
+
     return custody_data, population_data
 
 
@@ -333,10 +342,15 @@ def check_and_generate_projections(population_data: pd.DataFrame, custody_data: 
     return extended_population_data
 
 
-def load_and_process_data() -> Tuple[pd.DataFrame, int, int]:
-    """Load, process, and return the merged custody and population data with projections."""
+def load_and_process_data(config: dict) -> Tuple[pd.DataFrame, int, int]:
+    """Load, process, and return the merged custody and population data with projections.
+    Parameters:
+        config (dict): Configuration dictionary containing file paths and names.
+    Returns:
+        Tuple[pd.DataFrame, int, int]: Merged DataFrame, minimum year, and maximum year in the dataset.
+    """
     # Load data
-    custody_df, population_df = load_data()
+    custody_df, population_df = load_data(config=config)
 
     # Process custody data
     custody_data = process_custody_data(custody_df)
@@ -374,11 +388,20 @@ def create_publication_ready_table(df: pd.DataFrame) -> pd.DataFrame:
     return publication_table
 
 
-def save_processed_data(df: pd.DataFrame, min_year: int, max_year: int) -> None:
-    """Save the processed data to the intermediate file path."""
+def save_processed_data(df: pd.DataFrame, min_year: int, max_year: int, config: dict) -> None:
+    """Save the processed data to the intermediate file path.
+    Parameters:
+        df (pd.DataFrame): The DataFrame to save.
+        min_year (int): The minimum year in the dataset.
+        max_year (int): The maximum year in the dataset.
+        config (dict): Configuration dictionary containing file paths and names.
+
+    """
+    output_filename_template = config['data']['filenames']['imprisonment_rates']
+
     filename = utils.get_output_filename(
         year=(min_year, max_year),
-        template=OUTPUT_FILENAME_TEMPLATE
+        template=output_filename_template
     )
     utils.safe_save_data(
         df,
@@ -387,12 +410,21 @@ def save_processed_data(df: pd.DataFrame, min_year: int, max_year: int) -> None:
     )
 
 
-def save_publication_table(df: pd.DataFrame, min_year: int, max_year: int) -> None:
-    """Save the publication-ready table to the cleaned file path."""
+def save_publication_table(df: pd.DataFrame, min_year: int, max_year: int, config: dict) -> None:
+    """Save the publication-ready table to the cleaned file path.
+    Parameters:
+        df (pd.DataFrame): The DataFrame to save.
+        min_year (int): The minimum year in the dataset.
+        max_year (int): The maximum year in the dataset.
+        config (dict): Configuration dictionary containing file paths and names.
+    """
+
+    final_table_filename_template = config['data']['filenames']['custody_rate_pfa']
+
     publication_table = create_publication_ready_table(df)
     publication_filename = utils.get_output_filename(
         year=(min_year, max_year),
-        template=FINAL_TABLE_FILENAME_TEMPLATE
+        template=final_table_filename_template
     )
     utils.safe_save_data(
         publication_table,
@@ -402,15 +434,34 @@ def save_publication_table(df: pd.DataFrame, min_year: int, max_year: int) -> No
     )
 
 
-def main():
+def retrieve_from_config(config: dict):
+    """
+    Retrieves configuration values for output filename template and final table filename
+    template from the provided config dictionary.
+
+    Args:
+        config (dict): Configuration dictionary containing paths and settings.
+
+    Returns:
+        tuple: A tuple containing the output filename template and final table filename template.
+    """
+    output_filename_template = config['data']['filenames']['imprisonment_rates']
+    final_table_filename_template = config['data']['filenames']['custody_rate_pfa']
+
+    return output_filename_template, final_table_filename_template
+
+
+def main(config: dict) -> None:
     """Main function to load, process, and save the data."""
-    df, min_year, max_year = load_and_process_data()
+    utils.setup_logging()
+    df, min_year, max_year = load_and_process_data(config=config)
 
     # Save processed data and publication table
     save_functions = [save_processed_data, save_publication_table]
     for save_func in save_functions:
-        save_func(df, min_year, max_year)
-
-
-if __name__ == "__main__":
-    main()
+        save_func(
+            df=df,
+            min_year=min_year,
+            max_year=max_year,
+            config=config
+        )

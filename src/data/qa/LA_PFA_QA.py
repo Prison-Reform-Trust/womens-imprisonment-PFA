@@ -24,23 +24,39 @@ import src.data.processing.common_ons_processing as common_processing
 import src.data.processing.la_to_pfa_matching as la_to_pfa_matching
 import src.utilities as utils
 
-config = utils.load_config()
-utils.setup_logging()
-
 
 # 1. Combining population estimates for England and Wales from 2021 census and MYE reconciliation data
-def load_population_data() -> Tuple[pd.DataFrame, pd.DataFrame]:
-    """Load the population estimates and reconciliation data."""
-    df_population = utils.load_data('raw', 'MYEB1_detailed_population_estimates_series_UK_(2021_geog21).csv')
-    df_reconciliation = utils.load_data('raw', 'MYEB2_detailed_components_of_change_for reconciliation_EW_(2021_geog21).csv',
-                                        usecols=range(25))  # Not including 'population_2021' column
+def load_population_data(config: dict) -> Tuple[pd.DataFrame, pd.DataFrame]:
+    """Load the population estimates and reconciliation data.
+    Parameters:
+        config (dict): Configuration dictionary containing file paths and other settings.
+    Returns:
+        Tuple[pd.DataFrame, pd.DataFrame]: DataFrames for population estimates and reconciliation data
+    """
+    df_population = utils.load_data(
+        status='raw',
+        filename='MYEB1_detailed_population_estimates_series_UK_(2021_geog21).csv',
+        config=config
+    )
+
+    df_reconciliation = utils.load_data(
+        status='raw',
+        filename='MYEB2_detailed_components_of_change_for reconciliation_EW_(2021_geog21).csv',
+        usecols=range(25),  # Not including 'population_2021' column
+        config=config
+    )
+
     return df_population, df_reconciliation
 
 
-def load_la_to_pfa_lookup(filename: str = config['data']['qaFilenames']['la_to_pfa_lookup']) -> pd.DataFrame:
+def load_la_to_pfa_lookup(filename: str, config: dict) -> pd.DataFrame:
     """Load the Local Authority to PFA lookup file."""
     la_to_pfa_lookup_filename = filename
-    return utils.load_data('raw', la_to_pfa_lookup_filename)
+    return utils.load_data(
+        status='raw',
+        filename=la_to_pfa_lookup_filename,
+        config=config
+    )
 
 
 def prepare_population_data(df: pd.DataFrame) -> pd.DataFrame:
@@ -104,10 +120,18 @@ def map_la_to_pfa(df_pop: pd.DataFrame, la_pfa_lookup: pd.DataFrame) -> pd.DataF
     return df
 
 
-def load_and_process_data() -> pd.DataFrame:
-    """Load, process, and return the combined population DataFrame with PFAs."""
-    df_population, df_reconciliation = load_population_data()
-    la_pfa_lookup = load_la_to_pfa_lookup()
+def load_and_process_data(config: dict) -> pd.DataFrame:
+    """Load, process, and return the combined population DataFrame with PFAs.
+    Parameters:
+        config (dict): Configuration dictionary containing file paths and other settings.
+    Returns:
+        pd.DataFrame: Processed DataFrame with population data and PFA mapping.
+    """
+    df_population, df_reconciliation = load_population_data(config=config)
+    la_pfa_lookup = load_la_to_pfa_lookup(
+        filename=config['data']['Filenames']['la_to_pfa_lookup'],
+        config=config
+    )
 
     df = (
         combine_population_data(df_population, df_reconciliation)
@@ -117,9 +141,12 @@ def load_and_process_data() -> pd.DataFrame:
     return df
 
 
-def main():
-    """Main function to load, process, and save the population data with PFA mapping."""
-    df = load_and_process_data()
+def main(config: dict):
+    """Main function to load, process, and save the population data with PFA mapping.
+    Parameters:
+        config (dict): Configuration dictionary containing file paths and other settings.
+    """
+    df = load_and_process_data(config=config)
     min_year, max_year = utils.get_year_range(df)
     filename = utils.get_output_filename(
         year=(min_year, max_year),
@@ -131,7 +158,3 @@ def main():
         path=config['paths']['interim'],
         filename=filename
     )
-
-
-if __name__ == "__main__":
-    main()

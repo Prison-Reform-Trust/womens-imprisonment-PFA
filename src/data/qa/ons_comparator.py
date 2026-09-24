@@ -17,12 +17,6 @@ import pandas as pd
 import src.data.processing.common_ons_processing as common_processing
 import src.utilities as utils
 
-utils.setup_logging()
-
-config = utils.load_config()
-
-OUTPUT_FILENAME_TEMPLATE = config['data']['qaFilenames']['ons_comparator']
-
 
 def process_data(df: pd.DataFrame) -> pd.DataFrame:
     """
@@ -53,23 +47,29 @@ def process_data(df: pd.DataFrame) -> pd.DataFrame:
     return df
 
 
-def load_and_process_data():
+def load_and_process_data(config: dict) -> tuple[pd.DataFrame, int, int]:
     """
     Load the ONS population data, rename and reorder columns, and apply filters.
+    Parameters
+    ----------
+    config : dict
+        Configuration dictionary containing paths and filenames.
 
     Returns
     -------
-    DataFrame
-        The processed DataFrame ready for further QA work with latest edition.
+    tuple[pd.DataFrame, int, int]
+        A tuple containing the processed DataFrame, minimum year, and maximum year.
     """
     logging.info("Loading comparator ONS population data...")
+
     df = utils.load_data(
         status='raw',
-        filename="MYEB1_detailed_population_estimates_series_UK_(2020_geog21).csv"
+        filename="MYEB1_detailed_population_estimates_series_UK_(2020_geog21).csv",
+        config=config
     )
+
     if df.empty:
         logging.error("No data loaded from ONS population file.")
-        return pd.DataFrame()
 
     df = process_data(df)
     min_year, max_year = utils.get_year_range(df)
@@ -78,14 +78,20 @@ def load_and_process_data():
     return df, min_year, max_year
 
 
-def main():
+def main(config: dict) -> None:
     """
     Main function to process the sentencing data.
     It loads the data, applies filters, and returns a cleaned DataFrame.
+    Parameters
+    ----------
+    config : dict
+        Configuration dictionary containing paths and filenames.
     """
 
-    df, min_year, max_year = load_and_process_data()
-    filename = utils.get_output_filename(year=(min_year, max_year), template=OUTPUT_FILENAME_TEMPLATE)
+    df, min_year, max_year = load_and_process_data(config=config)
+
+    output_filename_template = config['data']['qaFilenames']['ons_comparator']
+    filename = utils.get_output_filename(year=(min_year, max_year), template=output_filename_template)
 
     if not isinstance(df, pd.DataFrame):
         logging.error("Data processing failed, no DataFrame returned.")
@@ -96,7 +102,3 @@ def main():
         path=config['paths']['interim'],
         filename=filename
     )
-
-
-if __name__ == "__main__":
-    main()
