@@ -10,6 +10,7 @@ who received a custodial sentence in 2024, broken down by offence group.
 """
 
 import logging
+from dataclasses import dataclass
 from typing import Optional
 
 import pandas as pd
@@ -22,7 +23,7 @@ from src.visualization import prt_theme
 
 pio.templates.default = "prt_template"
 
-#NOTE: Currently here trying to use a dataclass to store settings for use in the data visualisation pipeline.
+
 @dataclass(frozen=True)
 class CustodyOffencesSettings:
     """
@@ -66,12 +67,13 @@ class PfaOffencesChart:
     Attributes:
         pfa (str): The Police Force Area to visualize.
         df (pd.DataFrame): The input DataFrame containing offence data.
+        settings (CustodyOffencesSettings): The settings for the visualisation.
         pfa_df (pd.DataFrame): Filtered DataFrame for the selected PFA.
         annotations (list[dict]): List of annotation dictionaries for the chart.
         fig (go.Figure): Plotly Figure object for the chart.
 
     Methods:
-        __init__(pfa: str, df: pd.DataFrame):
+        __init__(pfa: str, df: pd.DataFrame, settings: CustodyOffencesSettings):
             Initializes the chart with a PFA and its corresponding data.
 
         create_all_offences_group():
@@ -95,9 +97,15 @@ class PfaOffencesChart:
             Renders the chart in an interactive window.
     """
 
-    def __init__(self, pfa: str, df: pd.DataFrame):
+    def __init__(
+        self,
+        pfa: str,
+        df: pd.DataFrame,
+        settings: CustodyOffencesSettings,
+    ):
         self.pfa = pfa
         self.df = df
+        self.settings = settings
         self.pfa_df = self.df[self.df["pfa"] == self.pfa]
         self.annotations: list[dict] = []
         self.fig = go.Figure()
@@ -190,7 +198,7 @@ class PfaOffencesChart:
 
         title = (
             f'Imprisonment of women in {self.pfa_df["pfa"].iloc[0]}<br>'
-            f'by offence group, {max_year}'
+            f'by offence group, {self.settings.max_year}'
         )
 
         prt_theme.add_title(
@@ -256,7 +264,7 @@ class PfaOffencesChart:
         self.chart_params()
         self.chart_annotations()
 
-    def save_chart(self, path: str, filetype: str):
+    def save_chart(self, path: str, filetype: str, config: dict):
         """
         Saves the current chart to a specified path and file type.
 
@@ -265,9 +273,10 @@ class PfaOffencesChart:
         a configured output path, the specified folder, and file type. The filename is derived
         from the first value in the 'pfa' column of the 'pfa_df' DataFrame.
 
-        Args:
+        Parameters:
             path (str): The name of the folder where the chart will be saved.
             filetype (str): The file type/extension for the saved chart (e.g., 'png', 'jpg', 'svg').
+            config (dict): Configuration dictionary containing paths and settings.
 
         Raises:
             Any exceptions raised by Path operations or self.fig.write_image will propagate.
@@ -298,46 +307,42 @@ class PfaOffencesChart:
 
 
 def make_pfa_offences_charts(
-    filename: str,
-    path: str,
-    max_year: int,
+    settings: CustodyOffencesSettings,
     config: dict,
-    status="processed",
-    output="save",
-    filetype="emf",
+    output: str = "save",
+    filetype: str = "emf",
 ):
-    """
-    Generates and outputs offences charts for each unique PFA in the dataset.
-    Parameters:
-        filename (str): Name of the data file to load.
-        path (str): Directory path where charts will be saved if output is 'save'.
-        max_year (int): The maximum year to consider for the data.
-        config (dict): Configuration dictionary containing paths and settings.
-        status (str, optional): Status of the data to load (default is 'processed').
-        output (str, optional): Determines whether to save ('save') or display ('show')
-        the charts (default is 'save').
-        filetype (str, optional): File type for saving charts (default is 'emf').
-    Raises:
-        ValueError: If the output parameter is not 'save' or 'show'.
-    Side Effects:
-        Saves or displays charts for each unique PFA in the dataset.
-        Logs a message when charts are ready.
-    """
-    df = utils.load_data(status=status, filename=filename, config=config)
+    df = utils.load_data(
+        status="processed",
+        filename=settings.input_filename,
+        config=config,
+    )
 
     for pfa in df["pfa"].unique():
-        chart = PfaOffencesChart(pfa, df, max_year)
+        chart = PfaOffencesChart(
+            pfa=pfa,
+            df=df,
+            settings=settings,
+        )
 
         if output == "save":
-            chart.save_chart(path, filetype)
+            chart.save_chart(
+                path=settings.output_path,
+                filetype=filetype,
+                config=config
+            )
         elif output == "show":
             chart.output_chart()
         else:
             raise ValueError("output must be 'save' or 'show'.")
-    logging.info("Charts ready")
 
 
-def test_chart(config: dict, pfa: str = 'Gwent', df: Optional[pd.DataFrame] = None, output: str = 'show'):
+def test_chart(
+    config: dict,
+    pfa: str = 'Gwent',
+    df: Optional[pd.DataFrame] = None,
+    output: str = 'show'
+):
     """
     Test function to generate and display or save a sample chart for a specific PFA.
 
@@ -354,17 +359,23 @@ def test_chart(config: dict, pfa: str = 'Gwent', df: Optional[pd.DataFrame] = No
     Returns:
         go.Figure: The generated chart figure if output is 'show'.
     """
+    settings = retrieve_from_config(config)
+
     df = utils.load_data(
         status="processed",
-        filename=INPUT_FILENAME,
+        filename=settings.input_filename,
         config=config
         ) if df is None else df
-    chart = PfaOffencesChart(pfa, df)
+    chart = PfaOffencesChart(pfa=pfa, df=df, settings=settings)
 
     if output == 'show':
         return chart.output_chart()
     if output == 'save':
-        chart.save_chart(OUTPUT_PATH, 'pdf')
+        return chart.save_chart(
+                        path=settings.output_path,
+                        filetype='pdf',
+                        config=config
+                    )
     else:
         raise ValueError("output must be 'show' or 'save'.")
 
@@ -377,9 +388,8 @@ def main(config: dict):
     settings = retrieve_from_config(config)
 
     make_pfa_offences_charts(
-        filename=settings.input_filename,
-        path=settings.output_path,
-        max_year=settings.max_year,
-        filetype="pdf",
+        settings=settings,
         config=config,
+        output="save",
+        filetype="pdf",
     )
