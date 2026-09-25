@@ -5,6 +5,7 @@ import argparse
 
 from src.configuration import load_config
 from src.data.processing import process_data
+from src.data.raw import download_data
 
 
 def main() -> None:
@@ -23,8 +24,8 @@ def main() -> None:
     print(f"Data release: {config['analysis']['data_release']}")
 
     # Pass config to the pipeline:
-    # run_downloads(config)
-    process_data.main(config)
+    download_data.main(config=config)
+    process_data.main(config=config)
     # run_visualisations(config)
 
 
