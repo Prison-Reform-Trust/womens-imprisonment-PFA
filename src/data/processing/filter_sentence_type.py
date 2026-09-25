@@ -32,7 +32,18 @@ import src.utilities as utils
 def load_outcomes_data(config: dict) -> pd.DataFrame:
     """
     Load the outcomes by offence data from the raw data directory.
+
+    Parameters
+    ----------
+    config : dict
+        Configuration dictionary containing file paths and names.
+
+    Returns
+    -------
+    pd.DataFrame
+        The concatenated DataFrame containing the outcomes by offence data.
     """
+
     # TODO: #37 Consider moving columns to config for easier adjustments in the future.
     columns = [
         'Police Force Area',
