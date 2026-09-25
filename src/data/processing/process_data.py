@@ -27,11 +27,11 @@ def process_data(config: dict) -> None:
         config["analysis"]["id"],
     )
 
-    filter_sentence_type.main(config)
-    group_pfa_sentence_outcome.main(config)
-    filter_sentence_length.main(config)
-    make_custody_tables.main(config)
-    filter_custody_offences.main(config)
+    filter_sentence_type.main(config=config)
+    group_pfa_sentence_outcome.main(config=config)
+    filter_sentence_length.main(config=config)
+    make_custody_tables.main(config=config)
+    filter_custody_offences.main(config=config)
 
     logging.info("Data processing pipeline completed successfully.")
 
@@ -39,4 +39,4 @@ def process_data(config: dict) -> None:
 def main(config: dict) -> None:
     """Run the processing pipeline"""
     utils.setup_logging()
-    process_data(config)
+    process_data(config=config)
