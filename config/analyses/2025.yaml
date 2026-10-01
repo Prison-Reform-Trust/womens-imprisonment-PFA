@@ -49,23 +49,42 @@ data:
     custodial_sentences: factsheet_custodial_sentences_{category}.csv
     community_sentences: factsheet_community_sentences.csv
 
-outcomes_by_offence_filter:
+filters:
+  outcomes_by_offence:
     include:
       sex:
-        - Female
+        - "Female"
       outcome:
-        - Immediate Custody
-        - Community Sentence
-        - Suspended Sentence
+        - "Immediate Custody"
+        - "Community Sentence"
+        - "Suspended Sentence"
       age_group:
-        - Adults
-        - Young adults
+        - "Adults"
+        - "Young adults"
     exclude:
       pfa:
-        - Not known
+        - "Not known"
     sort_by:
-      - year
-      - pfa
+      - "year"
+      - "pfa"
+
+cleaning:
+  population:
+    discard_geographies:
+      - regional"
+      - "national"
+    sex: "Females"
+    minimum_age: 18
+  categories:
+    object_to_category_ratio: 0.05
+  geography:
+    excluded_la_codes:
+      - "E10"
+      - "E11"
+    excluded_pfa_names:
+      - "City of London"
+    rename_pfa:
+      "Devon & Cornwall": "Devon and Cornwall"
 
 visualisation:
   output_formats:
