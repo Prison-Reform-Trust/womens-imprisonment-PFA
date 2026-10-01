@@ -21,7 +21,6 @@ def main() -> None:
     config = load_config(args.year)
 
     print(f"Running analysis: {config['analysis']['id']}")
-    print(f"Data release: {config['analysis']['data_release']}")
 
     # Pass config to the pipeline:
     download_data.main(config=config)
