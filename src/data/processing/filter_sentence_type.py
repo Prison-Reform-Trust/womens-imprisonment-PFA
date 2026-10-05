@@ -138,12 +138,15 @@ def apply_multiple_regex_replacements(
                 categories = [re.sub(pattern, repl, cat) for cat in categories]
             df[col] = df[col].cat.rename_categories(categories)
 
-        elif pd.api.types.is_object_dtype(df[col]):
+        elif (
+            pd.api.types.is_object_dtype(df[col].dtype)
+            or pd.api.types.is_string_dtype(df[col].dtype)
+        ):
             for pattern, repl in changes:
                 df[col] = df[col].str.replace(pattern, repl, regex=True)
 
         else:
-            logging.warning("Column %s is not object or category dtype. Skipping.", col)
+            logging.warning("Column %s is not str, object or category dtype. Skipping.", col)
 
     return df
 
