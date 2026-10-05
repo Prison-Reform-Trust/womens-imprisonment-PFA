@@ -153,7 +153,7 @@ def apply_multiple_regex_replacements(
 
 def filter_dataframe(df: pd.DataFrame, filters: dict) -> pd.DataFrame:
     """
-    Filter the DataFrame based on include and exclude criteria.
+    Filter and optionally sort a DataFrame using configured rules.
 
     Parameters
     ----------
@@ -167,12 +167,17 @@ def filter_dataframe(df: pd.DataFrame, filters: dict) -> pd.DataFrame:
     pd.DataFrame
         The filtered DataFrame.
     """
-    logging.info("Applying filters...")
-
     include = filters.get('include', {})
     exclude = filters.get('exclude', {})
     sort_by = filters.get('sort_by', [])
 
+    if not include and not exclude:
+        logging.warning(
+            "No include or exclude filters configured, add to config file; returning unfiltered rows."
+        )
+    else:
+        logging.info("Applying filters...")
+    
     for col, allowed_values in include.items():
         logging.info("Include filter on column '%s' with values: %s", col, allowed_values)
         df = df[df[col].isin(allowed_values)]
@@ -210,7 +215,7 @@ def process_data(df: pd.DataFrame, config: dict) -> pd.DataFrame:
     regex_replacements = config["cleaning"]["sentence_type"]["regex_replacements"]
 
     # Filtering configuration
-    filters = config.get("filters", {}).get("outcomes_by_offence", {})
+    filters = config.get("filters", {}).get("sentence_type", {})
 
     df = (
         rename_and_reorder_columns(df)

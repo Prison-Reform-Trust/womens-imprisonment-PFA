@@ -50,7 +50,7 @@ data:
     community_sentences: factsheet_community_sentences.csv
 
 filters:
-  outcomes_by_offence:
+  sentence_type:
     include:
       sex:
         - "Female"
