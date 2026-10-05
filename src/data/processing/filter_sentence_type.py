@@ -173,11 +173,11 @@ def filter_dataframe(df: pd.DataFrame, filters: dict) -> pd.DataFrame:
 
     if not include and not exclude:
         logging.warning(
-            "No include or exclude filters configured, add to config file; returning unfiltered rows."
+            "No include or exclude filters configured, add these to the config file if needed; returning unfiltered rows."
         )
     else:
         logging.info("Applying filters...")
-    
+
     for col, allowed_values in include.items():
         logging.info("Include filter on column '%s' with values: %s", col, allowed_values)
         df = df[df[col].isin(allowed_values)]
@@ -188,6 +188,7 @@ def filter_dataframe(df: pd.DataFrame, filters: dict) -> pd.DataFrame:
 
     if sort_by:
         df = df.sort_values(sort_by)
+
     logging.info("Data filtered.")
 
     return df
