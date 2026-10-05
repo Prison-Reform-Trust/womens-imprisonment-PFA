@@ -210,7 +210,7 @@ def process_data(df: pd.DataFrame, config: dict) -> pd.DataFrame:
     regex_replacements = config["cleaning"]["sentence_type"]["regex_replacements"]
 
     # Filtering configuration
-    filters = config.get('outcomes_by_offence_filter', {})
+    filters = config.get("filters", {}).get("outcomes_by_offence", {})
 
     df = (
         rename_and_reorder_columns(df)
