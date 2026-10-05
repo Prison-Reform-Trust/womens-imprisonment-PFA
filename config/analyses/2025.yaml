@@ -69,6 +69,25 @@ filters:
       - "pfa"
 
 cleaning:
+  sentence_type:
+    regex_replacements:
+      pfa:
+        - ["Metropolitan", "London"]
+      sex:
+        - ['\d\d: ', ""]
+      age_group:
+        - ['\d\d: ', ""]
+      offence:
+        - ['\d\d: ', ""]
+      specific_offence:
+        - ['^[\dA-Za-z.-]+\s', ""]
+      outcome:
+        - ['\d\d: ', ""]
+      sentence_len:
+        - ['\d\d: ', ""]
+        - ["Custody - ", ""]
+        - ["Over", "More than"]
+        - ["Life$", "Life sentence"]
   population:
     discard_geographies:
       - regional"

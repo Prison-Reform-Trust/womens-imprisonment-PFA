@@ -206,22 +206,9 @@ def process_data(df: pd.DataFrame, config: dict) -> pd.DataFrame:
     """
     logging.info("Processing data...")
 
-    # Defining regex replacements for specific columns
-    #TODO: #36 Consider moving regex_replacements to config for easier adjustments in the future.
-    regex_replacements = {
-        'pfa': [(r"Metropolitan", "London")],
-        'sex': [(r"\d\d: ", "")],
-        'age_group': [(r"\d\d: ", "")],
-        'offence': [(r"\d\d: ", "")],
-        'specific_offence': [(r"^[\dA-Za-z.-]+\s", "")],
-        'outcome': [(r"\d\d: ", "")],
-        'sentence_len': [
-            (r"\d\d: ", ""),
-            (r"Custody - ", ""),
-            (r"Over", "More than"),
-            (r"Life$", "Life sentence"),
-        ]
-    }
+    # Defining regex replacements
+    regex_replacements = config["cleaning"]["sentence_type"]["regex_replacements"]
+
     # Filtering configuration
     filters = config.get('outcomes_by_offence_filter', {})
 
