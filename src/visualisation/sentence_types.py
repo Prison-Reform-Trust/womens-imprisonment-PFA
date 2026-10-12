@@ -355,7 +355,7 @@ def test_chart(config: dict, pfa: str = 'Gwent'):
         config (dict): Configuration dictionary containing paths and settings.
         pfa (str): The Police Force Area to visualize (default is 'Gwent').
     """
-    input_filename, _ = retrieve_from_config(config)
+    input_filename, _, _ = retrieve_from_config(config)
 
     df = utils.load_data(
         status="processed",
