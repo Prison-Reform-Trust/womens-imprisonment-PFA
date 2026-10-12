@@ -22,9 +22,6 @@ import plotly.io as pio
 from src import utilities as utils
 from src.visualisation import prt_theme
 
-utils.setup_logging()
-
-config = utils.load_config()
 pio.templates.default = "prt_template"
 
 INPUT_FILENAME = config['data']['filenames']['filter_sentence_length']
@@ -321,7 +318,7 @@ class SentenceLengthChart:
             self.chart_annotations()
             self.set_axes()
 
-    def save_chart(self, path: str, filetype: str):
+    def save_chart(self, path: str, filetype: str, config: dict):
         """
         Saves the current chart to a specified path and file type.
 
@@ -333,6 +330,7 @@ class SentenceLengthChart:
         Args:
             path (str): The name of the folder where the chart will be saved.
             filetype (str): The file type/extension for the saved chart (e.g., 'png', 'jpg', 'svg').
+            config (dict): Configuration dictionary containing paths and settings.
 
         Raises:
             Any exceptions raised by Path operations or self.fig.write_image will propagate.
@@ -415,6 +413,7 @@ def break_trace_labels(df):
 def generate_sentence_len_chart(
     df: pd.DataFrame,
     path: str,
+    config: dict,
     output: str = 'save',
     filetype: str = 'emf',
     pfa: Optional[str] = None,
@@ -442,7 +441,11 @@ def generate_sentence_len_chart(
         if not adjusted:
             chart = SentenceLengthChart(pfa_name, df)
         if output == 'save':
-            chart.save_chart(path, filetype)
+            chart.save_chart(
+                path=path,
+                filetype=filetype,
+                config=config
+            )
         elif output == 'show':
             chart.output_chart()
         else:
@@ -453,6 +456,7 @@ def generate_sentence_len_chart(
 def make_pfa_sentence_len_charts(
         filename: str,
         path: str,
+        config: dict,
         status='processed',
         output: str = 'save',
         filetype: str = 'emf',
@@ -462,12 +466,17 @@ def make_pfa_sentence_len_charts(
     Generates and outputs sentence length charts for each (or a single) PFA.
     """
     df = (
-        utils.load_data(status, filename)
+        utils.load_data(
+            status=status,
+            filename=filename,
+            config=config
+        )
         .pipe(break_trace_labels)
     )
     generate_sentence_len_chart(
         df=df,
         path=path,
+        config=config,
         output=output,
         filetype=filetype,
         pfa=pfa,
@@ -475,7 +484,7 @@ def make_pfa_sentence_len_charts(
     )
 
 
-def test_chart(pfa: str = 'Gwent', pfa_adjustments: Optional[List[Record]] = None):
+def test_chart(config: dict, pfa: str = 'Gwent', pfa_adjustments: Optional[List[Record]] = None):
     """
     Test function to generate and display a sample chart for a specific PFA,
     with optional PFA adjustments.
@@ -483,6 +492,7 @@ def test_chart(pfa: str = 'Gwent', pfa_adjustments: Optional[List[Record]] = Non
     make_pfa_sentence_len_charts(
         filename=INPUT_FILENAME,
         path=OUTPUT_PATH,
+        config=config,
         status="processed",
         output="save",
         filetype="pdf",
@@ -491,12 +501,14 @@ def test_chart(pfa: str = 'Gwent', pfa_adjustments: Optional[List[Record]] = Non
     )
 
 
-def main():
+def main(config: dict):
     """
     Main function to execute the chart generation process.
 
     This function calls the make_pfa_sentence_len_charts function with predefined parameters
     to generate and save sentence length charts for each PFA in the dataset.
+    Parameters:
+            config (dict): Configuration dictionary containing paths and settings.
     """
     pfa_adjustments = [
         Record('Cambridgeshire', 2, 10),
@@ -512,10 +524,7 @@ def main():
     make_pfa_sentence_len_charts(
         filename=INPUT_FILENAME,
         path=OUTPUT_PATH,
+        config=config,
         filetype='pdf',
         pfa_adjustments=pfa_adjustments,
     )
-
-
-if __name__ == "__main__":
-    main()

@@ -15,5 +15,5 @@ def main(config: dict) -> None:
     """
     Main function to produce all visualisations for the fact sheets.
     """
-    custody_sentence_lengths.main()
+    custody_sentence_lengths.main(config=config)
     sentence_types.main(config=config)
