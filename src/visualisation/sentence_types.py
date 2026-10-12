@@ -20,7 +20,7 @@ import plotly.graph_objs as go
 import plotly.io as pio
 
 from src import utilities as utils
-from src.visualization import prt_theme
+from src.visualisation import prt_theme
 
 pio.templates.default = "prt_template"
 
@@ -378,8 +378,9 @@ def retrieve_from_config(config: dict):
     """
     input_filename = config['data']['filenames']['group_pfa_sentence_outcome']
     output_path = config['visualisation']['paths']['sentence_types']
+    filetype = config['visualisation']['output_formats']
 
-    return input_filename, output_path
+    return input_filename, output_path, filetype
 
 
 def main(config: dict):
@@ -391,11 +392,11 @@ def main(config: dict):
     Parameters:
         config (dict): Configuration dictionary containing paths and settings.
     """
-    input_filename, output_path = retrieve_from_config(config)
+    input_filename, output_path, filetype = retrieve_from_config(config)
 
     make_pfa_sentence_type_charts(
         filename=input_filename,
         path=output_path,
-        filetype='pdf',
+        filetype=filetype,
         config=config
     )
