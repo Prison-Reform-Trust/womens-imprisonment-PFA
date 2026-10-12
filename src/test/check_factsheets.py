@@ -14,8 +14,7 @@ from typing import Optional
 import pandas as pd
 
 import src.utilities as utils
-
-utils.setup_logging()
+from src.configuration import load_config
 
 
 def load_data(
@@ -102,7 +101,6 @@ def save_data(df: pd.DataFrame, filename: str, config: dict, category: Optional[
         path=config['paths']['tests'],
         filename=filename,
     )
-    return None
 
 
 def calculate_sample_size(N, z=1.96, p=0.5, e=0.2) -> int:
@@ -324,7 +322,7 @@ def build_sample_pfa_list(config: dict) -> list[str]:
     return sample_pfas
 
 
-def main(config: dict) -> None:
+def main(year: int) -> None:
     """Main function to produce the factsheet data review process.
     config : dict
         configuration dictionary containing paths and filenames.
@@ -332,6 +330,8 @@ def main(config: dict) -> None:
     -------
     None
     """
+    utils.setup_logging()
+    config = load_config(year=year)
 
     all_custody_data = load_data(data_type='sentence_length', sentence_length='all', config=config)
     sample_pfas = create_pfa_sample(all_custody_data)
@@ -360,3 +360,7 @@ def main(config: dict) -> None:
         config=config
     )
     return None
+
+
+if __name__ == "__main__":
+    main(year=2025)
