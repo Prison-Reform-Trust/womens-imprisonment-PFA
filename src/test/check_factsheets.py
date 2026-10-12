@@ -142,7 +142,11 @@ def create_pfa_sample(data: pd.DataFrame) -> list[str]:
     return sample_pfas
 
 
-def create_total_custodial_sentences_table(data: pd.DataFrame, sample_pfas: list[str], config:dict) -> pd.DataFrame:
+def create_total_custodial_sentences_table(
+    data: pd.DataFrame,
+    sample_pfas: list[str],
+    config: dict
+) -> pd.DataFrame:
     """Create a table showing the total number of custodial sentences in each PFA.
 
     Parameters
@@ -252,7 +256,11 @@ def create_theft_offences_table(sample_pfas: list[str], all_custody_data: pd.Dat
     return df
 
 
-def create_community_sentences_table(sample_pfas: list[str], config: dict, time_period: Optional[int] = None) -> pd.DataFrame:
+def create_community_sentences_table(
+        sample_pfas: list[str],
+        config: dict,
+        time_period: Optional[int] = None
+) -> pd.DataFrame:
     """Create a table showing the number of community sentences in 2014 and the latest year,
     and the percentage change between these years for the sampled PFAs.
 
