@@ -19,7 +19,7 @@ import plotly.io as pio
 
 from src import utilities as utils
 from src.data.processing.filter_custody_offences import filter_offences
-from src.visualization import prt_theme
+from src.visualisation import prt_theme
 
 pio.templates.default = "prt_template"
 

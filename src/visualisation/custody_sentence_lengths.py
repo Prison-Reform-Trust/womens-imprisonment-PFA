@@ -20,7 +20,7 @@ import plotly.graph_objs as go
 import plotly.io as pio
 
 from src import utilities as utils
-from src.visualization import prt_theme
+from src.visualisation import prt_theme
 
 utils.setup_logging()
 
