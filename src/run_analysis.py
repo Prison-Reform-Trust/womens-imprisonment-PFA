@@ -6,6 +6,7 @@ import argparse
 from src.configuration import load_config
 from src.data.processing import process_data
 from src.data.raw import download_data
+from src.visualisation import make_visualisations
 
 
 def main() -> None:
@@ -25,7 +26,7 @@ def main() -> None:
     # Pass config to the pipeline:
     download_data.main(config=config)
     process_data.main(config=config)
-    # run_visualisations(config)
+    make_visualisations.main(config=config)
 
 
 if __name__ == "__main__":
