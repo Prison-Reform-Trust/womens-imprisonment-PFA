@@ -16,7 +16,7 @@ dependencies:
   - pandas
   - plotly::plotly-geo
   - chart-studio
-  - python
+  - python=3.13.3
   - black
   - poppler
   - requests
