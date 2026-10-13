@@ -6,6 +6,7 @@ import glob
 import logging
 import os
 import re
+from dataclasses import dataclass
 from pathlib import Path
 from typing import Any, Dict, Optional
 
@@ -379,3 +380,29 @@ def create_lookup_dict(df: pd.DataFrame, key_col_pattern: str, value_col_pattern
         raise ValueError(f"No column found matching pattern: {value_col_pattern}")
 
     return df.set_index(key_col)[value_col].to_dict()
+
+
+@dataclass(frozen=True)
+class VisualisationSettings:
+    """Store settings for visualisation input and output.
+    """
+    input_filename: str
+    output_path: str
+    filetype: str
+
+
+def get_visualisation_settings(
+    config: dict,
+    *,
+    filename_key: str,
+    visualisation_key: str,
+) -> VisualisationSettings:
+    """Return the configured input file and output settings for a visualisation."""
+    visualisation = config["visualisation"]
+    filetype = visualisation["output_format"]
+
+    return VisualisationSettings(
+        input_filename=config["data"]["filenames"][filename_key],
+        output_path=visualisation["paths"][visualisation_key],
+        filetype=filetype,
+    )
