@@ -10,6 +10,7 @@ who received a custodial sentence in 2024, broken down by offence group.
 """
 
 import logging
+import os
 from dataclasses import dataclass
 from typing import Optional
 
@@ -284,7 +285,7 @@ class PfaOffencesChart:
         self._prepare_chart()
 
         filename = f"{self.pfa_df['pfa'].iloc[0]}.{filetype}"
-        path = config['paths']['figures'] + path
+        path = os.path.join(config['paths']['figures'], path)
 
         utils.safe_save_chart(
             fig=self.fig,

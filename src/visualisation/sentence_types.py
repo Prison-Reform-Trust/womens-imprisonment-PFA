@@ -13,6 +13,7 @@ It provides a standardised column chart for each Police Force Area (PFA) to show
 """
 
 import logging
+import os
 from typing import List
 
 import pandas as pd
@@ -279,7 +280,7 @@ class SentenceTypeChart:
         self._prepare_chart()
 
         filename = f"{self.pfa_df_sentence['pfa'].iloc[0]}.{filetype}"
-        path = config['paths']['figures'] + path
+        path = os.path.join(config['paths']['figures'], path)
 
         utils.safe_save_chart(
             fig=self.fig,
