@@ -16,6 +16,9 @@ import plotly.graph_objs as go
 
 def setup_logging():
     """Set up logging configuration"""
+    logging.getLogger("kaleido").setLevel(logging.WARNING)
+    logging.getLogger("choreographer").setLevel(logging.WARNING)
+
     if not logging.getLogger().hasHandlers():
         logging.basicConfig(
             level=logging.INFO,
