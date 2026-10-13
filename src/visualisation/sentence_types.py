@@ -366,9 +366,10 @@ def test_chart(config: dict, pfa: str = 'Gwent'):
     return chart.output_chart()
 
 
-def retrieve_from_config(config: dict):
+def retrieve_from_config(config: dict) -> tuple[str, str, str]:
     """
-    Retrieves configuration values for input filename and output path from the provided config dictionary.
+    Retrieves configuration values for input filename, output path and filetype
+    from the provided config dictionary.
 
     Args:
         config (dict): Configuration dictionary containing paths and settings.
