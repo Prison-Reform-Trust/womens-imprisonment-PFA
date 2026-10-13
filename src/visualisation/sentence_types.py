@@ -355,33 +355,19 @@ def test_chart(config: dict, pfa: str = 'Gwent'):
         config (dict): Configuration dictionary containing paths and settings.
         pfa (str): The Police Force Area to visualize (default is 'Gwent').
     """
-    input_filename, _, _ = retrieve_from_config(config)
+    settings = utils.get_visualisation_settings(
+        config,
+        filename_key="group_pfa_sentence_outcome",
+        visualisation_key="sentence_types",
+    )
 
     df = utils.load_data(
         status="processed",
-        filename=input_filename,
+        filename=settings.input_filename,
         config=config
     )
     chart = SentenceTypeChart(pfa, df)
     return chart.output_chart()
-
-
-def retrieve_from_config(config: dict) -> tuple[str, str, str]:
-    """
-    Retrieves configuration values for input filename, output path and filetype
-    from the provided config dictionary.
-
-    Args:
-        config (dict): Configuration dictionary containing paths and settings.
-
-    Returns:
-        tuple: A tuple containing the input filename and output path.
-    """
-    input_filename = config['data']['filenames']['group_pfa_sentence_outcome']
-    output_path = config['visualisation']['paths']['sentence_types']
-    filetype = config['visualisation']['output_formats']
-
-    return input_filename, output_path, filetype
 
 
 def main(config: dict):
@@ -393,11 +379,16 @@ def main(config: dict):
     Parameters:
         config (dict): Configuration dictionary containing paths and settings.
     """
-    input_filename, output_path, filetype = retrieve_from_config(config)
+
+    settings = utils.get_visualisation_settings(
+        config=config,
+        filename_key='group_pfa_sentence_outcome',
+        visualisation_key='sentence_types'
+    )
 
     make_pfa_sentence_type_charts(
-        filename=input_filename,
-        path=output_path,
-        filetype=filetype,
+        filename=settings.input_filename,
+        path=settings.output_path,
+        filetype=settings.filetype,
         config=config
     )
