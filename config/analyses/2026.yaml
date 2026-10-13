@@ -65,8 +65,7 @@ cleaning:
       "Devon & Cornwall": "Devon and Cornwall"
 
 visualisation:
-  output_formats:
-    - "pdf"
+  output_format: "pdf"
   directories:
     custody_sentence_lengths: "custody_sentence_lengths"
     sentence_types: "sentence_types"
