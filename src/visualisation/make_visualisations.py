@@ -3,12 +3,13 @@
 
 """
 This script is part of the data visualisation pipeline for the Criminal Justice System
-statistics quarterly: December 2024 Outcomes by Offence dataset.
+statistics Outcomes by Offence dataset.
 
 This script generates all publication ready visualisations in this project.
 """
 
-from src.visualisation import custody_sentence_lengths, sentence_types
+from src.visualisation import (custody_offences, custody_sentence_lengths,
+                               sentence_types)
 
 
 def main(config: dict) -> None:
@@ -17,3 +18,4 @@ def main(config: dict) -> None:
     """
     custody_sentence_lengths.main(config=config)
     sentence_types.main(config=config)
+    custody_offences.main(config=config)
