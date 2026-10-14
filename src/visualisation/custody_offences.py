@@ -31,10 +31,10 @@ class CustodyOffencesSettings:
     Settings for the custody offences visualisation.
     """
 
-    filename_template: str
     max_year: int
     input_filename: str
     output_path: str
+    filetype: str
 
 
 def retrieve_from_config(config: dict) -> CustodyOffencesSettings:
@@ -46,17 +46,21 @@ def retrieve_from_config(config: dict) -> CustodyOffencesSettings:
     config : dict
         Configuration dictionary containing paths and settings.
     """
-    filename_template = config["data"]["filenames"]["filter_custody_offences"]
+    visualisation_settings = utils.get_visualisation_settings(
+        config,
+        filename_key="filter_custody_offences",
+        visualisation_key="custody_offences",
+    )
     max_year = utils.get_latest_year_from_files(
         path=config["paths"]["processed"],
-        template=filename_template,
+        template=visualisation_settings.input_filename,
     )
 
     return CustodyOffencesSettings(
-        filename_template=filename_template,
         max_year=max_year,
-        input_filename=filename_template.format(year=max_year),
-        output_path=config["visualisation"]["paths"]["custody_offences"],
+        input_filename=visualisation_settings.input_filename.format(year=max_year),
+        output_path=visualisation_settings.output_path,
+        filetype=visualisation_settings.filetype,
     )
 
 
@@ -311,7 +315,6 @@ def make_pfa_offences_charts(
     settings: CustodyOffencesSettings,
     config: dict,
     output: str = "save",
-    filetype: str = "emf",
 ):
     df = utils.load_data(
         status="processed",
@@ -329,7 +332,7 @@ def make_pfa_offences_charts(
         if output == "save":
             chart.save_chart(
                 path=settings.output_path,
-                filetype=filetype,
+                filetype=settings.filetype,
                 config=config
             )
         elif output == "show":
@@ -374,7 +377,7 @@ def test_chart(
     if output == 'save':
         return chart.save_chart(
                         path=settings.output_path,
-                        filetype='pdf',
+                        filetype=settings.filetype,
                         config=config
                     )
     else:
@@ -392,5 +395,4 @@ def main(config: dict):
         settings=settings,
         config=config,
         output="save",
-        filetype="pdf",
     )
