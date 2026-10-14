@@ -25,9 +25,6 @@ from src.visualisation import prt_theme
 
 pio.templates.default = "prt_template"
 
-INPUT_FILENAME = config['data']['filenames']['filter_sentence_length']
-OUTPUT_PATH = config['visualisation']['paths']['custody_sentence_lengths']
-
 
 class SentenceLengthChart:
     """
@@ -399,6 +396,14 @@ class Record:
         return f'{self.pfa_name} PFA adjustment'
 
 
+def _get_pfa_adjustments(config: dict) -> List[Record]:
+    """Build the sentence-label adjustment records configured for this analysis."""
+    return [
+        Record(**adjustment)
+        for adjustment in config["visualisation"]["adjustments"]["custody_sentence_lengths"]
+    ]
+
+
 def break_trace_labels(df):
     """
     Renames the categories of the 'sentence_len' column in the DataFrame to improve
@@ -490,15 +495,24 @@ def test_chart(config: dict, pfa: str = 'Gwent', pfa_adjustments: Optional[List[
     Test function to generate and display a sample chart for a specific PFA,
     with optional PFA adjustments.
     """
-    make_pfa_sentence_len_charts(
-        filename=INPUT_FILENAME,
-        path=OUTPUT_PATH,
+
+    settings = utils.get_visualisation_settings(
         config=config,
-        status="processed",
-        output="save",
-        filetype="pdf",
+        filename_key='filter_sentence_length',
+        visualisation_key='custody_sentence_lengths'
+        )
+
+    make_pfa_sentence_len_charts(
+        filename=settings.input_filename,
+        path=settings.output_path,
+        config=config,
+        filetype=settings.filetype,
         pfa=pfa,
-        pfa_adjustments=pfa_adjustments
+        pfa_adjustments=(
+            _get_pfa_adjustments(config)
+            if pfa_adjustments is None
+            else pfa_adjustments
+        )
     )
 
 
@@ -511,21 +525,19 @@ def main(config: dict):
     Parameters:
             config (dict): Configuration dictionary containing paths and settings.
     """
-    pfa_adjustments = [
-        Record('Cambridgeshire', 2, 10),
-        Record('Cumbria', 2, 2),
-        Record('Derbyshire', 2, 10),
-        Record('Durham', 2, 5),
-        Record('Northamptonshire', 2, 3),
-        Record('Suffolk', 2, -2),
-        Record('Surrey', [0, 2], [4, 2]),
-        Record('Warwickshire', 0, 7)
-    ]
+
+    settings = utils.get_visualisation_settings(
+        config=config,
+        filename_key='filter_sentence_length',
+        visualisation_key='custody_sentence_lengths'
+    )
+
+    pfa_adjustments = _get_pfa_adjustments(config)
 
     make_pfa_sentence_len_charts(
-        filename=INPUT_FILENAME,
-        path=OUTPUT_PATH,
+        filename=settings.input_filename,
+        path=settings.output_path,
         config=config,
-        filetype='pdf',
+        filetype=settings.filetype,
         pfa_adjustments=pfa_adjustments,
     )

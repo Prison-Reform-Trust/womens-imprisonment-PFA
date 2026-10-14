@@ -4,3 +4,7 @@ paths:
   processed: "data/processed/${analysis.id}"
   figures: "reports/${analysis.id}/figures"
   tests: "data/tests/${analysis.id}"
+
+visualisation:
+  adjustments:
+    custody_sentence_lengths: []

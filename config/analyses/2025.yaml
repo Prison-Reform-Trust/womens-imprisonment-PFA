@@ -107,6 +107,32 @@ cleaning:
 
 visualisation:
   output_format: "pdf"
+  adjustments:
+    custody_sentence_lengths:
+      - pfa_name: "Cambridgeshire"
+        label_idx: 2
+        adjust: 10
+      - pfa_name: "Cumbria"
+        label_idx: 2
+        adjust: 2
+      - pfa_name: "Derbyshire"
+        label_idx: 2
+        adjust: 10
+      - pfa_name: "Durham"
+        label_idx: 2
+        adjust: 5
+      - pfa_name: "Northamptonshire"
+        label_idx: 2
+        adjust: 3
+      - pfa_name: "Suffolk"
+        label_idx: 2
+        adjust: -2
+      - pfa_name: "Surrey"
+        label_idx: [0, 2]
+        adjust: [4, 2]
+      - pfa_name: "Warwickshire"
+        label_idx: 0
+        adjust: 7
   paths:
     custody_sentence_lengths: "custody_sentence_lengths"
     sentence_types: "sentence_types"
