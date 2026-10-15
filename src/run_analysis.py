@@ -10,6 +10,9 @@ from src.visualisation import make_visualisations
 
 
 def main() -> None:
+    """This is the entry point for the entire pipeline. It will
+    allow you to run the analysis for a given year, using the defined
+    values within the accompanying config file."""
     parser = argparse.ArgumentParser()
     parser.add_argument(
         "--year",
