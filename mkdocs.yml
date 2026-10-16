@@ -57,6 +57,7 @@ nav:
   - Welcome: index.md
   - Getting started:
     - getting-started/index.md
+    - Configuring an analysis: getting-started/configuring-an-analysis.md
     - Downloading the data: getting-started/downloading-the-data.md
     - Processing the data: getting-started/processing-the-data.md
   - Quality assurance:

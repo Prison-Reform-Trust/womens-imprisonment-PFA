@@ -26,9 +26,9 @@ graph TD
 
 We start of the processing with some initial cleaning and filtering of the dataset in `filter_sentence_type.py`.
 
-The script reads the values stored in `outcomes_by_offence_filter` within `config.yaml`. By default this includes sentence types such as 'Immediate custody', 'Community sentence', and 'Suspended sentence', and excludes the 'Not known' police force area, it also excludes children.
+The script reads the include, exclude and sort settings for sentence outcomes from the selected analysis configuration under `filters.sentence_type`. For example, the 2025 configuration includes female adults and young adults receiving immediate custody, community sentences or suspended sentences, and excludes records with an unknown police force area. See [Configuring an analysis](configuring-an-analysis.md) for how the year-specific configuration is loaded.
 
-Once the filtering has been applied, the script then renames and reorders the DataFrame columns; applies regex replacements and saves the processed DataFrame to a CSV file in the `intFilePath` directory as set in `config.yaml` (`data/interim` by default).
+Once filtering has been applied, the script renames and reorders the DataFrame columns, applies configured regular-expression replacements, and saves the processed DataFrame to the interim output directory defined by `paths.interim` in the merged configuration (for example, `data/interim/2025`).
 
 !!! success "Data produced"
     This produces our interim dataset, ready for further processing. This interim dataset forms the basis for producing the datasets necessary for all three of our visualisations which we use in our individual Police Force Area fact sheets.
@@ -119,7 +119,7 @@ The script loads the ONS population data from the raw data directory, which was 
 * Filters for adult women
 * Aggregates all age groups into a single annual value by local authority
 * Retrieves the minimum year and maximum year values in the DataFrame
-* Saves the processed DataFrame to a CSV file in the `intFilePath` directory as set in `config.yaml` (data/interim by default).
+* Saves the processed DataFrame to a CSV file in the interim output directory defined by `paths.interim`.
 
 !!! success "Data produced"
     This produces our interim dataset, showing the total number of adult women in each local authority area in England and Wales. This is now ready for further processing to match each local authority area to its own Police Force Area.
@@ -129,7 +129,7 @@ Once cleaning has been completed the dataset is read into `la_to_pfa_matching.py
 
 `la_to_pfa_matching.py` merges the population data with the PFA lookup file to assign each Local Authority to its corresponding Police Force Area. It then removes any rows where the local authority code is not in the lookup file — these are E10 (Counties) and E11 codes (Metropolitan Counties) at a higher geographic level, as well as City of London which is not relevant for this analysis given its [unique role](https://www.cityoflondon.police.uk/police-forces/city-of-london-police/areas/city-of-london/about-us/about-us/structure/). Finally it renames Devon & Cornwall to Devon and Cornwall for consistency with the existing Criminal Justice System Statistics datasets.
 
-The processed DataFrame is saved to a CSV file in the `intFilePath` directory as set in `config.yaml` (data/interim by default).
+The processed DataFrame is saved to a CSV file in the interim output directory defined by `paths.interim`.
 
 !!! success "Data produced"
     This produces our interim dataset, showing the total number of adult women in each local authority area in England and Wales, matched to its own Police Force Area.
