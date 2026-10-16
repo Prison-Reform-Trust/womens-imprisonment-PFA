@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 """
-This script processes the Criminal Justice System statistics quarterly: December 2024
+This script processes the Criminal Justice System statistics quarterly
 Outcomes by Offence datasets.
 
 Using the interim dataset produced by the `filter_sentence_type` module, it groups the

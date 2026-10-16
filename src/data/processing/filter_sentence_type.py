@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 """
-This script processes the Criminal Justice System statistics quarterly: December 2024
+This script processes the Criminal Justice System statistics quarterly
 Outcomes by Offence datasets. It filters the data to include only relevant records which are
 set in config['outcomes_by_offence_filter']. This includes sentence types such as
 'Immediate custody', 'Community sentence', and 'Suspended sentence',

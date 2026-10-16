@@ -7,7 +7,7 @@ from API responses, including GOV.UK and the Office for National Statistics (ONS
 def outcomes_by_offence_data_filter(data):
     """
     Filter to locate the outcomes by offence data from the Ministry of Justice
-    Criminal Justice System statistics quarterly: December 2024.
+    Criminal Justice System statistics quarterly.
 
     Published at https://www.gov.uk/government/collections/criminal-justice-statistics-quarterly
 

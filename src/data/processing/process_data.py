@@ -3,7 +3,7 @@
 
 """
 This module completes the full processing stages the Criminal Justice System statistics
-quarterly: December 2024 Outcomes by Offence dataset pipeline for this project.
+quarterly Outcomes by Offence dataset pipeline for this project.
 
 Using the scripts contained within the `src/data/processing` directory.
 Interim and fully processed datasets are saved as CSV files in the `intFilePath`

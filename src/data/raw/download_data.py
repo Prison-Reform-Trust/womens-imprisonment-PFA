@@ -3,7 +3,7 @@
 
 """
 This script downloads the data needed for analysis from the Ministry of Justice
-Criminal Justice System statistics quarterly: December 2024 and the latest
+Criminal Justice System statistics quarterly and the latest
 Office for National Statistics (ONS) mid-year population estimates from its API.
 
 Published at https://www.gov.uk/government/collections/criminal-justice-statistics-quarterly

@@ -3,7 +3,7 @@
 
 """
 This script is part of the data visualisation pipeline for the Criminal Justice System
-statistics quarterly: December 2024 Outcomes by Offence dataset.
+statistics quarterly Outcomes by Offence dataset.
 
 It provides a standardised column chart for each Police Force Area (PFA) to show:
     * The number of women who received a:
