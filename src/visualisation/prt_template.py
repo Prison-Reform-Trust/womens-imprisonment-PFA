@@ -31,11 +31,19 @@ Dependencies:
 """
 
 import textwrap
-from typing import List, Literal, Optional, Union
+from typing import Final, List, Literal, Optional, Union
 
 import pandas as pd
 import plotly.graph_objs as go
 import plotly.io as pio
+
+COLORWAY: Final[tuple[str, ...]] = (
+    "#A01D28",
+    "#499CC9",
+    "#F9A237",
+    "#6FBA3A",
+    "#573D6B",
+)
 
 # PRT standard template
 pio.templates["prt_template"] = go.layout.Template(
@@ -48,7 +56,7 @@ pio.templates["prt_template"] = go.layout.Template(
         font_size=14,
         paper_bgcolor="#F7F2F2",
         plot_bgcolor="#F7F2F2",
-        colorway=("#A01D28", "#499CC9", "#F9A237", "#6FBA3A", "#573D6B"),
+        colorway=COLORWAY,
         modebar_activecolor="#A01D28",
         showlegend=False,
         xaxis_showgrid=False,
@@ -216,7 +224,7 @@ def add_annotation(
                 "showarrow": showarrow,
                 "text": str(trace.name),
                 "font_size": font_size,
-                "font_color": font_color or pio.templates['prt_template'].layout.colorway[j]
+                "font_color": font_color or COLORWAY[j]
             })
 
         return annotations_list

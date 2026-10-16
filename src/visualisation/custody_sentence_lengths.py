@@ -21,7 +21,7 @@ import plotly.graph_objs as go
 import plotly.io as pio
 
 from src import utilities as utils
-from src.visualisation import prt_theme
+from src.visualisation import prt_template
 
 pio.templates.default = "prt_template"
 
@@ -211,7 +211,7 @@ class SentenceLengthChart:
             f'Use of immediate imprisonment for women '
             f'{self.pfa_df_sentence["pfa"].iloc[0]}, {min_year}—{max_year}'
         )
-        prt_theme.add_title(
+        prt_template.add_title(
             self.fig,
             title=title,
             width=40
@@ -226,7 +226,7 @@ class SentenceLengthChart:
             None
         """
         logging.info("Setting source annotation...")
-        prt_theme.add_annotation(
+        prt_template.add_annotation(
             self.annotations,
             text="Ministry of Justice, Criminal justice statistics",
             annotation_type="source",
@@ -240,7 +240,7 @@ class SentenceLengthChart:
         This method uses the `prt_theme.add_annotation` function to append an annotation to the chart's
         annotations list, specifying the label text and annotation type for the y-axis.
         """
-        prt_theme.add_annotation(
+        prt_template.add_annotation(
             self.annotations,
             text="Women sentenced to custody",
             annotation_type="y-axis",

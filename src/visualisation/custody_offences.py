@@ -20,7 +20,7 @@ import plotly.io as pio
 
 from src import utilities as utils
 from src.data.processing.filter_custody_offences import filter_offences
-from src.visualisation import prt_theme
+from src.visualisation import prt_template
 
 pio.templates.default = "prt_template"
 
@@ -137,7 +137,7 @@ class PfaOffencesChart:
         """Creates a sunburst trace for the PFA offences chart, wrapping all labels and parents."""
 
         def wrap_series(series):
-            return series.apply(lambda x: prt_theme.wrap_labels(x, max_chars=max_chars))
+            return series.apply(lambda x: prt_template.wrap_labels(x, max_chars=max_chars))
 
         wrapped_labels = wrap_series(self.pfa_df['offence'])
         wrapped_parents = wrap_series(self.pfa_df['parent'])
@@ -206,7 +206,7 @@ class PfaOffencesChart:
             f'by offence group, {self.settings.max_year}'
         )
 
-        prt_theme.add_title(
+        prt_template.add_title(
             self.fig,
             title=title,
             wrap=False,
@@ -222,7 +222,7 @@ class PfaOffencesChart:
         """
         logging.info("Setting source annotation...")
         self.annotations = (
-            prt_theme.add_annotation(
+            prt_template.add_annotation(
                 self.annotations,
                 text="Ministry of Justice, Criminal justice statistics",
                 annotation_type="source",
