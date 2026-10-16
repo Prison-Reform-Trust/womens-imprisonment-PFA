@@ -316,6 +316,23 @@ def make_pfa_offences_charts(
     config: dict,
     output: str = "save",
 ):
+    """Function to generate and save or display sunburst charts for each Police Force Area (PFA).
+
+    Parameters
+    ----------
+    settings : CustodyOffencesSettings
+        Settings for the custody offences visualisation, including
+        maximum year, input filename, output path, and file type.
+    config : dict
+        Configuration dictionary containing paths and settings.
+    output : str, optional
+        Determines whether to save ('save') or display ('show') the charts. Default is 'save'.
+
+    Raises
+    ------
+    ValueError
+        If the output parameter is not 'save' or 'show'.
+    """
     df = utils.load_data(
         status="processed",
         filename=settings.input_filename,
