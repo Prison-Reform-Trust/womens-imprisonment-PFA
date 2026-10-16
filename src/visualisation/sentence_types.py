@@ -21,7 +21,7 @@ import plotly.graph_objs as go
 import plotly.io as pio
 
 from src import utilities as utils
-from src.visualisation import prt_theme
+from src.visualisation import prt_template
 
 pio.templates.default = "prt_template"
 
@@ -150,7 +150,7 @@ class SentenceTypeChart:
             f'{self.pfa_df_sentence["pfa"].iloc[0]}, {min_year}—{max_year}'
         )
         logging.info("Setting title...")
-        prt_theme.add_title(
+        prt_template.add_title(
             self.fig,
             title=title,
             width=70
@@ -166,7 +166,7 @@ class SentenceTypeChart:
         """
         logging.info("Setting source annotation...")
         self.annotations = (
-            prt_theme.add_annotation(
+            prt_template.add_annotation(
                 self.annotations,
                 text="Ministry of Justice, Criminal justice statistics",
                 annotation_type="source",
@@ -183,7 +183,7 @@ class SentenceTypeChart:
         """
         logging.info("Setting y-axis annotation...")
         self.annotations = (
-            prt_theme.add_annotation(
+            prt_template.add_annotation(
                 self.annotations,
                 text="Women sentenced",
                 annotation_type="y-axis",

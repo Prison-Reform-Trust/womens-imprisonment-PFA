@@ -178,7 +178,7 @@ class SentenceLengthChart:
                     yanchor="bottom",
                     align="left",
                     showarrow=False,
-                    font_color=self.fig.layout.template.layout.colorway[i],
+                    font_color=prt_template.COLORWAY[i],
                     font_size=10,
                 )
             )

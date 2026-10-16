@@ -144,11 +144,7 @@ class PfaOffencesChart:
 
         # Define colour mapping based on the 'plot_order' column
         colour_map = {
-            0: self.fig.layout.template.layout.colorway[0],
-            1: self.fig.layout.template.layout.colorway[1],
-            2: self.fig.layout.template.layout.colorway[2],
-            3: self.fig.layout.template.layout.colorway[3],
-            4: self.fig.layout.template.layout.colorway[4],
+            index: color for index, color in enumerate(prt_template.COLORWAY)
         }
 
         colors = self.pfa_df['plot_order'].map(colour_map)
