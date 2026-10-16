@@ -213,13 +213,18 @@ def add_annotation(
 
         for j in trace_list_idx:
             trace = trace_list[j]
+            trace_x = trace.x
+            trace_y = trace.y
+            if trace_x is None or trace_y is None:
+                raise ValueError("Cannot label a trace without x and y data.")
+
             annotations_list.append({
                 "xref": "x",
                 "yref": "y",
                 "xanchor": xanchor,
                 "yanchor": yanchor,
-                "x": (x[j] if isinstance(x, list) else trace.x[-1]) + x_pad,
-                "y": y[j] if isinstance(y, list) else trace.y[-1],
+                "x": (x[j] if isinstance(x, list) else trace_x[-1]) + x_pad,
+                "y": y[j] if isinstance(y, list) else trace_y[-1],
                 "align": align,
                 "showarrow": showarrow,
                 "text": str(trace.name),

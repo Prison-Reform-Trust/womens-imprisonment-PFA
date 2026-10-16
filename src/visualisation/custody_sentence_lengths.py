@@ -167,12 +167,19 @@ class SentenceLengthChart:
         logging.info("Label index: %s, Adjustment: %s", self.label_idx, self.adjust)
 
         for i, trace in enumerate(self.trace_list):
+            x_values = trace.x
+            y_values = trace.y
+            if x_values is None or y_values is None:
+                raise ValueError("Cannot label a trace without x and y data.")
+            if not x_values or not y_values:
+                raise ValueError("Cannot label a trace without x and y data points.")
+
             self.annotations.append(
                 dict(
                     xref="x",
                     yref="y",
-                    x=trace.x[-1],
-                    y=trace.y[-1],
+                    x=x_values[-1],
+                    y=y_values[-1],
                     text=str(trace.name),
                     xanchor="left",
                     yanchor="bottom",
